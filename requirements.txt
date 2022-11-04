@@ -1,4 +1,4 @@
-black
-matlabengine
-PyQt6
-pytest-qt
+black==22.10.0
+matlabengine==9.13.1
+PyQt6==6.4.0
+pytest-qt==4.2.0
