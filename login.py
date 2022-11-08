@@ -5,29 +5,27 @@ from PyQt6 import uic
 
 logging.getLogger().setLevel(logging.INFO)
 
-class User():
-    def __init__(self, name, password):
-        self.name = name
-        self.password = password
 
 class LoginWindow(QtWidgets.QMainWindow):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         uic.loadUi("ui/loginform.ui", self)
 
-        self.doctor = User("John", "password")
+        self.users = {"John": "password"}
 
         self.loginPushButton.clicked.connect(self.loginPushed)
 
     def loginPushed(self):
         try:
-            assert(self.doctor.name == self.usernameLineEdit.text())
-            assert(self.doctor.password == self.passwordLineEdit.text())
-        except:
-            logging.error("Something went wrong")
+            username = self.usernameLineEdit.text()
+            password = self.passwordLineEdit.text()
+            assert username in self.users, "User does not exist"
+            assert self.users[username] == password, "Password is incorrect"
+        except AssertionError as msg:
+            logging.error(msg)
         else:
             logging.info("Success")
+
 
 app = QtWidgets.QApplication(sys.argv)
 window = LoginWindow()
