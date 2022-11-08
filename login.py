@@ -25,6 +25,7 @@ class LoginWindow(QtWidgets.QMainWindow):
             logging.error(msg)
         else:
             logging.info("Success")
+            # TODO: Connect to patient list widget
 
 
 app = QtWidgets.QApplication(sys.argv)
