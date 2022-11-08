@@ -1,4 +1,5 @@
 import sys
+import json
 import logging
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6 import uic
@@ -11,7 +12,10 @@ class LoginWindow(QtWidgets.QMainWindow):
         super().__init__(*args, **kwargs)
         uic.loadUi("ui/loginform.ui", self)
 
-        self.users = {"John": "password"}
+        with open("users.txt") as f:
+            data = f.read()
+
+        self.users = json.loads(data)
 
         self.loginPushButton.clicked.connect(self.loginPushed)
 
@@ -22,8 +26,11 @@ class LoginWindow(QtWidgets.QMainWindow):
             assert username in self.users, "User does not exist"
             assert self.users[username] == password, "Password is incorrect"
         except AssertionError as msg:
+            self.errorLabel.setText(str(msg))
+            self.errorLabel.setStyleSheet("color:red")
             logging.error(msg)
         else:
+            self.errorLabel.setText("")
             logging.info("Success")
             # TODO: Connect to patient list widget
 
