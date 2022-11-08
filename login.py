@@ -23,7 +23,7 @@ class LoginWindow(QtWidgets.QMainWindow):
         try:
             username = self.usernameLineEdit.text()
             password = self.passwordLineEdit.text()
-            assert username in self.users, "User does not exist"
+            assert username in self.users, "User {} does not exist".format(username)
             assert self.users[username] == password, "Password is incorrect"
         except AssertionError as msg:
             self.errorLabel.setText(str(msg))
