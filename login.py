@@ -18,6 +18,7 @@ class LoginWindow(QtWidgets.QMainWindow):
         self.users = json.loads(data)
 
         self.loginPushButton.clicked.connect(self.loginPushed)
+        self.signUpPushButton.clicked.connect(self.signUpPushed)
 
     def loginPushed(self):
         try:
@@ -31,8 +32,27 @@ class LoginWindow(QtWidgets.QMainWindow):
             logging.error(msg)
         else:
             self.errorLabel.setText("")
-            logging.info("Success")
+            logging.info("Login Successful")
             # TODO: Connect to patient list widget
+
+    def signUpPushed(self):
+        username = self.usernameLineEdit.text()
+        password = self.passwordLineEdit.text()
+
+        try:
+            assert username not in self.users, "User {} already exists".format(username)
+        except AssertionError as msg:
+            self.errorLabel.setText(str(msg))
+            self.errorLabel.setStyleSheet("color:red")
+            logging.error(msg)
+        else:
+            self.errorLabel.setText(
+                "User {} has been succesfully created".format(username)
+            )
+            logging.info("User {} has been successfully created".format(username))
+            self.users[username] = password
+            with open("users.txt", "w") as f:
+                f.write(json.dumps(self.users))
 
 
 app = QtWidgets.QApplication(sys.argv)
