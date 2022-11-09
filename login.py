@@ -49,6 +49,7 @@ class LoginWindow(QtWidgets.QMainWindow):
             self.errorLabel.setText(
                 "User {} has been succesfully created".format(username)
             )
+            self.errorLabel.setStyleSheet("color:green")
             logging.info("User {} has been successfully created".format(username))
             self.users[username] = password
             with open("users.txt", "w") as f:
