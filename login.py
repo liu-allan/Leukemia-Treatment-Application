@@ -7,7 +7,7 @@ from PyQt6 import uic
 logging.getLogger().setLevel(logging.INFO)
 
 
-class LoginWindow(QtWidgets.QMainWindow):
+class LoginWindow(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         uic.loadUi("ui/loginform.ui", self)
