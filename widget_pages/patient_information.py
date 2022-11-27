@@ -29,6 +29,7 @@ class Patient:
             self.ancMeasurement.append(ancMeasurement)
         print(self.ancMeasurement)
 
+
 class PatientInformationWindow(QWidget):
     def __init__(self):
         super().__init__()
