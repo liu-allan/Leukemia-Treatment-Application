@@ -82,7 +82,9 @@ class PatientInformationWindow(QWidget):
         dosage = float(self.dosageEdit.text())
         bsa = float(self.bodySurfaceAreaEdit.text())
         ancMeasurement = float(self.ancMeasurementEdit.text())
-        self.patient.save(name, weight, height, dosage, bsa, ancMeasurement, self.ancEdited)
+        self.patient.save(
+            name, weight, height, dosage, bsa, ancMeasurement, self.ancEdited
+        )
         self.ancEdited = False
 
     def showPatientListWindow(self):
