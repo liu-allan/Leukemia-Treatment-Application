@@ -27,7 +27,6 @@ class Patient:
         self.bsa = bsa
         if ancEdited:
             self.ancMeasurement.append(ancMeasurement)
-        print(self.ancMeasurement)
 
 
 class PatientInformationWindow(QWidget):
@@ -104,6 +103,7 @@ class PatientInformationWindow(QWidget):
                 (ancMeasurement, date),
                 self.ancEdited,
             )
+            logging.info(vars(self.patient))
             self.ancEdited = False
 
     def showPatientListWindow(self):
