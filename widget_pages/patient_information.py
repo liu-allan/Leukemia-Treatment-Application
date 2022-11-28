@@ -79,17 +79,32 @@ class PatientInformationWindow(QWidget):
             self.bodySurfaceAreaEdit.setText("{:.2f}".format(bsa))
 
     def savePatientInformation(self):
-        name = self.patientLineEdit.text()
-        weight = float(self.weightEdit.text())
-        height = float(self.heightEdit.text())
-        dosage = float(self.dosageEdit.text())
-        date = self.dateEdit.date().toPyDate()
-        bsa = float(self.bodySurfaceAreaEdit.text())
-        ancMeasurement = float(self.ancMeasurementEdit.text())
-        self.patient.save(
-            name, weight, height, dosage, bsa, (ancMeasurement, date), self.ancEdited
-        )
-        self.ancEdited = False
+        try:
+            name = self.patientLineEdit.text()
+            assert name != ""
+            date = self.dateEdit.date().toPyDate()
+            weight = float(self.weightEdit.text())
+            height = float(self.heightEdit.text())
+            dosage = float(self.dosageEdit.text())
+            bsa = float(self.bodySurfaceAreaEdit.text())
+            ancMeasurement = float(self.ancMeasurementEdit.text())
+        except:
+            msg = "Input fields must not be empty"
+            self.errorLabel.setText(msg)
+            self.errorLabel.setStyleSheet("color:red")
+            logging.error(msg)
+        else:
+            self.errorLabel.clear()
+            self.patient.save(
+                name,
+                weight,
+                height,
+                dosage,
+                bsa,
+                (ancMeasurement, date),
+                self.ancEdited,
+            )
+            self.ancEdited = False
 
     def showPatientListWindow(self):
         self.parent().parent().showPatientListWindow()
