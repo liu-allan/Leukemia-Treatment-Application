@@ -118,12 +118,10 @@ class PatientInformationWindow(QWidget):
         self.parent().parent().showPatientListWindow()
         self.displayParameters()
 
-
     def showDashboardWindow(self):
         self.errorLabel.clear()
         self.parent().parent().showDashboardWindow()
         self.displayParameters()
-
 
     def valueChanged(self):
         self.ancEdited = True
