@@ -58,6 +58,9 @@ class PatientInformationWindow(QWidget):
         # TODO: Load selected patient from database
 
         self.patient = Patient("Allan", 175, 64, 50, (2, datetime.date(2022, 1, 1)))
+        self.displayParameters()
+
+    def displayParameters(self):
         self.patientLineEdit.setText(self.patient.name)
         self.weightEdit.setText(str(self.patient.weight))
         self.heightEdit.setText(str(self.patient.height))
@@ -113,10 +116,14 @@ class PatientInformationWindow(QWidget):
     def showPatientListWindow(self):
         self.errorLabel.clear()
         self.parent().parent().showPatientListWindow()
+        self.displayParameters()
+
 
     def showDashboardWindow(self):
         self.errorLabel.clear()
         self.parent().parent().showDashboardWindow()
+        self.displayParameters()
+
 
     def valueChanged(self):
         self.ancEdited = True
