@@ -75,7 +75,7 @@ class PatientInformationWindow(QWidget):
             return
         else:
             bsa = math.sqrt(height * weight / 3600)
-            self.bodySurfaceAreaEdit.setText("{:.2f}".format(bsa))
+            self.bodySurfaceAreaMeasurement.setText("{:.2f}".format(bsa))
 
     def savePatientInformation(self):
         try:
@@ -85,7 +85,7 @@ class PatientInformationWindow(QWidget):
             weight = float(self.weightEdit.text())
             height = float(self.heightEdit.text())
             dosage = float(self.dosageEdit.text())
-            bsa = float(self.bodySurfaceAreaEdit.text())
+            bsa = float(self.bodySurfaceAreaMeasurement.text())
             ancMeasurement = float(self.ancMeasurementEdit.text())
         except:
             msg = "Input fields must not be empty"
@@ -103,13 +103,19 @@ class PatientInformationWindow(QWidget):
                 (ancMeasurement, date),
                 self.ancEdited,
             )
+            msg = "Parameters saved successfully!"
+            self.errorLabel.setText(msg)
+            self.errorLabel.setStyleSheet("color:green")
+            logging.info(msg)
             logging.info(vars(self.patient))
             self.ancEdited = False
 
     def showPatientListWindow(self):
+        self.errorLabel.clear()
         self.parent().parent().showPatientListWindow()
 
     def showDashboardWindow(self):
+        self.errorLabel.clear()
         self.parent().parent().showDashboardWindow()
 
     def valueChanged(self):
