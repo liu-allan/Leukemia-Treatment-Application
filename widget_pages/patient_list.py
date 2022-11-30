@@ -17,6 +17,7 @@ from PyQt6 import uic
 
 logging.getLogger().setLevel(logging.INFO)
 
+
 class PatientListItem(QWidget):
     def __init__(self, patient_name):
         super(PatientListItem, self).__init__()
@@ -24,16 +25,24 @@ class PatientListItem(QWidget):
         self.patient_name = patient_name
         self.label = QLabel(self.patient_name)
         self.select_button = QPushButton("Patient Information")
-        middle_spacer = QSpacerItem(1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.middle_spacer = QSpacerItem(1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.layout = QHBoxLayout()
         self.layout.addWidget(self.label)
-        self.layout.addItem(middle_spacer)
+        self.layout.addItem(self.middle_spacer)
         self.layout.addWidget(self.select_button)
 
         self.setLayout(self.layout)
 
         self.select_button.clicked.connect(self.showPatientInfo)
+    
+    def show(self):
+        for item in [self, self.label, self.select_button]:
+            item.setVisible(True)
+
+    def hide(self):
+        for item in [self, self.label, self.select_button]:
+            item.setVisible(False)
     
     def showPatientInfo(self):
         # lol
@@ -62,7 +71,8 @@ class PatientListWindow(QWidget):
         self.main_box_layout = QVBoxLayout()
 
         self.search_bar = QLineEdit()
-        self.search_bar.placeholderText = "Search"
+        self.search_bar.setPlaceholderText("Search patients")
+        self.search_bar.textChanged.connect(self.filterSearchItems)
 
         self.list = QWidget()
         self.list_layout = QVBoxLayout()
@@ -94,6 +104,12 @@ class PatientListWindow(QWidget):
         # layout.addWidget(button)
 
         # self.setLayout(layout)
+    def filterSearchItems(self, input):
+        for widget in self.patient_widgets:
+            if input.lower() in widget.patient_name.lower():
+                widget.show()
+            else:
+                widget.hide()
 
     def showPatientInformationWindow(self):
         self.parent().parent().showPatientInformationWindow()
