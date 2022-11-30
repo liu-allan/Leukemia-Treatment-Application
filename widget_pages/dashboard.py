@@ -215,18 +215,7 @@ class DashboardWindow(QWidget):
 
         self.tabs.tabBar().setCursor(Qt.CursorShape.PointingHandCursor)
 
-        # tabBars = QTabBar()
-        # tabs.setTabBar(tabBars)
-
-        # tabShowGraph = QLabel("Model Output2")
-        # tabBars.setTabButton(0, QTabBar.ButtonPosition.LeftSide, tabShowGraph)
-        # tabBars.setTabData(0, TabShowGraph())
-
-        # tabPatientList = QLabel("Patient List2")
-        # tabBars.setTabButton(1, QTabBar.ButtonPosition.LeftSide, tabPatientList)
-        # tabBars.setTabData(1, TabPatientList())
-
-        # tabs.setTabBar(tabBars)
+        # TODO horizontal text tabBar
 
         self.tabs.addTab(TabShowGraph(), "Model Output")
         self.tabs.addTab(QWidget(), "Patient List")
@@ -265,16 +254,13 @@ class DashboardWindow(QWidget):
             button.setCursor(Qt.CursorShape.PointingHandCursor)
 
         dlg.setFont(QFont("Avenir", 15))
-        # dlg.setIcon(QMessageBox.Icon.Question)
         button = dlg.exec()
 
         if button == QMessageBox.StandardButton.Yes:
-            print("Yes!")
             # link to login page
             self.showLoginWindow()
             self.tabs.setCurrentIndex(0)
         else:
-            print("No!")
             # back to model output tab
             self.tabs.setCurrentIndex(0)
 
