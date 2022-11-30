@@ -66,6 +66,7 @@ class PatientInformationWindow(QWidget):
         self.heightEdit.setText(str(self.patient.height))
         self.dosageEdit.setText(str(self.patient.dosage))
         self.ancMeasurementEdit.setText(str(self.patient.ancMeasurement[-1][0]))
+        self.dateEdit.setDate(self.patient.ancMeasurement[-1][1])
         self.calculateBodySurfaceArea()
 
     def calculateBodySurfaceArea(self):
@@ -119,9 +120,24 @@ class PatientInformationWindow(QWidget):
         self.displayParameters()
 
     def showDashboardWindow(self):
-        self.errorLabel.clear()
-        self.parent().parent().showDashboardWindow()
-        self.displayParameters()
+        try:
+            name = self.patientLineEdit.text()
+            assert name != ""
+            date = self.dateEdit.date().toPyDate()
+            weight = float(self.weightEdit.text())
+            height = float(self.heightEdit.text())
+            dosage = float(self.dosageEdit.text())
+            bsa = float(self.bodySurfaceAreaMeasurement.text())
+            ancMeasurement = float(self.ancMeasurementEdit.text())
+        except:
+            msg = "Input fields must not be empty"
+            self.errorLabel.setText(msg)
+            self.errorLabel.setStyleSheet("color:red")
+            logging.error(msg)
+        else:
+            self.errorLabel.clear()
+            self.parent().parent().showDashboardWindow()
+            self.displayParameters()
 
     def valueChanged(self):
         self.ancEdited = True
