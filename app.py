@@ -5,9 +5,7 @@
 
 from PyQt6.QtWidgets import (
     QApplication,
-    QHBoxLayout,
     QMainWindow,
-    QPushButton,
     QStackedLayout,
     QVBoxLayout,
     QWidget,
@@ -24,30 +22,13 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         pageLayout = QVBoxLayout()
-        buttonLayout = QHBoxLayout()
         self.stackLayout = QStackedLayout()
 
-        pageLayout.addLayout(buttonLayout)
         pageLayout.addLayout(self.stackLayout)
 
-        button = QPushButton("Login")
-        button.pressed.connect(self.showLoginWindow)
-        buttonLayout.addWidget(button)
         self.stackLayout.addWidget(LoginWindow())
-
-        button = QPushButton("Patient List")
-        button.pressed.connect(self.showPatientListWindow)
-        buttonLayout.addWidget(button)
         self.stackLayout.addWidget(PatientListWindow())
-
-        button = QPushButton("Patient Information")
-        button.pressed.connect(self.showPatientInformationWindow)
-        buttonLayout.addWidget(button)
         self.stackLayout.addWidget(PatientInformationWindow())
-
-        button = QPushButton("Dashboard")
-        button.pressed.connect(self.showDashboardWindow)
-        buttonLayout.addWidget(button)
         self.stackLayout.addWidget(DashboardWindow())
 
         widget = QWidget()
