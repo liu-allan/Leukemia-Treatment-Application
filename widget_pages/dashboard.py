@@ -1,79 +1,149 @@
-from PyQt6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QWidget, QToolBar, QTabWidget, QSizePolicy, QTabBar, QGridLayout, QMainWindow
-from PyQt6.QtGui import QAction, QIcon, QPalette, QColor, QFont
+from PyQt6.QtWidgets import (
+    QLabel,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+    QToolBar,
+    QTabWidget,
+    QSizePolicy,
+    QMessageBox,
+    QTableWidget,
+    QTableWidgetItem,
+    QHeaderView,
+    QMainWindow,
+)
+from PyQt6.QtGui import QColor, QFont
 from PyQt6.QtCore import Qt
-from pyqtgraph import PlotWidget, plot
+from pyqtgraph import plot
 import pyqtgraph as pg
 
-# class Color(QWidget):
-
-#     def __init__(self, color):
-#         super(Color, self).__init__()
-#         self.setAutoFillBackground(True)
-
-#         palette = self.palette()
-#         palette.setColor(QPalette.ColorRole.Window, QColor(color))
-#         self.setPalette(palette)
 
 class TabShowGraph(QMainWindow):
     def __init__(self):
         super().__init__()
-        
-        self.graphWidget = pg.PlotWidget()
-        self.setCentralWidget(self.graphWidget)
 
-        day = [1,2,3,4,5,6,7,8,9,10]
-        anticipatory_neutraphil_count = [-10,1,10,-4,15,-12,20,8,-17,3]
-        reactive_neutraphil_count = [-25,5,15,-15,4,-22,-7,25,13,0]
+        widget = QWidget()
+        graphLayout = QVBoxLayout()
+
+        self.graphWidget = pg.PlotWidget()
+        graphLayout.addWidget(self.graphWidget)
+
+        day = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        anticipatory_neutraphil_count = [-10, 1, 10, -4, 15, -12, 20, 8, -17, 3]
+        reactive_neutraphil_count = [-25, 5, 15, -15, 4, -22, -7, 25, 13, 0]
         boundary_positive = [20, 20, 20, 20, 20, 20, 20, 20, 20, 20]
         boundary_negative = [-20, -20, -20, -20, -20, -20, -20, -20, -20, -20]
 
-        #Add Background colour to white
-        self.graphWidget.setBackground('w')
+        # Add Background colour to white
+        self.graphWidget.setBackground("w")
         # Add Title
-        self.graphWidget.setTitle("Neutraphil Count (Anticipatory vs. Reactive)", color="#000000", size="25pt", font="Avenir")
+        self.graphWidget.setTitle(
+            "Neutraphil Count (Anticipatory vs. Reactive)",
+            color="#000",
+            font=QFont("Avenir", 20),
+            size="20pt",
+        )
         # Add Axis Labels
-        styles = {"color": "#000000", "font-size": "20px", "font":"Avenir"}
-        self.graphWidget.setLabel("left", "Neutraphil Count ()", **styles)
+        styles = {"color": "#000000", "font": QFont("Avenir", 25), "font-size": "25px"}
+        self.graphWidget.setLabel("left", "Neutraphil Count", **styles)
         self.graphWidget.setLabel("bottom", "Day (days)", **styles)
-        #Add legend
+        # Add legend
         self.graphWidget.addLegend()
-        #Add grid
+        # Add grid
         self.graphWidget.showGrid(x=True, y=True)
-        #Set Range
+        # Set Range
         self.graphWidget.setXRange(0, 11, padding=0)
         self.graphWidget.setYRange(-35, 35, padding=0)
 
-        self.plot(day, anticipatory_neutraphil_count, "Anticipatory", 'r')
-        self.plot(day, reactive_neutraphil_count, "Reactive", 'b')
+        self.plot(day, anticipatory_neutraphil_count, "Anticipatory", "r")
+        self.plot(day, reactive_neutraphil_count, "Reactive", "b")
 
-        self.plot_straight(day, boundary_positive, "Neutraphil Top Boundary", '#4a707a')
-        self.plot_straight(day, boundary_negative, "Neutraphil Bottom Boundary", '#4a707a')
+        self.plot_straight(day, boundary_positive, "Neutraphil Top Boundary", "#4a707a")
+        self.plot_straight(
+            day, boundary_negative, "Neutraphil Bottom Boundary", "#4a707a"
+        )
+
+        ant_dosages = [50, 30, 100, 25, 30, 80, 50]
+        self.anticipatory_dosage_title = QLabel("Anticipatory dosages")
+        self.anticipatory_dosage_title.setFont(QFont("Avenir", 15))
+        self.anticipatory_dosage_title.setMargin(5)
+        self.anticipatory_dosage = self.createTable(2, 8, ant_dosages)
+        graphLayout.addWidget(self.anticipatory_dosage_title)
+        graphLayout.addWidget(self.anticipatory_dosage)
+
+        reac_dosages = [10, 30, 40, 20, 79, 84, 24]
+        self.reactive_dosage_title = QLabel("Reactive dosages")
+        self.reactive_dosage_title.setFont(QFont("Avenir", 15))
+        self.reactive_dosage_title.setMargin(5)
+        self.reactive_dosage = self.createTable(2, 8, reac_dosages)
+        graphLayout.addWidget(self.reactive_dosage_title)
+        graphLayout.addWidget(self.reactive_dosage)
+
+        widget.setLayout(graphLayout)
+        self.setCentralWidget(widget)
 
     def plot(self, x, y, plotname, color):
         pen = pg.mkPen(color=color, width=5)
-        self.graphWidget.plot(x, y, name=plotname, pen=pen, symbol='o', symbolSize=7, symbolBrush=(color))
-    
+        self.graphWidget.plot(
+            x, y, name=plotname, pen=pen, symbol="o", symbolSize=7, symbolBrush=(color)
+        )
+
     def plot_straight(self, x, y, plotname, color):
-        pen = pg.mkPen(color=color, width=7, style=Qt.PenStyle.DashLine)
+        pen = pg.mkPen(color=color, width=5, style=Qt.PenStyle.DashLine)
         self.graphWidget.plot(x, y, name=plotname, pen=pen, symbolBrush=(color))
-    
-    def main():
-        main = TabShowGraph()
-        main.show()
 
-class TabPatientList(QWidget):
-    def __init__(self):
-        super().__init__()
+    def createTable(self, row, column, dosages_list):
+        self.tableWidget = QTableWidget()
 
-        print("inside patient list")
+        self.tableWidget.setStyleSheet(
+            """ QTableWidget {
+                                        border: 1px solid #000;
+                                        gridline-color: 1px solid #000;
+                                    }"""
+        )
 
-class TabChangeParameter(QWidget):
-    def __init__(self):
-        super().__init__()
+        # Row count
+        self.tableWidget.setRowCount(row)
 
-class TabLogOff(QWidget):
-    def __init__(self):
-        super().__init__()
+        # Column count
+        self.tableWidget.setColumnCount(column)
+
+        item = QTableWidgetItem("Day")
+        item.setFlags(Qt.ItemFlag.ItemIsEnabled)
+        item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+        item.setBackground(QColor("#bfd8d2"))
+        self.tableWidget.setItem(0, 0, item)
+
+        item = QTableWidgetItem("Dosages (mg)")
+        item.setFlags(Qt.ItemFlag.ItemIsEnabled)
+        item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+        item.setBackground(QColor("#bfd8d2"))
+        self.tableWidget.setItem(1, 0, item)
+
+        for i in range(row):
+            for j in range(1, column):
+
+                if i == 0:
+                    item = QTableWidgetItem(str(j))
+                    item.setFlags(Qt.ItemFlag.ItemIsEnabled)
+                    item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                    item.setBackground(QColor("#bfd8d2"))
+                    self.tableWidget.setItem(i, j, item)
+                elif i == 1:
+                    item = QTableWidgetItem(str(dosages_list[j - 1]))
+                    item.setFlags(Qt.ItemFlag.ItemIsEnabled)
+                    item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                    self.tableWidget.setItem(i, j, item)
+
+        self.tableWidget.verticalHeader().setVisible(False)
+        self.tableWidget.horizontalHeader().setVisible(False)
+
+        # Table will fit the screen horizontally
+        self.tableWidget.verticalHeader().setStretchLastSection(True)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+
+        return self.tableWidget
+
 
 class DashboardWindow(QWidget):
     def __init__(self):
@@ -81,30 +151,33 @@ class DashboardWindow(QWidget):
 
         layout = QVBoxLayout()
 
-        # Top tool bar that shows page name + user account 
+        # Top tool bar that shows page name + user account
         toolBar = QToolBar("Dashboard top bar")
-        toolBar.setStyleSheet("background-color: #a9c7c5; height : 50; border-radius: 10px")
+        toolBar.setStyleSheet(
+            "background-color: #a9c7c5; height : 50; border-radius: 10px"
+        )
         layout.addWidget(toolBar)
 
         dashboard_label = QLabel("Dashboard")
         dashboard_label.setAlignment(Qt.AlignmentFlag.AlignVCenter)
-        dashboard_label.setFont(QFont('Avenir', 25))
+        dashboard_label.setFont(QFont("Avenir", 25))
         dashboard_label.setMargin(10)
         toolBar.addWidget(dashboard_label)
 
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         toolBar.addWidget(spacer)
-        
+
         user_name = QPushButton("AX", self)
         user_name.setCursor(Qt.CursorShape.PointingHandCursor)
         user_name.clicked.connect(self.userProfileClick)
-        user_name.setFont(QFont('Avenir', 15))
+        user_name.setFont(QFont("Avenir", 15))
         user_name.setFixedHeight(40)
         user_name.setFixedWidth(40)
-        
+
         # https://stackoverflow.com/questions/12734319/change-rectangular-qt-button-to-round
-        user_name.setStyleSheet(""" QPushButton {
+        user_name.setStyleSheet(
+            """ QPushButton {
                                         background-color: #bfd8d2;
                                         border-radius: 20px;
                                         border-style: outset;
@@ -121,21 +194,22 @@ class DashboardWindow(QWidget):
                                             cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
                                             radius: 1.35, stop: 0 #bfd8d2, stop: 1 #82a3ac
                                         );
-                                    }""")
-  
+                                    }"""
+        )
+
         # setting radius and border
         toolBar.addWidget(user_name)
 
         name_label = QLabel("Dr. Anne Xie")
         name_label.setAlignment(Qt.AlignmentFlag.AlignVCenter)
-        name_label.setFont(QFont('Avenir', 20))
+        name_label.setFont(QFont("Avenir", 20))
         name_label.setMargin(15)
         toolBar.addWidget(name_label)
 
         # Side tabs
-        tabs = QTabWidget()
+        self.tabs = QTabWidget()
 
-        tabs.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.tabs.setCursor(Qt.CursorShape.PointingHandCursor)
 
         # tabBars = QTabBar()
         # tabs.setTabBar(tabBars)
@@ -150,27 +224,56 @@ class DashboardWindow(QWidget):
 
         # tabs.setTabBar(tabBars)
 
-        tabs.addTab(TabShowGraph(), "Model Output")
-        tabs.addTab(TabPatientList(), "Patient List")
-        tabs.addTab(TabChangeParameter(), "Change Parameter")
-        tabs.addTab(TabLogOff(), "Log Off")
+        self.tabs.addTab(TabShowGraph(), "Model Output")
+        self.tabs.addTab(QWidget(), "Patient List")
+        self.tabs.addTab(QWidget(), "Change Parameter")
+        self.tabs.addTab(QWidget(), "Log Off")
 
-        tabs.setTabPosition(QTabWidget.TabPosition.West)
-                
-        layout.addWidget(tabs)
+        self.tabs.currentChanged.connect(self.tabBarClicked)
 
-        button1 = QPushButton("Back to Patient List")
-        button2 = QPushButton("Back to Patient Information")
-        button1.clicked.connect(self.showPatientListWindow)
-        button2.clicked.connect(self.showPatientInformationWindow)
+        self.tabs.setTabPosition(QTabWidget.TabPosition.West)
 
-        layout.addWidget(button1)
-        layout.addWidget(button2)
+        layout.addWidget(self.tabs)
 
         self.setLayout(layout)
 
+    def tabBarClicked(self, tabIndex):
+        if tabIndex == 1:
+            self.tabs.setCurrentIndex(0)
+            self.showPatientListWindow()
+        elif tabIndex == 2:
+            self.tabs.setCurrentIndex(0)
+            self.showPatientInformationWindow()
+        elif tabIndex == 3:
+            self.logoff_clicked()
+            self.tabs.setCurrentIndex(0)
+
+    def logoff_clicked(self):
+        dlg = QMessageBox(self)
+        dlg.setWindowTitle("Log Off")
+        dlg.setText("Are you sure you want to log off?")
+        dlg.setStandardButtons(
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        dlg.setFont(QFont("Avenir", 15))
+        # dlg.setIcon(QMessageBox.Icon.Question)
+        button = dlg.exec()
+
+        if button == QMessageBox.StandardButton.Yes:
+            print("Yes!")
+            self.showLoginWindow()
+            self.tabs.setCurrentIndex(0)
+            # link to log off page
+        else:
+            print("No!")
+            self.tabs.setCurrentIndex(0)
+            # back to model output tab
+
     def userProfileClick(self, s):
         print("click", s)
+
+    def showLoginWindow(self):
+        self.parent().parent().showLoginWindow()
 
     def showPatientListWindow(self):
         self.parent().parent().showPatientListWindow()
@@ -178,4 +281,5 @@ class DashboardWindow(QWidget):
     def showPatientInformationWindow(self):
         self.parent().parent().showPatientInformationWindow()
 
-
+    def showDashboard(self):
+        self.parent().parent().showDashboardWindow()
