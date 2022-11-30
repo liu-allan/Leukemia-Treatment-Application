@@ -9,6 +9,7 @@ from PyQt6.QtWidgets import (
     QMessageBox,
     QTableWidget,
     QTableWidgetItem,
+    QDialogButtonBox,
     QHeaderView,
     QMainWindow,
 )
@@ -27,7 +28,9 @@ class TabShowGraph(QMainWindow):
 
         self.graphWidget = pg.PlotWidget()
         graphLayout.addWidget(self.graphWidget)
-
+        
+        self.graphWidget.setCursor(Qt.CursorShape.OpenHandCursor) 
+        # Temp data -> will connect to matlab in the future
         day = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         anticipatory_neutraphil_count = [-10, 1, 10, -4, 15, -12, 20, 8, -17, 3]
         reactive_neutraphil_count = [-25, 5, 15, -15, 4, -22, -7, 25, 13, 0]
@@ -62,7 +65,8 @@ class TabShowGraph(QMainWindow):
         self.plot_straight(
             day, boundary_negative, "Neutraphil Bottom Boundary", "#4a707a"
         )
-
+        
+        # Creating tables for dosages
         ant_dosages = [50, 30, 100, 25, 30, 80, 50]
         self.anticipatory_dosage_title = QLabel("Anticipatory dosages")
         self.anticipatory_dosage_title.setFont(QFont("Avenir", 15))
@@ -209,7 +213,7 @@ class DashboardWindow(QWidget):
         # Side tabs
         self.tabs = QTabWidget()
 
-        self.tabs.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.tabs.tabBar().setCursor(Qt.CursorShape.PointingHandCursor)
 
         # tabBars = QTabBar()
         # tabs.setTabBar(tabBars)
@@ -237,6 +241,8 @@ class DashboardWindow(QWidget):
 
         self.setLayout(layout)
 
+    # Setting currentIndex to 0 so that whenever the user navigates back to the dashboard
+    # it will always show the graph tab
     def tabBarClicked(self, tabIndex):
         if tabIndex == 1:
             self.tabs.setCurrentIndex(0)
@@ -255,19 +261,22 @@ class DashboardWindow(QWidget):
         dlg.setStandardButtons(
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
         )
+        for button in dlg.findChild(QDialogButtonBox).findChildren(QPushButton):
+            button.setCursor(Qt.CursorShape.PointingHandCursor)
+
         dlg.setFont(QFont("Avenir", 15))
         # dlg.setIcon(QMessageBox.Icon.Question)
         button = dlg.exec()
 
         if button == QMessageBox.StandardButton.Yes:
             print("Yes!")
+            # link to login page
             self.showLoginWindow()
             self.tabs.setCurrentIndex(0)
-            # link to log off page
         else:
             print("No!")
-            self.tabs.setCurrentIndex(0)
             # back to model output tab
+            self.tabs.setCurrentIndex(0)
 
     def userProfileClick(self, s):
         print("click", s)
@@ -280,6 +289,3 @@ class DashboardWindow(QWidget):
 
     def showPatientInformationWindow(self):
         self.parent().parent().showPatientInformationWindow()
-
-    def showDashboard(self):
-        self.parent().parent().showDashboardWindow()
