@@ -33,6 +33,7 @@ class LoginWindow(QWidget):
         else:
             self.errorLabel.setText("")
             logging.info("Login Successful")
+            self.updateUsername(username)
             self.showPatientListWindow()
 
     def signUpPushed(self):
@@ -54,6 +55,9 @@ class LoginWindow(QWidget):
             self.users[username] = password
             with open("users.txt", "w") as f:
                 f.write(json.dumps(self.users))
+
+    def updateUsername(self, username):
+        self.parent().parent().updateUsername(username)
 
     def showPatientListWindow(self):
         self.parent().parent().showPatientListWindow()

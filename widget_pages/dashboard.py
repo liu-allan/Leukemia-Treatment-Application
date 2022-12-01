@@ -18,6 +18,8 @@ from PyQt6.QtCore import Qt
 from pyqtgraph import plot
 import pyqtgraph as pg
 
+from widget_pages.toolbar import ToolBar
+
 
 class TabShowGraph(QMainWindow):
     def __init__(self):
@@ -28,8 +30,8 @@ class TabShowGraph(QMainWindow):
 
         self.graphWidget = pg.PlotWidget()
         graphLayout.addWidget(self.graphWidget)
-        
-        self.graphWidget.setCursor(Qt.CursorShape.OpenHandCursor) 
+
+        self.graphWidget.setCursor(Qt.CursorShape.OpenHandCursor)
         # Temp data -> will connect to matlab in the future
         day = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         anticipatory_neutraphil_count = [-10, 1, 10, -4, 15, -12, 20, 8, -17, 3]
@@ -65,7 +67,7 @@ class TabShowGraph(QMainWindow):
         self.plot_straight(
             day, boundary_negative, "Neutraphil Bottom Boundary", "#4a707a"
         )
-        
+
         # Creating tables for dosages
         ant_dosages = [50, 30, 100, 25, 30, 80, 50]
         self.anticipatory_dosage_title = QLabel("Anticipatory dosages")
@@ -144,7 +146,9 @@ class TabShowGraph(QMainWindow):
 
         # Table will fit the screen horizontally
         self.tableWidget.verticalHeader().setStretchLastSection(True)
-        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.Stretch
+        )
 
         return self.tableWidget
 
@@ -154,61 +158,6 @@ class DashboardWindow(QWidget):
         super().__init__()
 
         layout = QVBoxLayout()
-
-        # Top tool bar that shows page name + user account
-        toolBar = QToolBar("Dashboard top bar")
-        toolBar.setStyleSheet(
-            "background-color: #a9c7c5; height : 50; border-radius: 10px"
-        )
-        layout.addWidget(toolBar)
-
-        dashboard_label = QLabel("Dashboard")
-        dashboard_label.setAlignment(Qt.AlignmentFlag.AlignVCenter)
-        dashboard_label.setFont(QFont("Avenir", 25))
-        dashboard_label.setMargin(10)
-        toolBar.addWidget(dashboard_label)
-
-        spacer = QWidget()
-        spacer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        toolBar.addWidget(spacer)
-
-        user_name = QPushButton("AX", self)
-        user_name.setCursor(Qt.CursorShape.PointingHandCursor)
-        user_name.clicked.connect(self.userProfileClick)
-        user_name.setFont(QFont("Avenir", 15))
-        user_name.setFixedHeight(40)
-        user_name.setFixedWidth(40)
-
-        # https://stackoverflow.com/questions/12734319/change-rectangular-qt-button-to-round
-        user_name.setStyleSheet(
-            """ QPushButton {
-                                        background-color: #bfd8d2;
-                                        border-radius: 20px;
-                                        border-style: outset;
-                                        background: qradialgradient(
-                                            cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
-                                            radius: 1.35, stop: 0 #bfd8d2, stop: 1 #bfd8d2
-                                        );
-                                        border: 2px solid #bfd8d2;
-                                        padding: 5px;
-                                    }
-
-                                    QPushButton:hover {
-                                        background: qradialgradient(
-                                            cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
-                                            radius: 1.35, stop: 0 #bfd8d2, stop: 1 #82a3ac
-                                        );
-                                    }"""
-        )
-
-        # setting radius and border
-        toolBar.addWidget(user_name)
-
-        name_label = QLabel("Dr. Anne Xie")
-        name_label.setAlignment(Qt.AlignmentFlag.AlignVCenter)
-        name_label.setFont(QFont("Avenir", 20))
-        name_label.setMargin(15)
-        toolBar.addWidget(name_label)
 
         # Side tabs
         self.tabs = QTabWidget()
@@ -220,7 +169,6 @@ class DashboardWindow(QWidget):
         self.tabs.addTab(TabShowGraph(), "Model Output")
         self.tabs.addTab(QWidget(), "Patient List")
         self.tabs.addTab(QWidget(), "Change Parameter")
-        self.tabs.addTab(QWidget(), "Log Off")
 
         self.tabs.currentChanged.connect(self.tabBarClicked)
 
@@ -239,33 +187,9 @@ class DashboardWindow(QWidget):
         elif tabIndex == 2:
             self.tabs.setCurrentIndex(0)
             self.showPatientInformationWindow()
-        elif tabIndex == 3:
-            self.logoff_clicked()
-            self.tabs.setCurrentIndex(0)
 
-    def logoff_clicked(self):
-        dlg = QMessageBox(self)
-        dlg.setWindowTitle("Log Off")
-        dlg.setText("Are you sure you want to log off?")
-        dlg.setStandardButtons(
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
-        )
-        for button in dlg.findChild(QDialogButtonBox).findChildren(QPushButton):
-            button.setCursor(Qt.CursorShape.PointingHandCursor)
-
-        dlg.setFont(QFont("Avenir", 15))
-        button = dlg.exec()
-
-        if button == QMessageBox.StandardButton.Yes:
-            # link to login page
-            self.showLoginWindow()
-            self.tabs.setCurrentIndex(0)
-        else:
-            # back to model output tab
-            self.tabs.setCurrentIndex(0)
-
-    def userProfileClick(self, s):
-        print("click", s)
+    def updateUsername(self, username):
+        self.parent().parent().updateUsername(username)
 
     def showLoginWindow(self):
         self.parent().parent().showLoginWindow()
