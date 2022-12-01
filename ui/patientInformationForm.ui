@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>542</width>
-    <height>483</height>
+    <height>533</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,24 +20,6 @@
    <property name="verticalSpacing">
     <number>25</number>
    </property>
-   <item row="2" column="1">
-    <widget class="QLabel" name="weightLabel">
-     <property name="maximumSize">
-      <size>
-       <width>200</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>9</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Weight (kg)</string>
-     </property>
-    </widget>
-   </item>
    <item row="6" column="2">
     <widget class="QLineEdit" name="ancMeasurementEdit">
      <property name="maximumSize">
@@ -96,24 +78,6 @@
      </property>
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::Save</set>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QLabel" name="heightLabel">
-     <property name="maximumSize">
-      <size>
-       <width>200</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>9</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Height (cm)</string>
      </property>
     </widget>
    </item>
@@ -241,50 +205,14 @@
     </spacer>
    </item>
    <item row="1" column="1">
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="patientLabel">
      <property name="text">
       <string>Patient Name</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
-    <widget class="QLabel" name="bodySurfaceAreaLabel">
-     <property name="maximumSize">
-      <size>
-       <width>200</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>9</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Body Surface Area (m^2)</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1">
-    <widget class="QLabel" name="dosageLabel">
-     <property name="maximumSize">
-      <size>
-       <width>200</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>9</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>6-MP Dosage (mg)</string>
-     </property>
-    </widget>
-   </item>
    <item row="7" column="1">
-    <widget class="QLabel" name="label_2">
+    <widget class="QLabel" name="dateLabel">
      <property name="text">
       <string>Date of ANC Measurement</string>
      </property>
@@ -292,6 +220,34 @@
    </item>
    <item row="7" column="2">
     <widget class="QDateEdit" name="dateEdit"/>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLabel" name="weightLabel">
+     <property name="text">
+      <string>Weight (kg)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLabel" name="heightLabel">
+     <property name="text">
+      <string>Height (cm)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QLabel" name="bodySurfaceAreaLabel">
+     <property name="text">
+      <string>Body Surface Area (m^2)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QLabel" name="dosageLabel">
+     <property name="text">
+      <string>6-MP Dosage (mg)</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
