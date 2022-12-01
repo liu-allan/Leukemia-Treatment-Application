@@ -61,3 +61,5 @@ class LoginWindow(QWidget):
 
     def showPatientListWindow(self):
         self.parent().parent().showPatientListWindow()
+        self.usernameLineEdit.clear()
+        self.passwordLineEdit.clear()
