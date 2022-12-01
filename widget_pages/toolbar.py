@@ -7,9 +7,8 @@ from PyQt6.QtWidgets import (
     QSizePolicy,
     QMessageBox,
     QDialogButtonBox,
-    QSpacerItem
 )
-from PyQt6.QtGui import QColor, QFont
+from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
 
 
@@ -30,7 +29,9 @@ class ToolBar(QWidget):
         self.toolBar.addWidget(self.dashboard_label)
 
         spacer1 = QWidget()
-        spacer1.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        spacer1.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
+        )
         self.toolBar.addWidget(spacer1)
 
         self.avatar = QPushButton(username[0].upper() if username else "", self)
@@ -74,7 +75,7 @@ class ToolBar(QWidget):
         self.logout_button = QPushButton("Log Off", self)
         self.logout_button.setFixedHeight(40)
         self.logout_button.setStyleSheet(
-            "background-color: #aaaaaa; border-radius: 7px; padding: 10px"
+            "background-color: #bbbbbb; border-radius: 7px; padding: 10px"
         )
         self.logout_button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.logout_button.clicked.connect(self.logoffClicked)
@@ -88,20 +89,30 @@ class ToolBar(QWidget):
         self.layout = QHBoxLayout()
         self.layout.addWidget(self.toolBar)
         self.setLayout(self.layout)
-    
 
     def updateToolBar(self, page_name, username):
         if page_name == "Login":
-            for item in [self, self.dashboard_label, self.avatar, self.name_label, self.logout_button]:
+            for item in [
+                self,
+                self.dashboard_label,
+                self.avatar,
+                self.name_label,
+                self.logout_button,
+            ]:
                 item.setVisible(False)
             return
         else:
-            for item in [self, self.dashboard_label, self.avatar, self.name_label, self.logout_button]:
+            for item in [
+                self,
+                self.dashboard_label,
+                self.avatar,
+                self.name_label,
+                self.logout_button,
+            ]:
                 item.setVisible(True)
         self.dashboard_label.setText(page_name)
         self.avatar.setText(username[0].upper() if username else "")
         self.name_label.setText("Dr. " + username if username else "")
-    
 
     def logoffClicked(self):
         dlg = QMessageBox(self)
@@ -120,15 +131,12 @@ class ToolBar(QWidget):
             # link to login page
             self.updateUsername("")
             self.showLoginWindow()
-    
 
     def updateUsername(self, username):
         self.parent().parent().updateUsername(username)
 
-
     def showLoginWindow(self):
         self.parent().parent().showLoginWindow()
-
 
     def userProfileClick(self, s):
         print("click", s)

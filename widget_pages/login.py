@@ -55,7 +55,7 @@ class LoginWindow(QWidget):
             self.users[username] = password
             with open("users.txt", "w") as f:
                 f.write(json.dumps(self.users))
-    
+
     def updateUsername(self, username):
         self.parent().parent().updateUsername(username)
 

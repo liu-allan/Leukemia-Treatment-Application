@@ -42,11 +42,11 @@ class MainWindow(QMainWindow):
         widget.setLayout(pageLayout)
         self.setCentralWidget(widget)
         self.showMaximized()
-    
+
     def updateUsername(self, username):
         self.username = username
         self.updateToolBar()
-    
+
     def updateToolBar(self):
         self.toolBar.updateToolBar(self.current_page, self.username)
 

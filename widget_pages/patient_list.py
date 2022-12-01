@@ -1,13 +1,13 @@
 import sys
 import logging
 from PyQt6.QtWidgets import (
-    QLabel, 
-    QPushButton, 
-    QVBoxLayout, 
-    QHBoxLayout, 
-    QWidget, 
-    QSpacerItem, 
-    QSizePolicy, 
+    QLabel,
+    QPushButton,
+    QVBoxLayout,
+    QHBoxLayout,
+    QWidget,
+    QSpacerItem,
+    QSizePolicy,
     QScrollArea,
     QLineEdit,
 )
@@ -18,14 +18,15 @@ logging.getLogger().setLevel(logging.INFO)
 
 
 class PatientListItem(QWidget):
-    
     def __init__(self, patient_name):
         super(PatientListItem, self).__init__()
 
         self.patient_name = patient_name
         self.label = QLabel(self.patient_name)
         self.select_button = QPushButton("Patient Information")
-        self.middle_spacer = QSpacerItem(1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.middle_spacer = QSpacerItem(
+            1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
+        )
 
         self.layout = QHBoxLayout()
         self.layout.addWidget(self.label)
@@ -35,24 +36,21 @@ class PatientListItem(QWidget):
         self.setLayout(self.layout)
 
         self.select_button.clicked.connect(self.showPatientInfo)
-    
 
     def show(self):
         for item in [self, self.label, self.select_button]:
             item.setVisible(True)
 
-
     def hide(self):
         for item in [self, self.label, self.select_button]:
             item.setVisible(False)
-    
 
     def showPatientInfo(self):
-        # 
+        #
         self.parent().parent().parent().parent().showPatientInformationWindow()
 
-class PatientListWindow(QWidget):
 
+class PatientListWindow(QWidget):
     def __init__(self):
         super().__init__()
 
@@ -64,7 +62,7 @@ class PatientListWindow(QWidget):
             "Jacked Ma",
             "Ripped Ma",
             "Frodo Baggins",
-            "Allan Liu"
+            "Allan Liu",
         ]
 
         self.patients.sort()
@@ -83,14 +81,18 @@ class PatientListWindow(QWidget):
             widget = PatientListItem(patient)
             self.patient_widgets.append(widget)
             self.list_layout.addWidget(widget)
-        
-        bottom_spacer = QSpacerItem(1, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        bottom_spacer = QSpacerItem(
+            1, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding
+        )
         self.list_layout.addItem(bottom_spacer)
 
         self.list.setLayout(self.list_layout)
 
         self.scroll_area = QScrollArea()
-        self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.scroll_area.setHorizontalScrollBarPolicy(
+            Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+        )
         self.scroll_area.setWidget(self.list)
         self.scroll_area.setWidgetResizable(True)
 
@@ -98,14 +100,12 @@ class PatientListWindow(QWidget):
         self.main_box_layout.addWidget(self.scroll_area)
         self.setLayout(self.main_box_layout)
 
-
     def filterSearchItems(self, input):
         for widget in self.patient_widgets:
             if input.lower() in widget.patient_name.lower():
                 widget.show()
             else:
                 widget.hide()
-
 
     def showPatientInformationWindow(self):
         self.parent().parent().showPatientInformationWindow()

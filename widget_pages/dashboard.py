@@ -20,6 +20,7 @@ import pyqtgraph as pg
 
 from widget_pages.toolbar import ToolBar
 
+
 class TabShowGraph(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -29,8 +30,8 @@ class TabShowGraph(QMainWindow):
 
         self.graphWidget = pg.PlotWidget()
         graphLayout.addWidget(self.graphWidget)
-        
-        self.graphWidget.setCursor(Qt.CursorShape.OpenHandCursor) 
+
+        self.graphWidget.setCursor(Qt.CursorShape.OpenHandCursor)
         # Temp data -> will connect to matlab in the future
         day = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         anticipatory_neutraphil_count = [-10, 1, 10, -4, 15, -12, 20, 8, -17, 3]
@@ -66,7 +67,7 @@ class TabShowGraph(QMainWindow):
         self.plot_straight(
             day, boundary_negative, "Neutraphil Bottom Boundary", "#4a707a"
         )
-        
+
         # Creating tables for dosages
         ant_dosages = [50, 30, 100, 25, 30, 80, 50]
         self.anticipatory_dosage_title = QLabel("Anticipatory dosages")
@@ -145,7 +146,9 @@ class TabShowGraph(QMainWindow):
 
         # Table will fit the screen horizontally
         self.tableWidget.verticalHeader().setStretchLastSection(True)
-        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.Stretch
+        )
 
         return self.tableWidget
 
@@ -184,7 +187,7 @@ class DashboardWindow(QWidget):
         elif tabIndex == 2:
             self.tabs.setCurrentIndex(0)
             self.showPatientInformationWindow()
-    
+
     def updateUsername(self, username):
         self.parent().parent().updateUsername(username)
 
