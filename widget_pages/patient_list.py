@@ -56,13 +56,29 @@ class PatientListWindow(QWidget):
 
         self.patients = [
             "Bill Anderson",
-            "Big Wu",
-            "Bigger Wu",
-            "Jack Ma",
-            "Jacked Ma",
-            "Ripped Ma",
+            "Mario Luigi",
+            "Jack Lantern",
             "Frodo Baggins",
-            "Allan Liu",
+            "Samwise Gamgee",
+            "Harry Potter",
+            "Patient Zero",
+            "Giant Gnome",
+            "Patient One",
+            "Patient Two",
+            "Gandalf Grey",
+            "Bilbo Baggins",
+            "Sting Ray",
+            "Captain America",
+            "Rice Cake",
+            "Robert Smith",
+            "Rick Smith",
+            "Adam Smith",
+            "Sophie Smith",
+            "Emily Smith",
+            "Zoe Smith",
+            "Kat Smith",
+            "Teresa Smith",
+            "Mike Smith"
         ]
 
         self.patients.sort()
