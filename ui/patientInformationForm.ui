@@ -6,50 +6,38 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>450</width>
-    <height>300</height>
+    <width>542</width>
+    <height>533</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="9" column="1">
-    <spacer name="verticalSpacer">
+   <property name="topMargin">
+    <number>7</number>
+   </property>
+   <property name="verticalSpacing">
+    <number>25</number>
+   </property>
+   <item row="3" column="0">
+    <spacer name="horizontalSpacer">
      <property name="orientation">
-      <enum>Qt::Vertical</enum>
+      <enum>Qt::Horizontal</enum>
      </property>
      <property name="sizeType">
       <enum>QSizePolicy::Fixed</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>20</width>
-       <height>40</height>
+       <width>40</width>
+       <height>20</height>
       </size>
      </property>
     </spacer>
    </item>
-   <item row="4" column="1">
-    <widget class="QLabel" name="bodySurfaceAreaLabel">
-     <property name="maximumSize">
-      <size>
-       <width>200</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>9</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Body Surface Area (m^2)</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="2">
-    <widget class="QLineEdit" name="heightEdit">
+   <item row="1" column="2">
+    <widget class="QLineEdit" name="patientLineEdit">
      <property name="maximumSize">
       <size>
        <width>100</width>
@@ -57,38 +45,47 @@
       </size>
      </property>
      <property name="placeholderText">
-      <string>cm</string>
+      <string>Patient</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="1">
-    <widget class="QLabel" name="dosageLabel">
+   <item row="3" column="1">
+    <widget class="QLabel" name="heightLabel">
+     <property name="text">
+      <string>Height (cm)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="2">
+    <widget class="QLineEdit" name="ancMeasurementEdit">
      <property name="maximumSize">
       <size>
-       <width>200</width>
+       <width>100</width>
        <height>16777215</height>
       </size>
      </property>
-     <property name="font">
-      <font>
-       <pointsize>9</pointsize>
-      </font>
+     <property name="placeholderText">
+      <string>g/L</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLabel" name="weightLabel">
+     <property name="text">
+      <string>Weight (kg)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2">
+    <widget class="QLabel" name="bodySurfaceAreaMeasurement">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
      <property name="text">
-      <string>6-MP Dosage (mg)</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="1">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="maximumSize">
-      <size>
-       <width>200</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::Save</set>
+      <string>m^2</string>
      </property>
     </widget>
    </item>
@@ -111,113 +108,19 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QLineEdit" name="patientLineEdit">
+   <item row="7" column="2">
+    <widget class="QDateEdit" name="dateEdit"/>
+   </item>
+   <item row="10" column="1">
+    <widget class="QDialogButtonBox" name="buttonBox">
      <property name="maximumSize">
       <size>
        <width>200</width>
        <height>16777215</height>
       </size>
      </property>
-     <property name="placeholderText">
-      <string>Patient</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QLabel" name="weightLabel">
-     <property name="maximumSize">
-      <size>
-       <width>200</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>9</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Weight (kg)</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QLabel" name="heightLabel">
-     <property name="maximumSize">
-      <size>
-       <width>200</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>9</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Height (cm)</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="2">
-    <widget class="QLineEdit" name="dosageEdit">
-     <property name="maximumSize">
-      <size>
-       <width>100</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="placeholderText">
-      <string>mg</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="3" column="3">
-    <spacer name="horizontalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="6" column="1">
-    <widget class="QLabel" name="ancCountLabel">
-     <property name="maximumSize">
-      <size>
-       <width>200</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>ANC Measurement  (g/L)</string>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::Save</set>
      </property>
     </widget>
    </item>
@@ -237,8 +140,81 @@
      </property>
     </spacer>
    </item>
-   <item row="6" column="2">
-    <widget class="QLineEdit" name="ancMeasurementEdit">
+   <item row="5" column="1">
+    <widget class="QLabel" name="dosageLabel">
+     <property name="text">
+      <string>6-MP Dosage (mg)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QLabel" name="bodySurfaceAreaLabel">
+     <property name="text">
+      <string>Body Surface Area (m^2)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="3">
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="11" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="6" column="1">
+    <widget class="QLabel" name="ancCountLabel">
+     <property name="maximumSize">
+      <size>
+       <width>200</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>ANC Measurement  (g/L)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
+    <widget class="QLabel" name="dateLabel">
+     <property name="text">
+      <string>Date of ANC Measurement</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLabel" name="patientLabel">
+     <property name="text">
+      <string>Patient Name</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="QLineEdit" name="heightEdit">
      <property name="maximumSize">
       <size>
        <width>100</width>
@@ -246,30 +222,36 @@
       </size>
      </property>
      <property name="placeholderText">
-      <string>g/L</string>
+      <string>cm</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="2">
-    <widget class="QDateEdit" name="dateEdit"/>
-   </item>
-   <item row="7" column="1">
-    <widget class="QLabel" name="errorLabel">
+   <item row="5" column="2">
+    <widget class="QLineEdit" name="dosageEdit">
+     <property name="maximumSize">
+      <size>
+       <width>100</width>
+       <height>16777215</height>
+      </size>
+     </property>
      <property name="text">
       <string/>
      </property>
+     <property name="placeholderText">
+      <string>mg</string>
+     </property>
     </widget>
    </item>
-   <item row="4" column="2">
-    <widget class="QLabel" name="bodySurfaceAreaMeasurement">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+   <item row="9" column="1">
+    <widget class="QLabel" name="errorLabel">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>30</height>
+      </size>
      </property>
      <property name="text">
-      <string>m^2</string>
+      <string/>
      </property>
     </widget>
    </item>
