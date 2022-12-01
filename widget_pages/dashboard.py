@@ -18,6 +18,7 @@ from PyQt6.QtCore import Qt
 from pyqtgraph import plot
 import pyqtgraph as pg
 
+from widget_pages.toolbar import ToolBar
 
 class TabShowGraph(QMainWindow):
     def __init__(self):
@@ -155,60 +156,8 @@ class DashboardWindow(QWidget):
 
         layout = QVBoxLayout()
 
-        # Top tool bar that shows page name + user account
-        toolBar = QToolBar("Dashboard top bar")
-        toolBar.setStyleSheet(
-            "background-color: #a9c7c5; height : 50; border-radius: 10px"
-        )
+        toolBar = ToolBar("Dashboard", "Anne Xie")
         layout.addWidget(toolBar)
-
-        dashboard_label = QLabel("Dashboard")
-        dashboard_label.setAlignment(Qt.AlignmentFlag.AlignVCenter)
-        dashboard_label.setFont(QFont("Avenir", 25))
-        dashboard_label.setMargin(10)
-        toolBar.addWidget(dashboard_label)
-
-        spacer = QWidget()
-        spacer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        toolBar.addWidget(spacer)
-
-        user_name = QPushButton("AX", self)
-        user_name.setCursor(Qt.CursorShape.PointingHandCursor)
-        user_name.clicked.connect(self.userProfileClick)
-        user_name.setFont(QFont("Avenir", 15))
-        user_name.setFixedHeight(40)
-        user_name.setFixedWidth(40)
-
-        # https://stackoverflow.com/questions/12734319/change-rectangular-qt-button-to-round
-        user_name.setStyleSheet(
-            """ QPushButton {
-                                        background-color: #bfd8d2;
-                                        border-radius: 20px;
-                                        border-style: outset;
-                                        background: qradialgradient(
-                                            cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
-                                            radius: 1.35, stop: 0 #bfd8d2, stop: 1 #bfd8d2
-                                        );
-                                        border: 2px solid #bfd8d2;
-                                        padding: 5px;
-                                    }
-
-                                    QPushButton:hover {
-                                        background: qradialgradient(
-                                            cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
-                                            radius: 1.35, stop: 0 #bfd8d2, stop: 1 #82a3ac
-                                        );
-                                    }"""
-        )
-
-        # setting radius and border
-        toolBar.addWidget(user_name)
-
-        name_label = QLabel("Dr. Anne Xie")
-        name_label.setAlignment(Qt.AlignmentFlag.AlignVCenter)
-        name_label.setFont(QFont("Avenir", 20))
-        name_label.setMargin(15)
-        toolBar.addWidget(name_label)
 
         # Side tabs
         self.tabs = QTabWidget()

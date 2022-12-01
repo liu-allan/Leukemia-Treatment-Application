@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QHBoxLayout,
     QWidget,
-    QtoolBar,
+    QToolBar,
     QSizePolicy,
 )
 from PyQt6.QtGui import QColor, QFont
@@ -15,7 +15,7 @@ class ToolBar(QWidget):
         super().__init__()
 
         # Top tool bar that shows page name + user account
-        toolBar = QtoolBar("tool bar")
+        toolBar = QToolBar("tool bar")
         toolBar.setStyleSheet(
             "background-color: #a9c7c5; height : 50; border-radius: 10px"
         )

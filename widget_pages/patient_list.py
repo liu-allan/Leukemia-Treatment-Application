@@ -10,10 +10,9 @@ from PyQt6.QtWidgets import (
     QSizePolicy, 
     QScrollArea,
     QLineEdit,
-    QFrame
 )
 from PyQt6.QtCore import Qt
-from PyQt6 import uic
+from widget_pages.toolbar import ToolBar
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -57,6 +56,8 @@ class PatientListWindow(QWidget):
     def __init__(self):
         super().__init__()
 
+        toolBar = ToolBar("Patient List", "Anne Xie")
+
         self.patients = [
             "Bill Anderson",
             "Big Wu",
@@ -95,6 +96,7 @@ class PatientListWindow(QWidget):
         self.scroll_area.setWidget(self.list)
         self.scroll_area.setWidgetResizable(True)
 
+        self.main_box_layout.addWidget(toolBar)
         self.main_box_layout.addWidget(self.search_bar)
         self.main_box_layout.addWidget(self.scroll_area)
         self.setLayout(self.main_box_layout)
