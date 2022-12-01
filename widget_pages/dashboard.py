@@ -156,9 +156,6 @@ class DashboardWindow(QWidget):
 
         layout = QVBoxLayout()
 
-        toolBar = ToolBar("Dashboard", "Anne Xie")
-        layout.addWidget(toolBar)
-
         # Side tabs
         self.tabs = QTabWidget()
 
@@ -207,14 +204,15 @@ class DashboardWindow(QWidget):
 
         if button == QMessageBox.StandardButton.Yes:
             # link to login page
+            self.updateUsername("")
             self.showLoginWindow()
             self.tabs.setCurrentIndex(0)
         else:
             # back to model output tab
             self.tabs.setCurrentIndex(0)
-
-    def userProfileClick(self, s):
-        print("click", s)
+    
+    def updateUsername(self, username):
+        self.parent().parent().updateUsername(username)
 
     def showLoginWindow(self):
         self.parent().parent().showLoginWindow()

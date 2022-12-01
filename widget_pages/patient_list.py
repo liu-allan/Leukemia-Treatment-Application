@@ -56,8 +56,6 @@ class PatientListWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        toolBar = ToolBar("Patient List", "Anne Xie")
-
         self.patients = [
             "Bill Anderson",
             "Big Wu",
@@ -96,7 +94,6 @@ class PatientListWindow(QWidget):
         self.scroll_area.setWidget(self.list)
         self.scroll_area.setWidgetResizable(True)
 
-        self.main_box_layout.addWidget(toolBar)
         self.main_box_layout.addWidget(self.search_bar)
         self.main_box_layout.addWidget(self.scroll_area)
         self.setLayout(self.main_box_layout)
