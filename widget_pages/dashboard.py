@@ -166,7 +166,6 @@ class DashboardWindow(QWidget):
         self.tabs.addTab(TabShowGraph(), "Model Output")
         self.tabs.addTab(QWidget(), "Patient List")
         self.tabs.addTab(QWidget(), "Change Parameter")
-        self.tabs.addTab(QWidget(), "Log Off")
 
         self.tabs.currentChanged.connect(self.tabBarClicked)
 
@@ -185,31 +184,6 @@ class DashboardWindow(QWidget):
         elif tabIndex == 2:
             self.tabs.setCurrentIndex(0)
             self.showPatientInformationWindow()
-        elif tabIndex == 3:
-            self.logoff_clicked()
-            self.tabs.setCurrentIndex(0)
-
-    def logoff_clicked(self):
-        dlg = QMessageBox(self)
-        dlg.setWindowTitle("Log Off")
-        dlg.setText("Are you sure you want to log off?")
-        dlg.setStandardButtons(
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
-        )
-        for button in dlg.findChild(QDialogButtonBox).findChildren(QPushButton):
-            button.setCursor(Qt.CursorShape.PointingHandCursor)
-
-        dlg.setFont(QFont("Avenir", 15))
-        button = dlg.exec()
-
-        if button == QMessageBox.StandardButton.Yes:
-            # link to login page
-            self.updateUsername("")
-            self.showLoginWindow()
-            self.tabs.setCurrentIndex(0)
-        else:
-            # back to model output tab
-            self.tabs.setCurrentIndex(0)
     
     def updateUsername(self, username):
         self.parent().parent().updateUsername(username)
