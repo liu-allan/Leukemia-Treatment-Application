@@ -1,32 +1,13 @@
-import sys
-import json
-import math
-import datetime
 import logging
-from PyQt6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QWidget, QDialogButtonBox
-from PyQt6 import uic
+import math
+import sqlite3
 
+from PyQt6 import uic
+from PyQt6.QtCore import QDate
+from PyQt6.QtWidgets import QWidget
 from PyQt6.QtGui import QDoubleValidator
 
 logging.getLogger().setLevel(logging.INFO)
-
-
-class Patient:
-    def __init__(self, name, weight, height, dosage, ancMeasurement):
-        self.name = name
-        self.weight = weight
-        self.height = height
-        self.dosage = dosage
-        self.ancMeasurement = [ancMeasurement]
-
-    def save(self, name, weight, height, dosage, bsa, ancMeasurement, ancEdited):
-        self.name = name
-        self.weight = weight
-        self.height = height
-        self.dosage = dosage
-        self.bsa = bsa
-        if ancEdited:
-            self.ancMeasurement.append(ancMeasurement)
 
 
 class PatientInformationWindow(QWidget):
@@ -34,6 +15,7 @@ class PatientInformationWindow(QWidget):
         super().__init__()
         uic.loadUi("ui/patientinformationform.ui", self)
 
+        self.patient = None
         self.weightEdit.setValidator(QDoubleValidator())
         self.heightEdit.setValidator(QDoubleValidator())
         self.dosageEdit.setValidator(QDoubleValidator())
@@ -55,19 +37,23 @@ class PatientInformationWindow(QWidget):
             self.showDashboardWindow
         )
 
-        # TODO: Load selected patient from database
-
-        self.patient = Patient("Allan", 175, 64, 50, (2, datetime.date(2022, 1, 1)))
-        self.displayParameters()
-
     def displayParameters(self):
-        self.patientLineEdit.setText(self.patient.name)
-        self.weightEdit.setText(str(self.patient.weight))
-        self.heightEdit.setText(str(self.patient.height))
-        self.dosageEdit.setText(str(self.patient.dosage))
-        self.ancMeasurementEdit.setText(str(self.patient.ancMeasurement[-1][0]))
-        self.dateEdit.setDate(self.patient.ancMeasurement[-1][1])
-        self.calculateBodySurfaceArea()
+        self.patientLineEdit.clear()
+        self.weightEdit.clear()
+        self.heightEdit.clear()
+        self.dosageEdit.clear()
+        self.ancMeasurementEdit.clear()
+        self.dateEdit.setDate(QDate.currentDate())
+        self.bodySurfaceAreaMeasurement.clear()
+
+        if self.patient is not None:
+            self.patientLineEdit.setText(self.patient.name)
+            self.weightEdit.setText(str(self.patient.weight))
+            self.heightEdit.setText(str(self.patient.height))
+            self.dosageEdit.setText(str(self.patient.dosage))
+            self.ancMeasurementEdit.setText(str(self.patient.ancMeasurement[-1][0]))
+            self.dateEdit.setDate(self.patient.ancMeasurement[-1][1])
+            self.calculateBodySurfaceArea()
 
     def calculateBodySurfaceArea(self):
         weight = self.weightEdit.text()
@@ -85,17 +71,69 @@ class PatientInformationWindow(QWidget):
         try:
             name = self.patientLineEdit.text()
             assert name != ""
-            date = self.dateEdit.date().toPyDate()
+            date = self.dateEdit.dateTime().toSecsSinceEpoch()
             weight = float(self.weightEdit.text())
             height = float(self.heightEdit.text())
             dosage = float(self.dosageEdit.text())
             bsa = float(self.bodySurfaceAreaMeasurement.text())
             ancMeasurement = float(self.ancMeasurementEdit.text())
+
+            conn = self.parent().parent().getDatabaseConnection()
+            patient_id = self.patient.id if self.patient else -1
+
+            if self.patient is None:
+                conn.execute(
+                    """
+                        INSERT INTO patients (name, weight, height, dosage, body_surface_area, oncologist_id)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        name,
+                        weight,
+                        height,
+                        dosage,
+                        bsa,
+                        self.parent().parent().username,
+                    ),
+                )
+
+                res = conn.execute("SELECT last_insert_rowid()")
+                patient_id = res.fetchone()[0]
+
+            else:
+                conn.execute(
+                    """
+                        UPDATE patients 
+                        SET name=?, weight=?, height=?, dosage=?, body_surface_area=? 
+                        WHERE id=?
+                    """,
+                    (name, weight, height, dosage, bsa, self.patient.id),
+                )
+
+            conn.execute(
+                """
+                    INSERT INTO measurements (time, anc_measurement, patient_id)
+                    VALUES (?, ?, ?)
+                """,
+                (date, ancMeasurement, patient_id),
+            )
+            conn.commit()
+
+            self.parent().parent().updateSelectedPatient(patient_id)
+            self.patient = self.parent().parent().selected_patient
+
+        except sqlite3.Error as er:
+            msg = "Existing entry in the database. Please check your inputs."
+            self.errorLabel.setText(msg)
+            self.errorLabel.setStyleSheet("color:red")
+            logging.error(er)
+
         except:
             msg = "Input fields must not be empty"
             self.errorLabel.setText(msg)
             self.errorLabel.setStyleSheet("color:red")
             logging.error(msg)
+
         else:
             self.errorLabel.clear()
             self.patient.save(
@@ -141,3 +179,7 @@ class PatientInformationWindow(QWidget):
 
     def valueChanged(self):
         self.ancEdited = True
+
+    def updatePatientInfo(self):
+        self.patient = self.parent().parent().selected_patient
+        self.displayParameters()
