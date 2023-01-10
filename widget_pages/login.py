@@ -10,6 +10,7 @@ from PyQt6.QtWidgets import (
     QGridLayout,
     QSpacerItem,
     QSizePolicy,
+    QToolBar
 )
 from PyQt6 import uic
 from PyQt6.QtCore import Qt
@@ -25,19 +26,33 @@ class LoginWindow(QWidget):
         self.layout = QGridLayout()
         self.layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
+        self.titleLabel = QLabel("Login")
+        self.titleLabel.setFont(QFont("Avenir", 25))
+        self.titleLabel.setMargin(10)
+        self.titleLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.titleLabel.setStyleSheet(
+            "background-color: #a9c7c5; height : 100; border-radius: 10px; padding 10px"
+        )
+        self.layout.addWidget(self.titleLabel, 0, 1)
+
+        self.vSpacer = QSpacerItem(
+            1, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum
+        )
+        self.layout.addItem(self.vSpacer, 1, 1)
+
         self.usernameLineEdit = QLineEdit()
         self.usernameLineEdit.setPlaceholderText("Username")
-        self.layout.addWidget(self.usernameLineEdit, 0, 1)
+        self.layout.addWidget(self.usernameLineEdit, 2, 1)
 
         self.passwordLineEdit = QLineEdit()
         self.passwordLineEdit.setPlaceholderText("Password")
         self.passwordLineEdit.setEchoMode(QLineEdit.EchoMode.Password)
-        self.layout.addWidget(self.passwordLineEdit, 1, 1)
+        self.layout.addWidget(self.passwordLineEdit, 3, 1)
 
         self.errorLabel = QLabel()
         self.errorLabel.setFont(QFont("Avenir", 12))
         self.errorLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.layout.addWidget(self.errorLabel, 2, 1)
+        self.layout.addWidget(self.errorLabel, 4, 1)
 
         self.loginPushButton = QPushButton("Login")
         self.loginPushButton.clicked.connect(self.loginPushed)
@@ -45,7 +60,7 @@ class LoginWindow(QWidget):
         self.loginPushButton.setStyleSheet(
             "background-color: #aaaaee; border-radius: 5px; padding: 10px"
         )
-        self.layout.addWidget(self.loginPushButton, 3, 1)
+        self.layout.addWidget(self.loginPushButton, 5, 1)
 
         self.signUpPushButton = QPushButton("Sign Up")
         self.signUpPushButton.clicked.connect(self.signUpPushed)
@@ -53,7 +68,7 @@ class LoginWindow(QWidget):
         self.signUpPushButton.setStyleSheet(
             "background-color: #aaaaee; border-radius: 5px; padding: 10px"
         )
-        self.layout.addWidget(self.signUpPushButton, 4, 1)
+        self.layout.addWidget(self.signUpPushButton, 6, 1)
         self.spacer = QSpacerItem(
             1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
         )
