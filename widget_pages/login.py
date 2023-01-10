@@ -79,7 +79,7 @@ class LoginWindow(QWidget):
 
             assert (
                 row is not None and username == row[0]
-            ), "User '{}' does not exist".format(username)
+            ), "User {} does not exist".format(username)
             assert password == row[1], "Password is incorrect"
         except AssertionError as msg:
             self.errorLabel.setText(str(msg))
@@ -96,6 +96,8 @@ class LoginWindow(QWidget):
         password = self.passwordLineEdit.text()
 
         try:
+            
+            assert username and password, "Username or password must not be empty"
 
             db_conn = self.parent().parent().getDatabaseConnection()
             res = db_conn.execute(
@@ -109,8 +111,22 @@ class LoginWindow(QWidget):
             row = res.fetchone()
 
             assert row is None, "User {} already exists".format(username)
-            # assert username not in self.users, "User {} already exists".format(username)
-        except AssertionError as msg:
+
+            db_conn.execute(
+                    """
+                        INSERT INTO oncologists (username, password)
+                        VALUES (?, ?)
+                    """,
+                    (
+                        username,
+                        password
+                    ),
+                )
+
+            res = db_conn.execute("SELECT last_insert_rowid()")
+            patient_id = res.fetchone()[0]
+
+        except Exception as msg:
             self.errorLabel.setText(str(msg))
             self.errorLabel.setStyleSheet("color:red")
             logging.error(msg)
