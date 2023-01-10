@@ -96,7 +96,7 @@ class LoginWindow(QWidget):
         password = self.passwordLineEdit.text()
 
         try:
-            
+
             assert username and password, "Username or password must not be empty"
 
             db_conn = self.parent().parent().getDatabaseConnection()
@@ -113,15 +113,12 @@ class LoginWindow(QWidget):
             assert row is None, "User {} already exists".format(username)
 
             db_conn.execute(
-                    """
+                """
                         INSERT INTO oncologists (username, password)
                         VALUES (?, ?)
                     """,
-                    (
-                        username,
-                        password
-                    ),
-                )
+                (username, password),
+            )
 
             res = db_conn.execute("SELECT last_insert_rowid()")
             patient_id = res.fetchone()[0]
