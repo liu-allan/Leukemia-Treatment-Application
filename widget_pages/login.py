@@ -1,24 +1,65 @@
 import sys
 import json
 import logging
-from PyQt6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import (
+    QLabel,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+    QLineEdit,
+    QGridLayout,
+    QSpacerItem,
+    QSizePolicy,
+)
 from PyQt6 import uic
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QFont
 
 logging.getLogger().setLevel(logging.INFO)
 
 
 class LoginWindow(QWidget):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        uic.loadUi("ui/loginform.ui", self)
+    def __init__(self):
+        super().__init__()
 
-        with open("users.txt") as f:
-            data = f.read()
+        self.layout = QGridLayout()
+        self.layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.users = json.loads(data)
+        self.usernameLineEdit = QLineEdit()
+        self.usernameLineEdit.setPlaceholderText("Username")
+        self.layout.addWidget(self.usernameLineEdit, 0, 1)
 
+        self.passwordLineEdit = QLineEdit()
+        self.passwordLineEdit.setPlaceholderText("Password")
+        self.passwordLineEdit.setEchoMode(QLineEdit.EchoMode.Password)
+        self.layout.addWidget(self.passwordLineEdit, 1, 1)
+
+        self.errorLabel = QLabel()
+        self.errorLabel.setFont(QFont("Avenir", 12))
+        self.errorLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.layout.addWidget(self.errorLabel, 2, 1)
+
+        self.loginPushButton = QPushButton("Login")
         self.loginPushButton.clicked.connect(self.loginPushed)
+        self.loginPushButton.setFont(QFont("Avenir", 12))
+        self.loginPushButton.setStyleSheet(
+            "background-color: #aaaaee; border-radius: 5px; padding: 10px"
+        )
+        self.layout.addWidget(self.loginPushButton, 3, 1)
+
+        self.signUpPushButton = QPushButton("Sign Up")
         self.signUpPushButton.clicked.connect(self.signUpPushed)
+        self.signUpPushButton.setFont(QFont("Avenir", 12))
+        self.signUpPushButton.setStyleSheet(
+            "background-color: #aaaaee; border-radius: 5px; padding: 10px"
+        )
+        self.layout.addWidget(self.signUpPushButton, 4, 1)
+        self.spacer = QSpacerItem(
+            1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
+        )
+        self.layout.addItem(self.spacer, 0, 0)
+        self.layout.addItem(self.spacer, 0, 2)
+        self.setLayout(self.layout)
 
     def loginPushed(self):
         try:
@@ -38,7 +79,7 @@ class LoginWindow(QWidget):
 
             assert (
                 row is not None and username == row[0]
-            ), "User {} does not exist".format(username)
+            ), "User '{}' does not exist".format(username)
             assert password == row[1], "Password is incorrect"
         except AssertionError as msg:
             self.errorLabel.setText(str(msg))
@@ -55,7 +96,20 @@ class LoginWindow(QWidget):
         password = self.passwordLineEdit.text()
 
         try:
-            assert username not in self.users, "User {} already exists".format(username)
+
+            db_conn = self.parent().parent().getDatabaseConnection()
+            res = db_conn.execute(
+                """SELECT * 
+                   FROM oncologists 
+                   WHERE username=?
+                """,
+                (username,),
+            )
+
+            row = res.fetchone()
+
+            assert row is None, "User {} already exists".format(username)
+            # assert username not in self.users, "User {} already exists".format(username)
         except AssertionError as msg:
             self.errorLabel.setText(str(msg))
             self.errorLabel.setStyleSheet("color:red")
@@ -66,9 +120,6 @@ class LoginWindow(QWidget):
             )
             self.errorLabel.setStyleSheet("color:green")
             logging.info("User {} has been successfully created".format(username))
-            self.users[username] = password
-            with open("users.txt", "w") as f:
-                f.write(json.dumps(self.users))
 
     def updateUsername(self, username):
         self.parent().parent().updateUsername(username)
