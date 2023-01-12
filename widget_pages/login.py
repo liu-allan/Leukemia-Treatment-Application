@@ -10,7 +10,7 @@ from PyQt6.QtWidgets import (
     QGridLayout,
     QSpacerItem,
     QSizePolicy,
-    QToolBar
+    QToolBar,
 )
 from PyQt6 import uic
 from PyQt6.QtCore import Qt
@@ -136,7 +136,7 @@ class LoginWindow(QWidget):
             )
 
             res = db_conn.execute("SELECT last_insert_rowid()")
-            patient_id = res.fetchone()[0]
+            db_conn.commit()
 
         except Exception as msg:
             self.errorLabel.setText(str(msg))
