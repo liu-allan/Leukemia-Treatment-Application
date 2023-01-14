@@ -37,7 +37,7 @@ conn.execute(
 conn.execute(
     """
         CREATE TABLE IF NOT EXISTS measurements
-            (time INT NOT NULL,
+            (time TEXT NOT NULL,
              anc_measurement REAL NOT NULL,
              patient_id INTEGER NOT NULL,
              PRIMARY KEY(time, patient_id),
@@ -67,7 +67,7 @@ conn.execute(
 # conn.execute(
 #     """
 #       INSERT INTO measurements (time, anc_measurement, patient_id)
-#       VALUES (1672862405, 4, 4);
+#       VALUES ("20220101", 4, 4);
 #     """
 # )
 

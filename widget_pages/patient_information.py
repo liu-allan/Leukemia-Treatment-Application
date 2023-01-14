@@ -52,7 +52,9 @@ class PatientInformationWindow(QWidget):
             self.heightEdit.setText(str(self.patient.height))
             self.dosageEdit.setText(str(self.patient.dosage))
             self.ancMeasurementEdit.setText(str(self.patient.ancMeasurement[-1][0]))
-            self.dateEdit.setDate(self.patient.ancMeasurement[-1][1])
+            self.dateEdit.setDate(
+                QDate.fromString(self.patient.ancMeasurement[-1][1], "yyyyMMdd")
+            )
             self.calculateBodySurfaceArea()
 
     def calculateBodySurfaceArea(self):
@@ -71,7 +73,7 @@ class PatientInformationWindow(QWidget):
         try:
             name = self.patientLineEdit.text()
             assert name != ""
-            date = self.dateEdit.dateTime().toSecsSinceEpoch()
+            date = self.dateEdit.date().toString("yyyyMMdd")
             weight = float(self.weightEdit.text())
             height = float(self.heightEdit.text())
             dosage = float(self.dosageEdit.text())
