@@ -21,19 +21,19 @@ logging.getLogger().setLevel(logging.INFO)
 
 
 class Label(QLabel):
-    def __init__(self, text):
+    def __init__(self, text, width=400):
         super().__init__()
         self.setText(text)
         self.setFont(QFont("Avenir", 12))
-        self.setFixedWidth(400)
+        self.setFixedWidth(width)
 
 
 class LineEdit(QLineEdit):
-    def __init__(self, placeholderText):
+    def __init__(self, placeholderText, width=200):
         super().__init__()
         self.setPlaceholderText(placeholderText)
         self.setFont(QFont("Avenir", 12))
-        self.setFixedWidth(200)
+        self.setFixedWidth(width)
 
 
 class FormRow(QWidget):
