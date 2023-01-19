@@ -3,18 +3,89 @@ import math
 import sqlite3
 
 from PyQt6 import uic
-from PyQt6.QtCore import QDate
-from PyQt6.QtWidgets import QWidget
-from PyQt6.QtGui import QDoubleValidator
+from PyQt6.QtCore import QDate, Qt
+from PyQt6.QtWidgets import (
+    QWidget,
+    QLabel,
+    QLineEdit,
+    QDateEdit,
+    QDialogButtonBox,
+    QVBoxLayout,
+    QHBoxLayout,
+    QSpacerItem,
+    QSizePolicy,
+)
+from PyQt6.QtGui import QDoubleValidator, QFont
 
 logging.getLogger().setLevel(logging.INFO)
 
 
+class Label(QLabel):
+    def __init__(self, text, width=400):
+        super().__init__()
+        self.setText(text)
+        self.setFont(QFont("Avenir", 12))
+        self.setFixedWidth(width)
+
+
+class LineEdit(QLineEdit):
+    def __init__(self, placeholderText, width=200):
+        super().__init__()
+        self.setPlaceholderText(placeholderText)
+        self.setFont(QFont("Avenir", 12))
+        self.setFixedWidth(width)
+
+
+class FormRow(QWidget):
+    def __init__(self, label, widget):
+        super().__init__()
+        layout = QHBoxLayout()
+        layout.addWidget(label)
+        layout.addItem(
+            QSpacerItem(1, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        )
+        layout.addWidget(widget)
+
+        self.setLayout(layout)
+        
+
 class PatientInformationWindow(QWidget):
     def __init__(self):
         super().__init__()
-        uic.loadUi("ui/patientinformationform.ui", self)
 
+        self.layout = QVBoxLayout()
+
+        self.patientLabel = Label("Patient Name")
+        self.patientLineEdit = LineEdit("Patient")
+        self.layout.addWidget(FormRow(self.patientLabel, self.patientLineEdit))
+
+        self.weightLabel = Label("Weight (kg)")
+        self.weightEdit = LineEdit("kg")
+        self.layout.addWidget(FormRow(self.weightLabel, self.weightEdit))
+
+        self.heightLabel = Label("Height (cm)")
+        self.heightEdit = LineEdit("cm")
+        self.layout.addWidget(FormRow(self.heightLabel, self.heightEdit))
+
+        self.bodySurfaceAreaLabel = Label("Body Surface Area (m^2)")
+        self.bodySurfaceAreaMeasurement = Label("m^2")
+        self.bodySurfaceAreaMeasurement.setFixedWidth(200)
+        self.layout.addWidget(FormRow(self.bodySurfaceAreaLabel, self.bodySurfaceAreaMeasurement))
+
+        self.dosageLabel = Label("6-MP Dosage (mg)")
+        self.dosageEdit = LineEdit("mg")
+        self.layout.addWidget(FormRow(self.dosageLabel, self.dosageEdit))
+
+        self.ancCountLabel = Label("ANC Measurement (g/L)")
+        self.ancMeasurementEdit = LineEdit("g/L")
+        self.layout.addWidget(FormRow(self.ancCountLabel, self.ancMeasurementEdit))
+
+        self.dateLabel = Label("Date of ANC Measurement")
+        self.dateEdit = QDateEdit()
+        self.dateEdit.setFixedWidth(200)
+        self.layout.addWidget(FormRow(self.dateLabel, self.dateEdit))
+
+        self.errorLabel = Label("")
         self.patient = None
         self.weightEdit.setValidator(QDoubleValidator())
         self.heightEdit.setValidator(QDoubleValidator())
@@ -27,6 +98,16 @@ class PatientInformationWindow(QWidget):
         self.weightEdit.textEdited.connect(self.calculateBodySurfaceArea)
         self.heightEdit.textEdited.connect(self.calculateBodySurfaceArea)
 
+        self.buttonBox = QDialogButtonBox()
+        self.buttonBox.addButton(self.buttonBox.standardButtons().Cancel)
+        self.buttonBox.addButton(self.buttonBox.standardButtons().Save)
+        self.buttonBox.addButton(self.buttonBox.standardButtons().Ok)
+        self.buttonBox.setFont(QFont("Avenir", 12))
+        self.buttonBox.setFixedWidth(200)
+        self.buttonBox.setStyleSheet(
+            "background-color: #aaaaee; border-radius: 5px; padding: 10px"
+        )
+
         self.buttonBox.button(self.buttonBox.standardButtons().Cancel).clicked.connect(
             self.showPatientListWindow
         )
@@ -36,6 +117,8 @@ class PatientInformationWindow(QWidget):
         self.buttonBox.button(self.buttonBox.standardButtons().Ok).clicked.connect(
             self.showDashboardWindow
         )
+        self.layout.addWidget(FormRow(self.errorLabel, self.buttonBox))
+        self.setLayout(self.layout)
 
     def displayParameters(self):
         self.patientLineEdit.clear()
