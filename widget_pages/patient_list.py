@@ -1,4 +1,3 @@
-import sys
 import logging
 from PyQt6.QtWidgets import (
     QLabel,
@@ -18,7 +17,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 
 class PatientListItem(QWidget):
-    def __init__(self, patient_name):
+    def __init__(self, patient_name, patient_id):
         super(PatientListItem, self).__init__()
 
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
@@ -27,6 +26,7 @@ class PatientListItem(QWidget):
         )
 
         self.patient_name = patient_name
+        self.patient_id = patient_id
         self.label = QLabel(self.patient_name)
         self.label.setFont(QFont("Avenir", 12))
         self.select_button = QPushButton("Select")
@@ -57,41 +57,16 @@ class PatientListItem(QWidget):
             item.setVisible(False)
 
     def showPatientInfo(self):
-        self.parent().parent().parent().parent().showPatientInformationWindow()
+        self.parent().parent().parent().parent().showPatientInformationWindow(
+            self.patient_id
+        )
 
 
 class PatientListWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.patients = [
-            "Bill Anderson",
-            "Mario Luigi",
-            "Jack Lantern",
-            "Frodo Baggins",
-            "Samwise Gamgee",
-            "Harry Potter",
-            "Patient Zero",
-            "Giant Gnome",
-            "Patient One",
-            "Patient Two",
-            "Gandalf Grey",
-            "Bilbo Baggins",
-            "Sting Ray",
-            "Captain America",
-            "Rice Cake",
-            "Robert Smith",
-            "Rick Smith",
-            "Adam Smith",
-            "Sophie Smith",
-            "Emily Smith",
-            "Zoe Smith",
-            "Kat Smith",
-            "Teresa Smith",
-            "Mike Smith"
-        ]
-
-        self.patients.sort()
+        self.patients = []
         self.patient_widgets = []
 
         self.main_box_layout = QVBoxLayout()
@@ -111,27 +86,10 @@ class PatientListWindow(QWidget):
         self.new_patient_button.clicked.connect(self.showPatientInformationWindow)
         self.search_bar_layout.addWidget(self.new_patient_button)
 
-        self.list = QWidget()
-        self.list_layout = QVBoxLayout()
-
-        for patient in self.patients:
-            widget = PatientListItem(patient)
-            self.patient_widgets.append(widget)
-            self.list_layout.addWidget(widget)
-
-        bottom_spacer = QSpacerItem(
-            1, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding
-        )
-        self.list_layout.addItem(bottom_spacer)
-
-        self.list.setLayout(self.list_layout)
-
         self.scroll_area = QScrollArea()
         self.scroll_area.setHorizontalScrollBarPolicy(
             Qt.ScrollBarPolicy.ScrollBarAlwaysOff
         )
-        self.scroll_area.setWidget(self.list)
-        self.scroll_area.setWidgetResizable(True)
 
         self.main_box_layout.addLayout(self.search_bar_layout)
         self.main_box_layout.addWidget(self.scroll_area)
@@ -144,5 +102,40 @@ class PatientListWindow(QWidget):
             else:
                 widget.hide()
 
-    def showPatientInformationWindow(self):
+    def showPatientInformationWindow(self, patient_id=-1):
+        self.parent().parent().updateSelectedPatient(patient_id)
         self.parent().parent().showPatientInformationWindow()
+
+    def displayPatientList(self):
+        self.list = QWidget()
+        self.list_layout = QVBoxLayout()
+
+        for patient_name, patient_id in self.patients:
+            widget = PatientListItem(patient_name, patient_id)
+            self.patient_widgets.append(widget)
+            self.list_layout.addWidget(widget)
+
+        bottom_spacer = QSpacerItem(
+            1, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding
+        )
+        self.list_layout.addItem(bottom_spacer)
+
+        self.list.setLayout(self.list_layout)
+        self.scroll_area.setWidget(self.list)
+        self.scroll_area.setWidgetResizable(True)
+
+    def updatePatientList(self, conn, username):
+        res = conn.execute(
+            """SELECT name, id 
+               FROM patients p 
+               INNER JOIN oncologists o ON p.oncologist_id=o.username
+                    AND o.username=?
+            """,
+            (username,),
+        )
+
+        rows = res.fetchall()
+        self.patients = []
+        if rows:
+            self.patients = rows
+        self.displayPatientList()

@@ -1,3 +1,4 @@
+import bcrypt
 import sys
 import json
 import logging
@@ -24,8 +25,23 @@ class LoginWindow(QWidget):
         try:
             username = self.usernameLineEdit.text()
             password = self.passwordLineEdit.text()
-            assert username in self.users, "User {} does not exist".format(username)
-            assert self.users[username] == password, "Password is incorrect"
+            passwordBytes = password.encode("utf-8")
+
+            db_conn = self.parent().parent().getDatabaseConnection()
+            res = db_conn.execute(
+                """SELECT * 
+                   FROM oncologists 
+                   WHERE username=?
+                """,
+                (username,),
+            )
+
+            row = res.fetchone()
+
+            assert (
+                row is not None and username == row[0]
+            ), "User {} does not exist".format(username)
+            assert bcrypt.checkpw(passwordBytes, row[1]), "Password is incorrect"
         except AssertionError as msg:
             self.errorLabel.setText(str(msg))
             self.errorLabel.setStyleSheet("color:red")

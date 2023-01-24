@@ -157,6 +157,8 @@ class DashboardWindow(QWidget):
     def __init__(self):
         super().__init__()
 
+        self.patient = None
+
         layout = QVBoxLayout()
 
         # Side tabs
@@ -199,3 +201,6 @@ class DashboardWindow(QWidget):
 
     def showPatientInformationWindow(self):
         self.parent().parent().showPatientInformationWindow()
+
+    def updatePatientInfo(self):
+        self.patient = self.parent().parent().selected_patient
