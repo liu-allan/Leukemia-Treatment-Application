@@ -135,6 +135,7 @@ class PatientListWindow(QWidget):
         )
 
         rows = res.fetchall()
+        self.patients = []
         if rows:
             self.patients = rows
         self.displayPatientList()

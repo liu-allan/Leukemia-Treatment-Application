@@ -3,6 +3,7 @@
 # Example script to set-up and create the necessary tables for the database.
 # Also serves as the definition of keys and columns of each table.
 
+import bcrypt
 import sqlite3
 
 conn = sqlite3.connect("db.db")
@@ -37,7 +38,7 @@ conn.execute(
 conn.execute(
     """
         CREATE TABLE IF NOT EXISTS measurements
-            (time INT NOT NULL,
+            (time TEXT NOT NULL,
              anc_measurement REAL NOT NULL,
              patient_id INTEGER NOT NULL,
              PRIMARY KEY(time, patient_id),
@@ -50,11 +51,18 @@ conn.execute(
 
 # INSERT examples are listed below, feel free to uncomment to insert any entries as needed.
 
+# encrypting password so it's not stored in plain text
+password = "password"
+bytes = password.encode("utf-8")
+salt = bcrypt.gensalt()
+hash = bcrypt.hashpw(bytes, salt)
+
 # conn.execute(
 #     '''
 #       INSERT INTO oncologists (username, password)
-#       VALUES ('angus', 'password')
-#     '''
+#       VALUES ('angus', ?)
+#     ''',
+#     (hash,),
 # )
 
 # conn.execute(
@@ -67,7 +75,7 @@ conn.execute(
 # conn.execute(
 #     """
 #       INSERT INTO measurements (time, anc_measurement, patient_id)
-#       VALUES (1672862405, 4, 4);
+#       VALUES ("20220101", 4, 4);
 #     """
 # )
 

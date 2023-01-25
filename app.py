@@ -18,7 +18,6 @@ from widget_pages.patient_information import PatientInformationWindow
 from widget_pages.patient_list import PatientListWindow
 from widget_pages.toolbar import ToolBar
 
-import datetime
 import sqlite3
 
 
@@ -75,7 +74,7 @@ class MainWindow(QMainWindow):
             weight = row[1]
             height = row[2]
             dosage = row[3]
-            anc_measurements = (row[5], datetime.date.fromtimestamp(row[4]))
+            anc_measurements = (row[5], row[4])
 
             self.selected_patient = Patient(
                 patient_id, name, weight, height, dosage, anc_measurements
