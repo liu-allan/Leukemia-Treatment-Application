@@ -63,13 +63,6 @@ class LoginWindow(QWidget):
         )
         self.layout.addWidget(self.loginPushButton, 5, 1)
 
-        self.signUpPushButton = QPushButton("Sign Up")
-        self.signUpPushButton.clicked.connect(self.signUpPushed)
-        self.signUpPushButton.setFont(QFont("Avenir", 12))
-        self.signUpPushButton.setStyleSheet(
-            "background-color: #aaaaee; border-radius: 5px; padding: 10px"
-        )
-        self.layout.addWidget(self.signUpPushButton, 6, 1)
         self.spacer = QSpacerItem(
             1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
         )
@@ -107,49 +100,6 @@ class LoginWindow(QWidget):
             logging.info("Login Successful")
             self.updateUsername(username)
             self.showPatientListWindow()
-
-    def signUpPushed(self):
-        username = self.usernameLineEdit.text()
-        password = self.passwordLineEdit.text()
-
-        try:
-
-            assert username and password, "Username or password must not be empty"
-
-            db_conn = self.parent().parent().getDatabaseConnection()
-            res = db_conn.execute(
-                """SELECT * 
-                   FROM oncologists 
-                   WHERE username=?
-                """,
-                (username,),
-            )
-
-            row = res.fetchone()
-
-            assert row is None, "User {} already exists".format(username)
-
-            db_conn.execute(
-                """
-                        INSERT INTO oncologists (username, password)
-                        VALUES (?, ?)
-                    """,
-                (username, password),
-            )
-
-            res = db_conn.execute("SELECT last_insert_rowid()")
-            db_conn.commit()
-
-        except Exception as msg:
-            self.errorLabel.setText(str(msg))
-            self.errorLabel.setStyleSheet("color:red")
-            logging.error(msg)
-        else:
-            self.errorLabel.setText(
-                "User {} has been succesfully created".format(username)
-            )
-            self.errorLabel.setStyleSheet("color:green")
-            logging.info("User {} has been successfully created".format(username))
 
     def updateUsername(self, username):
         self.parent().parent().updateUsername(username)
