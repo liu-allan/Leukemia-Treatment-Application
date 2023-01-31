@@ -5,7 +5,7 @@ class Patient:
         self.weight = weight
         self.height = height
         self.dosage = dosage
-        self.ancMeasurement = [ancMeasurement]
+        self.ancMeasurement = ancMeasurement
 
     def save(self, name, weight, height, dosage, bsa, ancMeasurement, ancEdited):
         self.name = name

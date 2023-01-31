@@ -16,6 +16,7 @@ from widget_pages.dashboard import DashboardWindow
 from widget_pages.login import LoginWindow
 from widget_pages.patient_information import PatientInformationWindow
 from widget_pages.patient_list import PatientListWindow
+from widget_pages.patient_form import PatientFormWindow
 from widget_pages.toolbar import ToolBar
 
 import sqlite3
@@ -43,10 +44,12 @@ class MainWindow(QMainWindow):
         self.patientListWindow = PatientListWindow()
         self.patientInfoWindow = PatientInformationWindow()
         self.dashboardWindow = DashboardWindow()
+        self.patientFormWindow = PatientFormWindow()
         self.stackLayout.addWidget(self.loginWindow)
         self.stackLayout.addWidget(self.patientListWindow)
         self.stackLayout.addWidget(self.patientInfoWindow)
         self.stackLayout.addWidget(self.dashboardWindow)
+        self.stackLayout.addWidget(self.patientFormWindow)
 
         widget = QWidget()
         widget.setLayout(pageLayout)
@@ -62,19 +65,21 @@ class MainWindow(QMainWindow):
             """SELECT name, weight, height, dosage, time, anc_measurement 
                FROM measurements m 
                INNER JOIN patients p ON m.patient_id=p.id 
-                    AND m.patient_id=? ORDER BY time DESC
+                    AND m.patient_id=? ORDER BY time ASC
             """,
             (patient_id,),
         )
-        row = res.fetchone()
-        if row is None:
+        records = res.fetchall()
+        if records is None:
             self.selected_patient = None
         else:
-            name = row[0]
-            weight = row[1]
-            height = row[2]
-            dosage = row[3]
-            anc_measurements = (row[5], row[4])
+            name = records[0][0]
+            weight = records[0][1]
+            height = records[0][2]
+            dosage = records[0][3]
+            anc_measurements = []
+            for row in records:
+                anc_measurements.append((row[5], row[4]))
 
             self.selected_patient = Patient(
                 patient_id, name, weight, height, dosage, anc_measurements
@@ -105,6 +110,12 @@ class MainWindow(QMainWindow):
         self.current_page = "Dashboard"
         self.updateToolBar()
         self.dashboardWindow.updatePatientInfo()
+
+    def showPatientFormWindow(self):
+        self.stackLayout.setCurrentIndex(4)
+        self.current_page = "Patient Form"
+        self.updateToolBar()
+        self.patientFormWindow.updatePatientInfo()
 
     def getDatabaseConnection(self):
         return self.db_conn
