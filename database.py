@@ -13,6 +13,7 @@ conn.execute(
         CREATE TABLE IF NOT EXISTS oncologists
             (username TEXT NOT NULL,
              password TEXT NOT NULL,
+             full_name TEXT NOT NULL,
              PRIMARY KEY(username));
     """
 )
@@ -22,10 +23,14 @@ conn.execute(
         CREATE TABLE IF NOT EXISTS patients
             (id INTEGER NOT NULL,
              name TEXT NOT NULL,
+             phone_number TEXT NOT NULL,
+             birthday TEXT NOT NULL,
+             age INTEGER NOT NULL, 
+             blood_type TEXT NOT NULL CHECK( blood_type IN ('A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-') ),
+             all_type TEXT NOT NULL CHECK( all_type IN ('Immunophenotype', 'French-American-British (FAB)', 'ALL Cytogenetic Risk Group') ), 
              weight REAL NOT NULL,
              height REAL NOT NULL,
              body_surface_area REAL NOT NULL,
-             dosage REAL NOT NULL,
              oncologist_id TEXT NOT NULL,
              PRIMARY KEY(id),
              FOREIGN KEY(oncologist_id)
@@ -40,6 +45,7 @@ conn.execute(
         CREATE TABLE IF NOT EXISTS measurements
             (time TEXT NOT NULL,
              anc_measurement REAL NOT NULL,
+             dosage_measurement REAL NOT NULL,
              patient_id INTEGER NOT NULL,
              PRIMARY KEY(time, patient_id),
              FOREIGN KEY(patient_id) 
@@ -59,23 +65,23 @@ hash = bcrypt.hashpw(bytes, salt)
 
 # conn.execute(
 #     '''
-#       INSERT INTO oncologists (username, password)
-#       VALUES ('angus', ?)
+#       INSERT INTO oncologists (username, password, full_name)
+#       VALUES ('angus', ?, 'Angus Wang')
 #     ''',
 #     (hash,),
 # )
 
 # conn.execute(
 #     """
-#       INSERT INTO patients (name, weight, height, body_surface_area, dosage, oncologist_id)
-#       VALUES ('Small Mac', 1, 1, 250, 60, 'angus');
+#       INSERT INTO patients (name, phone_number, birthday, age, blood_type, all_type, weight, height, body_surface_area, oncologist_id)
+#       VALUES ('Small Bob', '1234567899', '19900506', 38, 'A+', 'Immunophenotype', 1, 1, 250, 'angus');
 #     """
 # )
 
 # conn.execute(
 #     """
-#       INSERT INTO measurements (time, anc_measurement, patient_id)
-#       VALUES ("20220101", 4, 4);
+#       INSERT INTO measurements (time, anc_measurement, dosage_measurement, patient_id)
+#       VALUES ("20220101", 4, 4, 4);
 #     """
 # )
 
