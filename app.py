@@ -59,7 +59,8 @@ class MainWindow(QMainWindow):
 
     def updateSelectedPatient(self, patient_id):
         res = self.db_conn.execute(
-            """SELECT name, weight, height, dosage, time, anc_measurement 
+            # """SELECT name, weight, height, dosage, time, anc_measurement 
+            """SELECT name, weight, height, time, anc_measurement 
                FROM measurements m 
                INNER JOIN patients p ON m.patient_id=p.id 
                     AND m.patient_id=? ORDER BY time DESC
@@ -73,8 +74,10 @@ class MainWindow(QMainWindow):
             name = row[0]
             weight = row[1]
             height = row[2]
-            dosage = row[3]
-            anc_measurements = (row[5], row[4])
+            # TODO: @anne will sort this dosage out, not sure what she needs for her graphs
+            # dosage = row[3]
+            dosage = 4.0
+            anc_measurements = (row[4], row[3])
 
             self.selected_patient = Patient(
                 patient_id, name, weight, height, dosage, anc_measurements
