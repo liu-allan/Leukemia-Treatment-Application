@@ -28,12 +28,13 @@ class MainWindow(QMainWindow):
         self.db_conn = sqlite3.connect("db.db")
 
         self.username = ""
+        self.user_full_name = ""
         self.selected_patient = None
         self.current_page = "Login"
 
         pageLayout = QVBoxLayout()
         self.stackLayout = QStackedLayout()
-        self.toolBar = ToolBar(self.current_page, self.username)
+        self.toolBar = ToolBar(self.current_page, self.user_full_name)
         self.updateToolBar()
 
         pageLayout.addWidget(self.toolBar)
@@ -55,11 +56,23 @@ class MainWindow(QMainWindow):
 
     def updateUsername(self, username):
         self.username = username
+        res = self.db_conn.execute(
+            """
+            SELECT full_name
+            FROM oncologists o
+            WHERE o.username=?
+            """,
+            (username,),
+        )
+        row = res.fetchone()
+        self.user_full_name = ""
+        if row:
+            self.user_full_name = row[0]
         self.updateToolBar()
 
     def updateSelectedPatient(self, patient_id):
         res = self.db_conn.execute(
-            # """SELECT name, weight, height, dosage, time, anc_measurement 
+            # """SELECT name, weight, height, dosage, time, anc_measurement
             """SELECT name, weight, height, time, anc_measurement 
                FROM measurements m 
                INNER JOIN patients p ON m.patient_id=p.id 
@@ -84,7 +97,7 @@ class MainWindow(QMainWindow):
             )
 
     def updateToolBar(self):
-        self.toolBar.updateToolBar(self.current_page, self.username)
+        self.toolBar.updateToolBar(self.current_page, self.user_full_name)
 
     def showLoginWindow(self):
         self.stackLayout.setCurrentIndex(0)
