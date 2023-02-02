@@ -63,7 +63,8 @@ class MainWindow(QMainWindow):
     def updateSelectedPatient(self, patient_id):
         res = self.db_conn.execute(
             # """SELECT name, weight, height, dosage, time, anc_measurement 
-            """SELECT name, weight, height, time, dosage_measurement, anc_measurement 
+            """SELECT name, weight, height, patient_id, phone_number, birthday, age, 
+                      blood_type, all_type, body_surface_area, time, dosage_measurement, anc_measurement, oncologist_id 
                FROM measurements m 
                INNER JOIN patients p ON m.patient_id=p.id 
                     AND m.patient_id=? ORDER BY time ASC
@@ -77,14 +78,22 @@ class MainWindow(QMainWindow):
             name = records[0][0]
             weight = records[0][1]
             height = records[0][2]
+            patient_id = records[0][3]
+            phone_number = records[0][4]
+            birthday = records[0][5]
+            age = records[0][6]
+            blood_type = records[0][7]
+            all_type = records[0][8]
+            body_surface_area = records[0][9]
+            oncologist_id = records[0][13]
             anc_measurements = []
             dosage_measurements = []
             for row in records:
-                dosage_measurements.append((row[4], row[3]))
-                anc_measurements.append((row[5], row[3]))
+                dosage_measurements.append((row[11], row[10]))
+                anc_measurements.append((row[12], row[10]))
 
             self.selected_patient = Patient(
-                patient_id, name, weight, height, dosage_measurements, anc_measurements
+                patient_id, name, weight, height, anc_measurements, birthday, dosage_measurements, phone_number, age, blood_type, all_type, body_surface_area, oncologist_id
             )
 
     def updateToolBar(self):

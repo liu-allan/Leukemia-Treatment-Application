@@ -105,7 +105,7 @@ class PatientFormWindow(QWidget):
         self.allTypeLabel = Label("ALL Type")
         self.allTypeSelect = QComboBox()
         self.allTypeSelect.addItems(['Immunophenotype', 'French-American-British (FAB)', 'ALL Cytogenetic Risk Group'])
-        self.allTypeSelect.activated.connect(self.selectedBloodType)
+        self.allTypeSelect.activated.connect(self.selectedAllType)
         self.allTypeSelect.setFixedWidth(210)
         self.patientFormLayout.addWidget(FormRow(self.allTypeLabel, self.allTypeSelect))
 
@@ -129,9 +129,12 @@ class PatientFormWindow(QWidget):
         self.dosageEdit.setValidator(QDoubleValidator())
         self.ancMeasurementEdit.setValidator(QDoubleValidator())
         self.ancEdited = False
+        self.dosageEdited = False
 
         self.ancMeasurementEdit.textEdited.connect(self.valueChanged)
+        self.dosageEdit.textEdited.connect(self.valueChangedDosage)
         self.dateEdit.editingFinished.connect(self.valueChanged)
+        self.phoneNumberEdit.editingFinished.connect(self.phoneNumberFormatter)
         self.weightEdit.textEdited.connect(self.calculateBodySurfaceArea)
         self.heightEdit.textEdited.connect(self.calculateBodySurfaceArea)
 
@@ -148,11 +151,11 @@ class PatientFormWindow(QWidget):
         self.buttonBox.button(self.buttonBox.standardButtons().Cancel).clicked.connect(
             self.showPatientListWindow
         )
-        # self.buttonBox.button(self.buttonBox.standardButtons().Save).clicked.connect(
-        #     self.savePatientInformation
-        # )
+        self.buttonBox.button(self.buttonBox.standardButtons().Save).clicked.connect(
+            self.savePatientInformation
+        )
         self.buttonBox.button(self.buttonBox.standardButtons().Ok).clicked.connect(
-            self.showDashboardWindow
+            self.showPatientInformationWindow
         )
 
         self.buttonBox.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -172,6 +175,9 @@ class PatientFormWindow(QWidget):
         self.patientLineEdit.clear()
         self.weightEdit.clear()
         self.heightEdit.clear()
+        self.phoneNumberEdit.clear()
+        self.birthdayEdit.clear()
+        self.bodySurfaceAreaMeasurement.clear()
         self.dosageEdit.clear()
         self.ancMeasurementEdit.clear()
         self.dateEdit.setDate(QDate.currentDate())
@@ -180,15 +186,36 @@ class PatientFormWindow(QWidget):
             self.patientLineEdit.setText(self.patient.name)
             self.weightEdit.setText(str(self.patient.weight))
             self.heightEdit.setText(str(self.patient.height))
-            self.dosageEdit.setText(str(self.patient.dosage))
+            print(self.patient.bloodType)
+            self.bloodTypeSelect.setCurrentText(self.patient.bloodType)
+            print(self.patient.allType)
+            self.allTypeSelect.setCurrentText(self.patient.allType)
+            self.birthdayEdit.setDate(
+                QDate.fromString(self.patient.birthday, "yyyyMMdd")
+            )
+
+            self.phoneNumberFormatterBegin()
             
-            self.calculateBodySurfaceArea()
+            self.bodySurfaceAreaMeasurement.setText(str(self.patient.bsa))
             self.ancMeasurementDate = [datetime.strptime(str(item[1]), '%Y%m%d') for item in self.patient.ancMeasurement]
             self.ancMeasurement = [item[0] for item in self.patient.ancMeasurement]
             self.ancMeasurementEdit.setText(str(self.ancMeasurement[-1]))
             self.dateEdit.setDate(
                 QDate.fromString(str(self.ancMeasurementDate[-1].date()), "yyyy-MM-dd")
             )
+
+            self.dosagePrescribedDate = [datetime.strptime(str(item[1]), '%Y%m%d') for item in self.patient.dosageMeasurement]
+            self.dosageAmount = [item[0] for item in self.patient.dosageMeasurement]
+            self.dosageEdit.setText(str(self.dosageAmount[-1]))
+
+    def phoneNumberFormatterBegin(self):
+        self.phoneNumberEdit.setText(format(int(self.patient.phoneNumber[:-1]), ",").replace(",", "-") + self.patient.phoneNumber[-1])   
+
+    def phoneNumberFormatter(self):
+        self.phoneNumberEdit.setText(format(int(self.phoneNumberEdit.text()[:-1]), ",").replace(",", "-") + self.phoneNumberEdit.text()[-1])    
+
+    def phoneNumberFormatterReverse(self):
+        return self.phoneNumberEdit.text().replace('-', '')
 
     def calculateBodySurfaceArea(self):
         weight = self.weightEdit.text()
@@ -201,109 +228,165 @@ class PatientFormWindow(QWidget):
         else:
             bsa = math.sqrt(height * weight / 3600)
             self.bodySurfaceAreaMeasurement.setText("{:.2f}".format(bsa))
+    
+    def savePatientInformation(self):
+        try:
+            name = self.patientLineEdit.text()
+            assert name != ""
+            date = self.dateEdit.date().toString("yyyyMMdd")
+            print(name + " " + date)
+            weight = float(self.weightEdit.text())
+            print(weight)
+            height = float(self.heightEdit.text())
+            print(height)
+            allType = self.allTypeSelect.currentText()
+            print(allType)
+            bloodType = self.bloodTypeSelect.currentText()
+            print(bloodType)
+            birthday = self.birthdayEdit.date().toString("yyyyMMdd")
+            print(birthday)
+            phoneNumber = self.phoneNumberFormatterReverse()
+            print(phoneNumber)
+            assignedDoctor = self.patient.assignedDoctor
+            print(assignedDoctor)
+            bsa = float(self.bodySurfaceAreaMeasurement.text())
+            print(bsa)
+            ancMeasurement = float(self.ancMeasurementEdit.text())
+            print(ancMeasurement)
+            dosageMeasurement = float(self.dosageEdit.text())
+            print(dosageMeasurement)
+            age = self.calculateAge()
+            print(age)
 
-    # def savePatientInformation(self):
-    #     try:
-    #         name = self.patientLineEdit.text()
-    #         assert name != ""
-    #         date = self.dateEdit.date().toString("yyyyMMdd")
-    #         weight = float(self.weightEdit.text())
-    #         height = float(self.heightEdit.text())
-    #         bloodType = self.bloodType
-    #         birthday = self.birthdayEdit.date().toString("yyyyMMdd")
-    #         phoneNumber = self.phoneNumberEdit.text()
-    #         allType = self.allTypeSelect
-    #         dosage = float(self.dosageEdit.text())
-    #         bsa = float(self.bodySurfaceAreaMeasurement.text())
-    #         ancMeasurement = float(self.ancMeasurementEdit.text())
+            conn = self.parent().parent().getDatabaseConnection()
+            patient_id = self.patient.id if self.patient else -1
 
-    #         conn = self.parent().parent().getDatabaseConnection()
-    #         patient_id = self.patient.id if self.patient else -1
+            if self.patient is None:
+                conn.execute(
+                    """
+                        INSERT INTO patients (name, weight, height, phone_number, birthday, age, 
+                      blood_type, all_type, body_surface_area, oncologist_id)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        name,
+                        weight,
+                        height,
+                        phoneNumber,
+                        birthday,
+                        age,
+                        bloodType,
+                        allType,
+                        bsa,
+                        self.parent().parent().username,
+                    ),
+                )
 
-            # if self.patient is None:
-            #     conn.execute(
-            #         """
-            #             INSERT INTO patients (name, weight, height, blood_type, birthday, phone_number, all_type, dosage, body_surface_area, oncologist_id)
-            #             VALUES (?, ?, ?, ?, ?, ?)
-            #         """,
-            #         (
-            #             name,
-            #             weight,
-            #             height,
-            #             bloodType,
-            #             birthday,
-            #             phoneNumber,
-            #             allType,
-            #             dosage,
-            #             bsa,
-            #             self.parent().parent().username,
-            #         ),
-            #     )
+                res = conn.execute("SELECT last_insert_rowid()")
+                patient_id = res.fetchone()[0]
 
-    #             res = conn.execute("SELECT last_insert_rowid()")
-    #             patient_id = res.fetchone()[0]
+            else:
+                conn.execute(
+                    """
+                        UPDATE patients 
+                        SET name=?, weight=?, height=?, phone_number=?, birthday=?, age=?, blood_type=?, all_type=?, body_surface_area=? 
+                        WHERE id=?
+                    """,
+                    (name, weight, height, phoneNumber, birthday, age, bloodType, allType, bsa, self.patient.id),
+                )
 
-    #         conn.execute(
-    #             """
-    #                 INSERT INTO measurements (time, anc_measurement, patient_id)
-    #                 VALUES (?, ?, ?)
-    #             """,
-    #             (date, ancMeasurement, patient_id),
-    #         )
-    #         conn.commit()
+            conn.execute(
+                """
+                    INSERT INTO measurements (time, anc_measurement, dosage_measurement, patient_id)
+                    VALUES (?, ?, ?, ?)
+                """,
+                (date, ancMeasurement, dosageMeasurement, patient_id),
+            )
+            conn.commit()
 
-    #         self.parent().parent().updateSelectedPatient(patient_id)
-    #         self.patient = self.parent().parent().selected_patient
+            self.parent().parent().updateSelectedPatient(patient_id)
+            self.patient = self.parent().parent().selected_patient
 
-    #     except sqlite3.Error as er:
-    #         msg = "Existing entry in the database. Please check your inputs."
-    #         self.errorLabel.setText(msg)
-    #         self.errorLabel.setStyleSheet("color:red")
-    #         logging.error(er)
+        except sqlite3.Error as er:
+            msg = "Existing entry in the database. Please check your inputs."
+            self.errorLabel.setText(msg)
+            self.errorLabel.setStyleSheet("color:red")
+            logging.error(er)
 
-    #     except:
-    #         msg = "Input fields must not be empty"
-    #         self.errorLabel.setText(msg)
-    #         self.errorLabel.setStyleSheet("color:red")
-    #         logging.error(msg)
+        except:
+            msg = "Input fields must not be empty"
+            self.errorLabel.setText(msg)
+            self.errorLabel.setStyleSheet("color:red")
+            logging.error(msg)
 
-    #     else:
-    #         self.errorLabel.clear()
-    #         self.patient.save(
-    #             name,
-    #             weight,
-    #             height,
-    #             bloodType,
-    #             birthday,
-    #             phoneNumber,
-    #             allType,
-    #             dosage,
-    #             bsa,
-    #             (ancMeasurement, date),
-    #             self.ancEdited,
-    #         )
-    #         msg = "Parameters saved successfully!"
-    #         self.errorLabel.setText(msg)
-    #         self.errorLabel.setStyleSheet("color:green")
-    #         logging.info(msg)
-    #         logging.info(vars(self.patient))
-    #         self.ancEdited = False
+        else:
+            self.errorLabel.clear()
+            self.patient.save(
+                name,
+                weight,
+                height,
+                bsa,
+                allType,
+                age,
+                bloodType,
+                birthday,
+                phoneNumber,
+                assignedDoctor,
+                (dosageMeasurement, date),
+                self.dosageEdited,
+                (ancMeasurement, date),
+                self.ancEdited,
+            )
+            msg = "Parameters saved successfully!"
+            self.errorLabel.setText(msg)
+            self.errorLabel.setStyleSheet("color:green")
+            logging.info(msg)
+            logging.info(vars(self.patient))
+            self.ancEdited = False
+            self.dosageEdited = False
+            self.errorLabel.clear()
+            self.parent().parent().showPatientInformationWindow()
+
+    def calculateAge(self):
+        today = datetime.today().date()
+        return today.year - self.birthdayEdit.date().year() - ((today.month, today.day) < (self.birthdayEdit.date().month(), self.birthdayEdit.date().day()))
 
     def showPatientListWindow(self):
         self.errorLabel.clear()
         self.parent().parent().showPatientListWindow()
-        self.displayParameters()
 
-    def showDashboardWindow(self):
+    def showPatientInformationWindow(self):
         try:
             name = self.patientLineEdit.text()
+            print(name)
             assert name != ""
             date = self.dateEdit.date().toPyDate()
+            print(date)
             weight = float(self.weightEdit.text())
+            print(weight)
             height = float(self.heightEdit.text())
+            print(height)
             dosage = float(self.dosageEdit.text())
-            # bsa = float(self.bodySurfaceAreaMeasurement.text())
+            print(dosage)
+            allType = self.allTypeSelect.currentText()
+            print(allType)
+            age = self.calculateAge()
+            print(age)
+            bloodType = self.bloodTypeSelect.currentText()
+            print(bloodType)
+            birthday = self.birthdayEdit.date().toPyDate()
+            print(birthday)
+            phoneNumber = self.phoneNumberFormatterReverse()
+            print(phoneNumber)
+            assignedDoctor = self.patient.assignedDoctor
+            print(assignedDoctor)
             ancMeasurement = float(self.ancMeasurementEdit.text())
+            print(ancMeasurement)
+            dosageMeasurement = float(self.dosageEdit.text())
+            print(dosageMeasurement)
+            bsa = float(self.bodySurfaceAreaMeasurement.text())
+            print(bsa)
+
         except:
             msg = "Input fields must not be empty"
             self.errorLabel.setText(msg)
@@ -311,11 +394,13 @@ class PatientFormWindow(QWidget):
             logging.error(msg)
         else:
             self.errorLabel.clear()
-            self.parent().parent().showDashboardWindow()
-            self.displayParameters()
+            self.parent().parent().showPatientInformationWindow()
 
     def valueChanged(self):
         self.ancEdited = True
+    
+    def valueChangedDosage(self):
+        self.dosageEdited = True
 
     def updatePatientInfo(self):
         self.patient = self.parent().parent().selected_patient

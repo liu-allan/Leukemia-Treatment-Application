@@ -9,13 +9,15 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QGridLayout,
     QWidget,
+    QDateEdit,
     QToolBar,
     QSizePolicy,
     QMessageBox,
     QDialogButtonBox,
 )
 from PyQt6.QtGui import QFont, QPixmap, QColor, QIcon
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QDate
+from datetime import datetime
 
 class Label(QLabel):
     def __init__(self, text, textSize, margins, color):
@@ -85,9 +87,16 @@ class PatientCard(QWidget):
         self.patientName = LabelBolded("", 25, [10, 0, 0, 0])
         self.name_layout.addWidget(self.patientName)
 
+        self.ageWidget = QWidget()
+        self.ageWidget.setContentsMargins(0, 0, 0, 0)
+        self.age_layout = QHBoxLayout(self.ageWidget)
+
         # set patient age
-        self.patientAge = LabelBolded("", 18, [10, 0, 0, 0])
-        self.name_layout.addWidget(self.patientAge)
+        self.patientAge = LabelBolded("Age: ", 18, [10, 0, 0, 0])
+        self.age_layout.addWidget(self.patientAge)
+
+        self.patientAgeV = LabelBolded("", 18, [10, 0, 0, 0])
+        self.age_layout.addWidget(self.patientAgeV)
 
         self.avatar_layout.addWidget(self.nameWidget, 3)
         self.left_layout.addWidget(self.avatarWidget)
@@ -223,20 +232,17 @@ class PatientCard(QWidget):
         if self.patient is not None:
             self.patientName.setText(self.patient.name)
             self.patientAvatar.setText(self.patient.name[0])
-            self.patientAge.setText("Age: 22")
+            self.patientAgeV.setText(str(self.patient.age))
             self.patientHeightV.setText(str(self.patient.height))
             self.patientWeightV.setText(str(self.patient.weight))
-            self.patientBloodV.setText("O")
-            self.patientIDV.setText("00035678")
-            self.birthdayV.setText("2000-08-21")
-            self.phoneNumberV.setText("123-456-789")
-            self.allTypeV.setText("Immunophenotype")
-            self.assignedDoctorV.setText("allan")
-            self.calculateBodySurfaceArea()
+            self.patientBloodV.setText(self.patient.bloodType)
+            self.patientIDV.setText(str(self.patient.id))
+            self.phoneNumberFormatter()
+            self.allTypeV.setText(self.patient.allType)
+            self.assignedDoctorV.setText(self.patient.assignedDoctor)
+            self.bodySurfaceAreaV.setText(str(self.patient.bsa))
 
-            # self.birthdayV.setDate(
-            #     QDate.fromString(self.patient.birthday, "yyyy-MM-dd")
-            # )
+            self.birthdayV.setText(datetime.strptime(self.patient.birthday, '%Y%m%d').strftime('%Y-%m-%d'))
 
     def calculateBodySurfaceArea(self):
         weight = self.patientWeightV.text()
@@ -250,6 +256,7 @@ class PatientCard(QWidget):
             bsa = math.sqrt(height * weight / 3600)
             self.bodySurfaceAreaV.setText("{:.2f}".format(bsa))
     
-    # def calculateAge(self):
-    #     birthday = self.birthdayV
+    def phoneNumberFormatter(self):
+        self.phoneNumberV.setText(format(int(self.patient.phoneNumber[:-1]), ",").replace(",", "-") + self.patient.phoneNumber[-1])    
+
 

@@ -48,7 +48,6 @@ class LineEdit(QLineEdit):
         self.setFont(QFont("Avenir", 18))
         self.setFixedWidth(width)
 
-
 class FormRow(QWidget):
     def __init__(self, label, widget):
         super().__init__()
@@ -125,8 +124,7 @@ class PatientInformationWindow(QWidget):
         styles = {"color": "#000000", "font": QFont("Avenir", 15)}
         self.graphWidgetANC.setLabel("left", "ANC Measurement (g/L)", **styles)
         self.graphWidgetANC.setLabel("bottom", "ANC Measurement Date", **styles)
-        # Add legend
-        self.graphWidgetANC.addLegend()
+        
         # Add grid
         self.graphWidgetANC.showGrid(x=True, y=True)
 
@@ -136,8 +134,8 @@ class PatientInformationWindow(QWidget):
 
         self.graphWidgetDosages.setCursor(Qt.CursorShape.OpenHandCursor)
         # Temp data -> will connect to matlab in the future
-        self.dosagePrescribedDate = [datetime(2022, 8, 21), datetime(2022, 9, 21), datetime(2022, 11, 30), datetime(2023, 1, 10)]
-        self.dosageAmount = [60, 30, 40, 20]
+        self.dosagePrescribedDate = []
+        self.dosageAmount = []
 
         # Add Background colour to white
         self.graphWidgetDosages.setBackground("w")
@@ -151,44 +149,21 @@ class PatientInformationWindow(QWidget):
         styles = {"color": "#000000", "font": QFont("Avenir", 15)}
         self.graphWidgetDosages.setLabel("left", "Dosage Amount Prescribed", **styles)
         self.graphWidgetDosages.setLabel("bottom", "Dosage Prescription Date", **styles)
-        # Add legend
-        self.graphWidgetDosages.addLegend()
+        
         # Add grid
         self.graphWidgetDosages.showGrid(x=True, y=True)
 
-        pen = pg.mkPen(color="#aaaaee", width=5)
-        self.graphWidgetDosages.plot(
-            x=[x.timestamp() for x in self.dosagePrescribedDate], y=self.dosageAmount, name="Dosage Amount Prescribed", pen=pen, symbol="o", symbolSize=7, symbolBrush=("#aaaaee")
-        )
-
-        self.patientBottomLayout.addWidget(self.patientHistoricGraphs, 1)
+        self.patientBottomLayout.addWidget(self.patientHistoricGraphs, 3)
 
         self.patientInputRight = QWidget()
         self.patientInputRight.setContentsMargins(0, 0, 0, 0)
         self.patientInputRight.setStyleSheet(
             "background-color: #ffffff; border-radius: 20px;"
         )
-        self.patientBottomLayout.addWidget(self.patientInputRight, 2)
+        self.patientBottomLayout.addWidget(self.patientInputRight, 1)
 
         self.patientInputLayout = QVBoxLayout(self.patientInputRight)
         self.patientInputLayout.setContentsMargins(0, 0, 0, 0)
-
-        # self.patientLabel = Label("Patient Name")
-        # self.patientLineEdit = LineEdit("Patient")
-        # self.patientInputLayout.addWidget(FormRow(self.patientLabel, self.patientLineEdit))
-
-        # self.weightLabel = Label("Weight (kg)")
-        # self.weightEdit = LineEdit("kg")
-        # self.patientInputLayout.addWidget(FormRow(self.weightLabel, self.weightEdit))
-
-        # self.heightLabel = Label("Height (cm)")
-        # self.heightEdit = LineEdit("cm")
-        # self.patientInputLayout.addWidget(FormRow(self.heightLabel, self.heightEdit))
-
-        # self.bodySurfaceAreaLabel = Label("Body Surface Area (m^2)")
-        # self.bodySurfaceAreaMeasurement = Label("m^2")
-        # self.bodySurfaceAreaMeasurement.setFixedWidth(200)
-        # self.patientInputLayout.addWidget(FormRow(self.bodySurfaceAreaLabel, self.bodySurfaceAreaMeasurement))
 
         self.dosageLabel = Label("6-MP Dosage (mg)")
         self.dosageEdit = LineEdit("mg")
@@ -205,16 +180,14 @@ class PatientInformationWindow(QWidget):
 
         self.errorLabel = Label("")
         self.patient = None
-        # self.weightEdit.setValidator(QDoubleValidator())
-        # self.heightEdit.setValidator(QDoubleValidator())
         self.dosageEdit.setValidator(QDoubleValidator())
         self.ancMeasurementEdit.setValidator(QDoubleValidator())
         self.ancEdited = False
+        self.dosageEdited = False
 
         self.ancMeasurementEdit.textEdited.connect(self.valueChanged)
         self.dateEdit.editingFinished.connect(self.valueChanged)
-        # self.weightEdit.textEdited.connect(self.calculateBodySurfaceArea)
-        # self.heightEdit.textEdited.connect(self.calculateBodySurfaceArea)
+        self.dosageEdit.textEdited.connect(self.valueChangedDosage)
 
         self.buttonBox = QDialogButtonBox()
         self.buttonBox.addButton(self.buttonBox.standardButtons().Cancel)
@@ -242,21 +215,15 @@ class PatientInformationWindow(QWidget):
         self.setLayout(self.sideBarLayout)
 
     def displayParameters(self):
-        # self.patientLineEdit.clear()
-        # self.weightEdit.clear()
-        # self.heightEdit.clear()
         self.dosageEdit.clear()
         self.ancMeasurementEdit.clear()
         self.dateEdit.setDate(QDate.currentDate())
-        # self.bodySurfaceAreaMeasurement.clear()
+        self.ancMeasurementDate.clear()
+        self.ancMeasurement.clear()
+        self.dosagePrescribedDate.clear()
+        self.dosageAmount.clear()
 
         if self.patient is not None:
-            # self.patientLineEdit.setText(self.patient.name)
-            # self.weightEdit.setText(str(self.patient.weight))
-            # self.heightEdit.setText(str(self.patient.height))
-            self.dosageEdit.setText(str(self.patient.dosage))
-
-            # self.calculateBodySurfaceArea()
             self.ancMeasurementDate = [datetime.strptime(str(item[1]), '%Y%m%d') for item in self.patient.ancMeasurement]
             self.ancMeasurement = [item[0] for item in self.patient.ancMeasurement]
             self.ancMeasurementEdit.setText(str(self.ancMeasurement[-1]))
@@ -264,83 +231,66 @@ class PatientInformationWindow(QWidget):
                 QDate.fromString(str(self.ancMeasurementDate[-1].date()), "yyyy-MM-dd")
             )
 
-            pen = pg.mkPen(color="#aaaaee", width=5)
-            self.graphWidgetANC.plot(
-                x=[x.timestamp() for x in self.ancMeasurementDate], y=self.ancMeasurement, name="ANC Measurement", pen=pen, symbol="o", symbolSize=7, symbolBrush=("#aaaaee")
-            )
+            # Add legend
+            self.ancLegend = self.graphWidgetANC.addLegend()
+            if len(self.ancMeasurement) == 1:
+                pen = None
+                self.ancLine = self.graphWidgetANC.plot(
+                    x=[self.ancMeasurementDate[0].timestamp()], y=[self.ancMeasurement[0]], name="ANC Measurement", pen=pen, symbol="o", symbolSize=7, symbolBrush=("#aaaaee")
+                )
+            else:
+                pen = pg.mkPen(color="#aaaaee", width=5) 
+                self.ancLine = self.graphWidgetANC.plot(
+                    x=[x.timestamp() for x in self.ancMeasurementDate], y=self.ancMeasurement, name="ANC Measurement", pen=pen, symbol="o", symbolSize=7, symbolBrush=("#aaaaee")
+                )
 
-    # def calculateBodySurfaceArea(self):
-    #     weight = self.weightEdit.text()
-    #     height = self.heightEdit.text()
-    #     try:
-    #         weight = float(weight)
-    #         height = float(height)
-    #     except:
-    #         return
-    #     else:
-    #         bsa = math.sqrt(height * weight / 3600)
-    #         self.bodySurfaceAreaMeasurement.setText("{:.2f}".format(bsa))
+            self.dosagePrescribedDate = [datetime.strptime(str(item[1]), '%Y%m%d') for item in self.patient.dosageMeasurement]
+            self.dosageAmount = [item[0] for item in self.patient.dosageMeasurement]
+            self.dosageEdit.setText(str(self.dosageAmount[-1]))
+
+            # Add legend
+            self.dosageLegend = self.graphWidgetDosages.addLegend()
+            if len(self.ancMeasurement) == 1:
+                pen = None
+                self.dosageLine = self.graphWidgetDosages.plot(
+                    x=[x.timestamp() for x in self.dosagePrescribedDate], y=self.dosageAmount, name="Dosage Amount Prescribed", pen=pen, symbol="o", symbolSize=7, symbolBrush=("#aaaaee")
+                )
+            else:
+                pen = pg.mkPen(color="#aaaaee", width=5)
+                self.dosageLine = self.graphWidgetDosages.plot(
+                    x=[x.timestamp() for x in self.dosagePrescribedDate], y=self.dosageAmount, name="Dosage Amount Prescribed", pen=pen, symbol="o", symbolSize=7, symbolBrush=("#aaaaee")
+                )
 
     def savePatientInformation(self):
         try:
-            # name = self.patientLineEdit.text()
             name = self.patient.name
             assert name != ""
             date = self.dateEdit.date().toString("yyyyMMdd")
             print(name + " " + date)
-            # weight = float(self.weightEdit.text())
-            # height = float(self.heightEdit.text())
             weight = self.patient.weight
-            print(weight)
             height = self.patient.height
-            print(height)
-            dosage = float(self.dosageEdit.text())
-            print(dosage)
-            # bsa = float(self.bodySurfaceAreaMeasurement.text())
             bsa = math.sqrt(height * weight / 3600)
             print(bsa)
+            allType = self.patient.allType
+            age = self.patient.age
+            bloodType = self.patient.bloodType
+            birthday = self.patient.birthday
+            phoneNumber = self.patient.phoneNumber
+            assignedDoctor = self.patient.assignedDoctor
             ancMeasurement = float(self.ancMeasurementEdit.text())
-
+            dosageMeasurement = float(self.dosageEdit.text())
             print(ancMeasurement)
+            print(dosageMeasurement)
 
             conn = self.parent().parent().getDatabaseConnection()
             patient_id = self.patient.id if self.patient else -1
 
-            # if self.patient is None:
-            #     conn.execute(
-            #         """
-            #             INSERT INTO patients (name, weight, height, dosage, body_surface_area, oncologist_id)
-            #             VALUES (?, ?, ?, ?, ?, ?)
-            #         """,
-            #         (
-            #             name,
-            #             weight,
-            #             height,
-            #             dosage,
-            #             bsa,
-            #             self.parent().parent().username,
-            #         ),
-            #     )
-
-            #     res = conn.execute("SELECT last_insert_rowid()")
-            #     patient_id = res.fetchone()[0]
-
-            # else:
-            #     conn.execute(
-            #         """
-            #             UPDATE patients 
-            #             SET name=?, weight=?, height=?, dosage=?, body_surface_area=? 
-            #             WHERE id=?
-            #         """,
-            #         (name, weight, height, dosage, bsa, self.patient.id),
-            #     )
-
             conn.execute(
                 """
-                    INSERT INTO measurements (time, anc_measurement, patient_id)
-                    VALUES (?, ?, ?)
+                    INSERT INTO measurements (time, anc_measurement, dosage_measurement, patient_id)
+                    VALUES (?, ?, ?, ?)
                 """,
-                (date, ancMeasurement, patient_id),
+                (date, ancMeasurement, dosageMeasurement, patient_id),
             )
             conn.commit()
 
@@ -365,8 +315,15 @@ class PatientInformationWindow(QWidget):
                 name,
                 weight,
                 height,
-                dosage,
                 bsa,
+                allType,
+                age,
+                bloodType,
+                birthday,
+                phoneNumber,
+                assignedDoctor,
+                (dosageMeasurement, date),
+                self.dosageEdited,
                 (ancMeasurement, date),
                 self.ancEdited,
             )
@@ -376,22 +333,31 @@ class PatientInformationWindow(QWidget):
             logging.info(msg)
             logging.info(vars(self.patient))
             self.ancEdited = False
+            self.dosageEdited = False
 
     def showPatientListWindow(self):
+        self.graphWidgetANC.clear()
+        self.graphWidgetDosages.clear()
         self.errorLabel.clear()
         self.parent().parent().showPatientListWindow()
-        self.displayParameters()
 
     def showDashboardWindow(self):
         try:
-            name = self.patientLineEdit.text()
+            name = self.patient.name
             assert name != ""
-            date = self.dateEdit.date().toPyDate()
-            weight = float(self.weightEdit.text())
-            height = float(self.heightEdit.text())
-            dosage = float(self.dosageEdit.text())
-            bsa = float(self.bodySurfaceAreaMeasurement.text())
+            date = self.dateEdit.date().toString("yyyyMMdd")
+            weight = self.patient.weight
+            height = self.patient.height
+            bsa = math.sqrt(height * weight / 3600)
+            allType = self.patient.allType
+            age = self.patient.age
+            bloodType = self.patient.bloodType
+            birthday = self.patient.birthday
+            phoneNumber = self.patient.phoneNumber
+            assignedDoctor = self.patient.assignedDoctor
             ancMeasurement = float(self.ancMeasurementEdit.text())
+            dosageMeasurement = float(self.dosageEdit.text())
+
         except:
             msg = "Input fields must not be empty"
             self.errorLabel.setText(msg)
@@ -400,15 +366,16 @@ class PatientInformationWindow(QWidget):
         else:
             self.errorLabel.clear()
             self.parent().parent().showDashboardWindow()
-            self.displayParameters()
 
     def showPatientFormWindow(self):
         self.errorLabel.clear()
         self.parent().parent().showPatientFormWindow()
-        self.displayParameters()
 
     def valueChanged(self):
         self.ancEdited = True
+
+    def valueChangedDosage(self):
+        self.dosageEdited = True
 
     def updatePatientInfo(self):
         self.errorLabel.clear()
