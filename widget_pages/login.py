@@ -5,6 +5,7 @@ import logging
 from PyQt6.QtWidgets import (
     QLabel,
     QPushButton,
+    QHBoxLayout,
     QVBoxLayout,
     QWidget,
     QLineEdit,
@@ -15,7 +16,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6 import uic
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QFont
+from PyQt6.QtGui import QFont, QPixmap, QBrush
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -24,36 +25,66 @@ class LoginWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.layout = QGridLayout()
+        self.mainPageLayout = QHBoxLayout()
+        self.mainPageLayout.setContentsMargins(0, 0, 0, 0)
+
+        self.login = QWidget()
+        self.login.setContentsMargins(0, 0, 0, 0)
+        self.login.setStyleSheet(
+            "background-color: #ffffff; border-radius: 20px;"
+        )
+        self.mainPageLayout.addWidget(self.login)
+
+        self.mainPicture = QPixmap('3EFB1109-FC90-45A4-A82A-6BC4F169C000_1_201_a.jpeg')
+
+        self.picture = QLabel()
+        self.picture.setFixedSize(1000, 1000)
+        self.mainPageLayout.addWidget(self.picture)
+        self.picture.setPixmap(self.mainPicture)
+        self.picture.setMinimumSize(1, 1)
+        self.picture.setContentsMargins(0, 0, 0, 0)
+
+        self.setLayout(self.mainPageLayout)
+
+        self.layout = QVBoxLayout(self.login)
         self.layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.titleLabel = QLabel("Login")
-        self.titleLabel.setFont(QFont("Avenir", 25))
-        self.titleLabel.setMargin(10)
+        self.titleLabel = QLabel("Welcome!")
+        self.titleLabel.setFont(QFont("Avenir", 45))
+        self.titleLabel.setContentsMargins(10, 10, 10, 0)
         self.titleLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.titleLabel.setStyleSheet(
-            "background-color: #a9c7c5; height : 100; border-radius: 10px; padding 10px"
+        self.titleLabel.setStyleSheet("font-weight: bold;")
+        # self.titleLabel.setStyleSheet(
+        #     "background-color: #a9c7c5; height : 100; border-radius: 20px"
+        # )
+        self.layout.addWidget(self.titleLabel)
+
+        self.promptLabel = QLabel("Please input your username and password to log into the system.")
+        self.promptLabel.setFont(QFont("Avenir", 15))
+        self.promptLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.promptLabel.setStyleSheet(
+            "color: #71797e;"
         )
-        self.layout.addWidget(self.titleLabel, 0, 1)
+        self.layout.addWidget(self.promptLabel)
 
         self.vSpacer = QSpacerItem(
-            1, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum
+            1, 5, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum
         )
-        self.layout.addItem(self.vSpacer, 1, 1)
+        self.layout.addItem(self.vSpacer)
 
         self.usernameLineEdit = QLineEdit()
         self.usernameLineEdit.setPlaceholderText("Username")
-        self.layout.addWidget(self.usernameLineEdit, 2, 1)
+        self.layout.addWidget(self.usernameLineEdit)
 
         self.passwordLineEdit = QLineEdit()
         self.passwordLineEdit.setPlaceholderText("Password")
         self.passwordLineEdit.setEchoMode(QLineEdit.EchoMode.Password)
-        self.layout.addWidget(self.passwordLineEdit, 3, 1)
+        self.layout.addWidget(self.passwordLineEdit)
 
         self.errorLabel = QLabel()
         self.errorLabel.setFont(QFont("Avenir", 12))
         self.errorLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.layout.addWidget(self.errorLabel, 4, 1)
+        self.layout.addWidget(self.errorLabel)
 
         self.loginPushButton = QPushButton("Login")
         self.loginPushButton.clicked.connect(self.loginPushed)
@@ -61,14 +92,13 @@ class LoginWindow(QWidget):
         self.loginPushButton.setStyleSheet(
             "background-color: #aaaaee; border-radius: 5px; padding: 10px"
         )
-        self.layout.addWidget(self.loginPushButton, 5, 1)
+        self.layout.addWidget(self.loginPushButton)
 
         self.spacer = QSpacerItem(
             1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
         )
-        self.layout.addItem(self.spacer, 0, 0)
-        self.layout.addItem(self.spacer, 0, 2)
-        self.setLayout(self.layout)
+        # self.layout.addItem(self.spacer, 0, 0)
+        # self.layout.addItem(self.spacer, 0, 2)
 
     def loginPushed(self):
         try:
