@@ -138,6 +138,8 @@ class PatientListWindow(QWidget):
                 widget.hide()
 
     def showPatientFormWindow(self):
+        # whenever you press "Add Patient", should clear state so the fields aren't pre-populated
+        self.parent().parent().selected_patient = None
         self.parent().parent().showPatientFormWindow()
 
     def showPatientInformationWindow(self, patient_id=-1):
