@@ -265,6 +265,7 @@ class PatientInformationWindow(QWidget):
         try:
             name = self.patient.name
             assert name != ""
+            user_id = self.patient.user_id
             date = self.dateEdit.date().toString("yyyyMMdd")
             print(name + " " + date)
             weight = self.patient.weight
@@ -312,6 +313,7 @@ class PatientInformationWindow(QWidget):
         else:
             self.errorLabel.clear()
             self.patient.save(
+                user_id,
                 name,
                 weight,
                 height,

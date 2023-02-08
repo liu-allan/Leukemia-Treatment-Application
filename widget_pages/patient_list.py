@@ -17,7 +17,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 
 class PatientListItem(QWidget):
-    def __init__(self, patient_name, patient_id):
+    def __init__(self, patient_name, patient_id, user_id):
         super(PatientListItem, self).__init__()
 
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
@@ -27,8 +27,11 @@ class PatientListItem(QWidget):
 
         self.patient_name = patient_name
         self.patient_id = patient_id
+        self.user_id = user_id
         self.label = QLabel(self.patient_name)
         self.label.setFont(QFont("Avenir", 12))
+        self.user_id_label = QLabel(self.user_id)
+        self.user_id_label.setFont(QFont("Avenir", 10))
         self.select_button = QPushButton("Select")
         self.select_button.setFont(QFont("Avenir", 12))
         self.select_button.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -42,6 +45,7 @@ class PatientListItem(QWidget):
         self.layout = QHBoxLayout()
         self.layout.addWidget(self.label)
         self.layout.addItem(self.middle_spacer)
+        self.layout.addWidget(self.user_id_label)
         self.layout.addWidget(self.select_button)
 
         self.setLayout(self.layout)
@@ -113,8 +117,8 @@ class PatientListWindow(QWidget):
         self.list = QWidget()
         self.list_layout = QVBoxLayout()
 
-        for patient_name, patient_id in self.patients:
-            widget = PatientListItem(patient_name, patient_id)
+        for patient_name, patient_id, user_id in self.patients:
+            widget = PatientListItem(patient_name, patient_id, user_id)
             self.patient_widgets.append(widget)
             self.list_layout.addWidget(widget)
 
@@ -129,7 +133,7 @@ class PatientListWindow(QWidget):
 
     def updatePatientList(self, conn, username):
         res = conn.execute(
-            """SELECT name, id 
+            """SELECT name, id, user_id 
                FROM patients p 
                INNER JOIN oncologists o ON p.oncologist_id=o.username
                     AND o.username=?

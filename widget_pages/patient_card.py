@@ -236,7 +236,7 @@ class PatientCard(QWidget):
             self.patientHeightV.setText(str(self.patient.height))
             self.patientWeightV.setText(str(self.patient.weight))
             self.patientBloodV.setText(self.patient.bloodType)
-            self.patientIDV.setText(str(self.patient.id))
+            self.patientIDV.setText(self.patient.user_id)
             self.phoneNumberFormatter()
             self.allTypeV.setText(self.patient.allType)
             self.assignedDoctorV.setText(self.patient.assignedDoctor)

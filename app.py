@@ -64,7 +64,7 @@ class MainWindow(QMainWindow):
         res = self.db_conn.execute(
             # """SELECT name, weight, height, dosage, time, anc_measurement 
             """SELECT name, weight, height, patient_id, phone_number, birthday, age, 
-                      blood_type, all_type, body_surface_area, time, dosage_measurement, anc_measurement, oncologist_id 
+                      blood_type, all_type, body_surface_area, time, dosage_measurement, anc_measurement, oncologist_id, user_id
                FROM measurements m 
                INNER JOIN patients p ON m.patient_id=p.id 
                     AND m.patient_id=? ORDER BY time ASC
@@ -86,6 +86,7 @@ class MainWindow(QMainWindow):
             all_type = records[0][8]
             body_surface_area = records[0][9]
             oncologist_id = records[0][13]
+            user_id = records[0][14]
             anc_measurements = []
             dosage_measurements = []
             for row in records:
@@ -93,7 +94,7 @@ class MainWindow(QMainWindow):
                 anc_measurements.append((row[12], row[10]))
 
             self.selected_patient = Patient(
-                patient_id, name, weight, height, anc_measurements, birthday, dosage_measurements, phone_number, age, blood_type, all_type, body_surface_area, oncologist_id
+                patient_id, user_id, name, weight, height, anc_measurements, birthday, dosage_measurements, phone_number, age, blood_type, all_type, body_surface_area, oncologist_id
             )
 
     def updateToolBar(self):

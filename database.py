@@ -22,6 +22,7 @@ conn.execute(
     """
         CREATE TABLE IF NOT EXISTS patients
             (id INTEGER NOT NULL,
+             user_id TEXT NOT NULL,
              name TEXT NOT NULL,
              phone_number TEXT NOT NULL,
              birthday TEXT NOT NULL,
@@ -73,8 +74,8 @@ hash = bcrypt.hashpw(bytes, salt)
 
 # conn.execute(
 #     """
-#       INSERT INTO patients (name, phone_number, birthday, age, blood_type, all_type, weight, height, body_surface_area, oncologist_id)
-#       VALUES ('Small Bob', '1234567899', '19900506', 38, 'A+', 'Immunophenotype', 1, 1, 250, 'angus');
+#       INSERT INTO patients (user_id, name, phone_number, birthday, age, blood_type, all_type, weight, height, body_surface_area, oncologist_id)
+#       VALUES ('smallbob123456', 'Small Bob', '1234567899', '19900506', 38, 'A+', 'Immunophenotype', 1, 1, 250, 'angus');
 #     """
 # )
 
