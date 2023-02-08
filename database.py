@@ -35,7 +35,7 @@ conn.execute(
              oncologist_id TEXT NOT NULL,
              PRIMARY KEY(id),
              FOREIGN KEY(oncologist_id)
-                REFERENCES oncologists(id)
+                REFERENCES oncologists(username)
                 ON DELETE CASCADE
                 ON UPDATE NO ACTION);
     """
@@ -82,9 +82,13 @@ hash = bcrypt.hashpw(bytes, salt)
 # conn.execute(
 #     """
 #       INSERT INTO measurements (time, anc_measurement, dosage_measurement, patient_id)
-#       VALUES ("20220101", 4, 4, 4);
+#       VALUES ("20220101", 4, 4, 1);
 #     """
 # )
+
+conn.execute(
+    "PRAGMA foreign_keys = ON"
+)  # enable foreign key cascade on delete
 
 conn.commit()  # this is necessary to confirm entry into the database
 

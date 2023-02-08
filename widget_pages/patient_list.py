@@ -1,4 +1,5 @@
 import logging
+import sqlite3
 from PyQt6.QtWidgets import (
     QLabel,
     QPushButton,
@@ -38,6 +39,12 @@ class PatientListItem(QWidget):
         self.select_button.setStyleSheet(
             "background-color: #aaaaee; border-radius: 5px; padding: 10px"
         )
+        self.delete_button = QPushButton("Delete")
+        self.delete_button.setFont(QFont("Avenir", 12))
+        self.delete_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.delete_button.setStyleSheet(
+            "background-color: #e3735e; border-radius: 5px; padding: 10px"
+        )
         self.middle_spacer = QSpacerItem(
             1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
         )
@@ -47,10 +54,12 @@ class PatientListItem(QWidget):
         self.layout.addItem(self.middle_spacer)
         self.layout.addWidget(self.user_id_label)
         self.layout.addWidget(self.select_button)
+        self.layout.addWidget(self.delete_button)
 
         self.setLayout(self.layout)
 
         self.select_button.clicked.connect(self.showPatientInfo)
+        self.delete_button.clicked.connect(self.deletePatient)
 
     def show(self):
         for item in [self, self.label, self.select_button]:
@@ -64,6 +73,28 @@ class PatientListItem(QWidget):
         self.parent().parent().parent().parent().showPatientInformationWindow(
             self.patient_id
         )
+
+    def deletePatient(self):
+        conn = self.parent().parent().parent().parent().getDatabaseConnection()
+
+        try:
+            conn.execute(
+                "PRAGMA foreign_keys = ON"
+            )  # enable foreign key cascade on delete for the measurements table
+            
+            conn.execute(
+                """
+                DELETE FROM patients 
+                WHERE id=? 
+                """,
+                (self.patient_id,),
+            )
+            conn.commit()
+
+        except sqlite3.Error as er:
+            logging.error("Something went wrong while deleting the patient", er)
+
+        self.parent().parent().parent().parent().updatePatientList()
 
 
 class PatientListWindow(QWidget):
@@ -113,6 +144,9 @@ class PatientListWindow(QWidget):
         self.parent().parent().updateSelectedPatient(patient_id)
         self.parent().parent().showPatientInformationWindow()
 
+    def getDatabaseConnection(self):
+        return self.parent().parent().getDatabaseConnection()
+
     def displayPatientList(self):
         self.list = QWidget()
         self.list_layout = QVBoxLayout()
@@ -131,7 +165,9 @@ class PatientListWindow(QWidget):
         self.scroll_area.setWidget(self.list)
         self.scroll_area.setWidgetResizable(True)
 
-    def updatePatientList(self, conn, username):
+    def updatePatientList(self):
+        conn = self.getDatabaseConnection()
+        username = self.parent().parent().username
         res = conn.execute(
             """SELECT name, id, user_id 
                FROM patients p 

@@ -109,7 +109,7 @@ class MainWindow(QMainWindow):
         self.stackLayout.setCurrentIndex(1)
         self.current_page = "Patient List"
         self.updateToolBar()
-        self.patientListWindow.updatePatientList(self.db_conn, self.username)
+        self.patientListWindow.updatePatientList()
 
     def showPatientInformationWindow(self):
         self.stackLayout.setCurrentIndex(2)
