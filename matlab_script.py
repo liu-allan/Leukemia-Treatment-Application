@@ -10,4 +10,4 @@ def runModel(bsa, numCycles, dosage):
 
     return time, nominal_trajectory, linearized_trajectory, reactive_trajectory, anticipatory_trajectory, reactive_dosage, anticipatory_dosage
 
-runModel(1.71, 1.0, 50.0)
+runModel(1.71, 2.0, [50.0, 70.0])
