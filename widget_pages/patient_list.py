@@ -180,7 +180,8 @@ class PatientListWindow(QWidget):
         )
 
         rows = res.fetchall()
-        self.patients = []
+        self.patients.clear()
+        self.patient_widgets.clear()
         if rows:
             self.patients = rows
         self.displayPatientList()
