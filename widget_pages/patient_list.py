@@ -86,27 +86,16 @@ class PatientListItem(QPushButton):
         # self.layout.addItem(name_spacer, 0, 1)
         self.layout.addWidget(self.user_id_label, 1, 0, 1, 1)
         self.layout.addItem(main_spacer, 0, 2, 2, 1)
-        # self.layout.addWidget(self.select_button)
         self.layout.addWidget(self.delete_button, 0, 3, 2, 1)
-        # self.layout.setColumnStretch(0, 1)
-        # self.layout.setColumnStretch(1, 1)
-        # self.layout.setColumnStretch(2, 1)
-        # self.layout.setColumnStretch(3, 10)
-        # self.layout.setColumnStretch(4, 1)
 
         self.setLayout(self.layout)
 
-        # self.select_button.clicked.connect(self.showPatientInfo)
         self.delete_button.clicked.connect(self.deletePatient)
 
     def show(self):
-        # for item in [self, self.label, self.select_button]:
-        #     item.setVisible(True)
         self.setVisible(True)
 
     def hide(self):
-        # for item in [self, self.label, self.select_button]:
-        #     item.setVisible(False)
         self.setVisible(False)
 
     def showPatientInfo(self):
