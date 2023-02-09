@@ -15,11 +15,13 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QFont, QIcon, QPixmap
 
+from datetime import datetime
+
 logging.getLogger().setLevel(logging.INFO)
 
 
 class PatientListItem(QPushButton):
-    def __init__(self, patient_name, patient_id, user_id):
+    def __init__(self, patient_name, patient_id, user_id, birthday):
         super(PatientListItem, self).__init__()
 
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
@@ -47,6 +49,8 @@ class PatientListItem(QPushButton):
         self.patient_name = patient_name
         self.patient_id = patient_id
         self.user_id = user_id
+        self.birthday = birthday
+
         self.name_label = QLabel(self.patient_name)
         self.name_label.setFont(QFont("Avenir", 13))
         self.name_label.setFixedWidth(300)
@@ -55,6 +59,11 @@ class PatientListItem(QPushButton):
         self.user_id_label.setFont(QFont("Avenir", 10, italic=True))
         self.user_id_label.setFixedWidth(300)
         self.user_id_label.setStyleSheet("color: #505050;")
+
+        self.birthday_label = QLabel("DOB: " + datetime.strptime(self.birthday, '%Y%m%d').strftime('%Y-%m-%d'))
+        self.birthday_label.setFont(QFont("Avenir", 10))
+        self.birthday_label.setFixedWidth(200)
+        self.birthday_label.setStyleSheet("color: #505050;")
 
         self.delete_button = QPushButton("Delete")
         self.delete_button.setFont(QFont("Avenir", 12))
@@ -83,10 +92,11 @@ class PatientListItem(QPushButton):
 
         self.layout = QGridLayout()
         self.layout.addWidget(self.name_label, 0, 0, 1, 1)
-        # self.layout.addItem(name_spacer, 0, 1)
         self.layout.addWidget(self.user_id_label, 1, 0, 1, 1)
-        self.layout.addItem(main_spacer, 0, 2, 2, 1)
-        self.layout.addWidget(self.delete_button, 0, 3, 2, 1)
+        self.layout.addItem(name_spacer, 0, 1, 2, 1)
+        self.layout.addWidget(self.birthday_label, 0, 2, 2, 1)
+        self.layout.addItem(main_spacer, 0, 3, 2, 1)
+        self.layout.addWidget(self.delete_button, 0, 4, 2, 1)
 
         self.setLayout(self.layout)
 
@@ -229,8 +239,8 @@ class PatientListWindow(QWidget):
         )
         self.list_layout = QVBoxLayout()
 
-        for patient_name, patient_id, user_id in self.patients:
-            widget = PatientListItem(patient_name, patient_id, user_id)
+        for patient_name, patient_id, user_id, birthday in self.patients:
+            widget = PatientListItem(patient_name, patient_id, user_id, birthday)
             self.patient_widgets.append(widget)
             self.list_layout.addWidget(widget)
 
@@ -247,7 +257,7 @@ class PatientListWindow(QWidget):
         conn = self.getDatabaseConnection()
         username = self.parent().parent().username
         res = conn.execute(
-            """SELECT name, id, user_id 
+            """SELECT name, id, user_id, birthday 
                FROM patients p 
                INNER JOIN oncologists o ON p.oncologist_id=o.username
                     AND o.username=?
