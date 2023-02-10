@@ -25,26 +25,31 @@ class LoginWindow(QWidget):
     def __init__(self):
         super().__init__()
 
+        self.setStyleSheet('border-radius: 20px')
+
         self.mainPageLayout = QHBoxLayout()
         self.mainPageLayout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(self.mainPageLayout)
 
         self.login = QWidget()
         self.login.setContentsMargins(0, 0, 0, 0)
         self.login.setStyleSheet(
             "background-color: #ffffff; border-radius: 20px;"
         )
-        self.mainPageLayout.addWidget(self.login)
+        self.mainPageLayout.addWidget(self.login, 55)
 
-        self.mainPicture = QPixmap('3EFB1109-FC90-45A4-A82A-6BC4F169C000_1_201_a.jpeg')
+        # self.mainPicture = QPixmap('3EFB1109-FC90-45A4-A82A-6BC4F169C000_1_201_a.jpeg')
 
         self.picture = QLabel()
-        self.picture.setFixedSize(1000, 1000)
-        self.mainPageLayout.addWidget(self.picture)
-        self.picture.setPixmap(self.mainPicture)
-        self.picture.setMinimumSize(1, 1)
-        self.picture.setContentsMargins(0, 0, 0, 0)
+        self.picture.setStyleSheet('border-image: url("background_image.png"); background-repeat: no-repeat; background-position: center; height: auto; border-radius: 20px')
+        self.mainPageLayout.addWidget(self.picture, 45)
+        # self.picture.setFixedSize(1000, 1000)
+        # self.mainPageLayout.addWidget(self.picture)
+        # # self.picture.setPixmap(self.mainPicture)
+        # self.picture.setMinimumSize(1, 1)
+        # self.picture.setContentsMargins(0, 0, 0, 0)
 
-        self.setLayout(self.mainPageLayout)
+        #  self.setLayout(self.mainPageLayout)
 
         self.layout = QVBoxLayout(self.login)
         self.layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -94,9 +99,9 @@ class LoginWindow(QWidget):
         )
         self.layout.addWidget(self.loginPushButton)
 
-        self.spacer = QSpacerItem(
-            1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
-        )
+        # self.spacer = QSpacerItem(
+        #     1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
+        # )
         # self.layout.addItem(self.spacer, 0, 0)
         # self.layout.addItem(self.spacer, 0, 2)
 
