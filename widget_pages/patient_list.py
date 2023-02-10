@@ -60,21 +60,23 @@ class PatientListItem(QPushButton):
         patient_name_font = QFont("Avenir", 18)
         patient_name_font.setBold(True)
         self.name_label.setFont(patient_name_font)
-        # self.name_label.setStyleSheet("color: #5050ad")
         self.name_label.setFixedWidth(450)
+        self.name_label.setContentsMargins(5, 10, 5, 0)
 
         self.user_id_label = QLabel("Patient ID: " + self.user_id)
         self.user_id_label.setFont(QFont("Avenir", 13, italic=True))
         self.user_id_label.setFixedWidth(450)
         self.user_id_label.setStyleSheet("color: #505050;")
+        self.user_id_label.setContentsMargins(5, 0, 5, 10)
 
         self.birthday_label = QLabel("DOB: " + self.birthday)
         self.birthday_label.setFont(QFont("Avenir", 13))
         self.birthday_label.setFixedWidth(200)
         self.birthday_label.setStyleSheet("color: #505050;")
+        self.birthday_label.setContentsMargins(0, 0, 5, 10)
 
         self.delete_button = QPushButton("Delete")
-        self.delete_button.setFont(QFont("Avenir", 13))
+        self.delete_button.setFont(QFont("Avenir", 15))
         self.delete_button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.delete_button.setStyleSheet(
             """
@@ -83,15 +85,18 @@ class PatientListItem(QPushButton):
                 background-color: #fa7a7a;
                 border: 1px solid #c23329;
                 border-radius: 5px;
-                padding: 10px
+                color: #505050;
+                padding: 20px
             }
 
             QPushButton:hover
             {
                 background-color: #fc5353;
+                color: #000000;
             }
             """
         )
+
         name_spacer = QSpacerItem(
             20, 1, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum
         )
@@ -161,7 +166,7 @@ class PatientListWindow(QWidget):
         self.search_bar_layout = QHBoxLayout()
 
         search_bar_spacer1 = QWidget()
-        search_bar_spacer1.setFixedWidth(5)
+        search_bar_spacer1.setFixedWidth(15)
         self.search_bar_layout.addWidget(search_bar_spacer1)
 
         self.new_patient_button = QPushButton("+")
@@ -221,8 +226,12 @@ class PatientListWindow(QWidget):
         self.id_search_bar.setVisible(False)
         self.search_bar_layout.addWidget(self.id_search_bar)
 
+        search_bar_spacer3 = QWidget()
+        search_bar_spacer3.setFixedWidth(10)
+        self.search_bar_layout.addWidget(search_bar_spacer3)
+
         self.search_mode_button = QPushButton("Advanced Search")
-        self.search_mode_button.setFont(QFont("Avenir", 10))
+        self.search_mode_button.setFont(QFont("Avenir", 13))
         self.search_mode_button.setCheckable(True)
         self.search_mode_button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.search_mode_button.setStyleSheet(
@@ -232,7 +241,7 @@ class PatientListWindow(QWidget):
                 background-color: #fafafa;
                 border: 1px solid #aaaaaa;
                 border-radius: 5px;
-                padding: 5px
+                padding: 10px
             }
 
             QPushButton:hover
