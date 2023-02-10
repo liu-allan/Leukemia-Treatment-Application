@@ -35,7 +35,7 @@ class PatientListItem(QPushButton):
             """
             QPushButton#PatientListItem
             {
-                min-height: 40px;
+                min-height: 70px;
                 background-color: #ebebf2;
                 border: 1px solid #aaaaaa;
                 border-radius: 5px;
@@ -57,21 +57,24 @@ class PatientListItem(QPushButton):
         self.birthday = datetime.strptime(birthday, '%Y%m%d').strftime('%Y-%m-%d')
 
         self.name_label = QLabel(self.patient_name)
-        self.name_label.setFont(QFont("Avenir", 13))
-        self.name_label.setFixedWidth(300)
+        patient_name_font = QFont("Avenir", 18)
+        patient_name_font.setBold(True)
+        self.name_label.setFont(patient_name_font)
+        # self.name_label.setStyleSheet("color: #5050ad")
+        self.name_label.setFixedWidth(450)
 
         self.user_id_label = QLabel("Patient ID: " + self.user_id)
-        self.user_id_label.setFont(QFont("Avenir", 10, italic=True))
-        self.user_id_label.setFixedWidth(300)
+        self.user_id_label.setFont(QFont("Avenir", 13, italic=True))
+        self.user_id_label.setFixedWidth(450)
         self.user_id_label.setStyleSheet("color: #505050;")
 
         self.birthday_label = QLabel("DOB: " + self.birthday)
-        self.birthday_label.setFont(QFont("Avenir", 10))
+        self.birthday_label.setFont(QFont("Avenir", 13))
         self.birthday_label.setFixedWidth(200)
         self.birthday_label.setStyleSheet("color: #505050;")
 
         self.delete_button = QPushButton("Delete")
-        self.delete_button.setFont(QFont("Avenir", 12))
+        self.delete_button.setFont(QFont("Avenir", 13))
         self.delete_button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.delete_button.setStyleSheet(
             """
