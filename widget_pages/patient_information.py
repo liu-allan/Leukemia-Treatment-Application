@@ -166,16 +166,52 @@ class PatientInformationWindow(QWidget):
         self.patientInputLayout.setContentsMargins(0, 0, 0, 0)
 
         self.dosageLabel = Label("6-MP Dosage (mg)")
+        self.dosageLabel.setContentsMargins(20, 0, 0, 0)
         self.dosageEdit = LineEdit("mg")
+        self.dosageEdit.setContentsMargins(0, 0, 20, 0)
+        self.dosageEdit.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.dosageEdit.setStyleSheet(
+            "background-color: #f5f5f5; height: 40px; border-radius: 20px; padding-left: 10px"
+        )
         self.patientInputLayout.addWidget(FormRow(self.dosageLabel, self.dosageEdit))
 
         self.ancCountLabel = Label("ANC Measurement (g/L)")
+        self.ancCountLabel.setContentsMargins(20, 0, 0, 0)
         self.ancMeasurementEdit = LineEdit("g/L")
+        self.ancMeasurementEdit.setContentsMargins(0, 0, 20, 0)
+        self.ancMeasurementEdit.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.ancMeasurementEdit.setStyleSheet(
+            "background-color: #f5f5f5; height: 40px; border-radius: 20px; padding-left: 10px"
+        )
         self.patientInputLayout.addWidget(FormRow(self.ancCountLabel, self.ancMeasurementEdit))
 
         self.dateLabel = Label("Date of ANC Measurement")
+        self.dateLabel.setContentsMargins(20, 0, 0, 0)
         self.dateEdit = QDateEdit()
+        self.dateEdit.setContentsMargins(0, 0, 20, 0)
+        self.dateEdit.setFont(QFont("Avenir", 18))
         self.dateEdit.setFixedWidth(200)
+        self.dateEdit.setStyleSheet("""
+                QDateEdit {
+                    border-radius: 20px;
+                    padding-left: 10px;
+                    background-color: #f5f5f5;
+                    height: 40px;
+                }
+                QDateEdit::down-arrow {
+                    border-image: url(down.png);
+                    border-radius: 20px;
+                    width: 20px;
+                    height: 20px;
+                }
+                QDateEdit::up-arrow {
+                    border-image: url(arrowhead-up.png);
+                    border-radius: 20px;
+                    width: 20px;
+                    height: 20px;
+                }     
+        """)
+  
         self.patientInputLayout.addWidget(FormRow(self.dateLabel, self.dateEdit))
 
         self.errorLabel = Label("")

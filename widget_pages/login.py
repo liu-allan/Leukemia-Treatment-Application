@@ -55,7 +55,6 @@ class LoginWindow(QWidget):
         self.pictureTop.move(215, 290)
         self.mainPageLayout.addChildWidget(self.pictureTop)
         self.pictureTop.raise_()
-        # self.pictureTop.raise_()
 
         self.login = QWidget()
         self.login.setContentsMargins(0, 0, 0, 0)
