@@ -95,6 +95,7 @@ class PatientFormWindow(QWidget):
 
         self.birthdayLabel = Label("Birthday")
         self.birthdayEdit = QDateEdit()
+        self.birthdayEdit.setFont(QFont("Avenir", 15))
         self.birthdayEdit.setFixedWidth(200)
         self.patientFormLayout.addWidget(FormRow(self.birthdayLabel, self.birthdayEdit))
 
@@ -119,6 +120,7 @@ class PatientFormWindow(QWidget):
 
         self.dateLabel = Label("Date of ANC Measurement")
         self.dateEdit = QDateEdit()
+        self.dateEdit.setFont(QFont("Avenir", 15))
         self.dateEdit.setFixedWidth(200)
         self.patientFormLayout.addWidget(FormRow(self.dateLabel, self.dateEdit))
 

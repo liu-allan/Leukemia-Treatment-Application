@@ -156,9 +156,16 @@ class PatientInformationWindow(QWidget):
         self.patientBottomLayout.addWidget(self.patientHistoricGraphs, 3)
 
         self.patientInputRight = QWidget()
-        self.patientInputRight.setContentsMargins(0, 0, 0, 0)
+        self.patientInputRight.setObjectName("PatientInputRight")
+        self.patientInputRight.setContentsMargins(30, 0, 30, 0)
         self.patientInputRight.setStyleSheet(
-            "background-color: #ffffff; border-radius: 20px;"
+            """
+            QWidget#PatientInputRight
+            {
+                background-color: #ffffff;
+                border-radius: 20px;
+            }
+            """
         )
         self.patientBottomLayout.addWidget(self.patientInputRight, 1)
 
@@ -166,9 +173,9 @@ class PatientInformationWindow(QWidget):
         self.patientInputLayout.setContentsMargins(0, 0, 0, 0)
 
         self.dosageLabel = Label("6-MP Dosage (mg)")
-        self.dosageLabel.setContentsMargins(20, 0, 0, 0)
+        self.dosageLabel.setContentsMargins(30, 0, 0, 0)
         self.dosageEdit = LineEdit("mg")
-        self.dosageEdit.setContentsMargins(0, 0, 20, 0)
+        self.dosageEdit.setContentsMargins(0, 0, 30, 0)
         self.dosageEdit.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.dosageEdit.setStyleSheet(
             "background-color: #f5f5f5; height: 40px; border-radius: 20px; padding-left: 10px"
@@ -176,9 +183,9 @@ class PatientInformationWindow(QWidget):
         self.patientInputLayout.addWidget(FormRow(self.dosageLabel, self.dosageEdit))
 
         self.ancCountLabel = Label("ANC Measurement (g/L)")
-        self.ancCountLabel.setContentsMargins(20, 0, 0, 0)
+        self.ancCountLabel.setContentsMargins(30, 0, 0, 0)
         self.ancMeasurementEdit = LineEdit("g/L")
-        self.ancMeasurementEdit.setContentsMargins(0, 0, 20, 0)
+        self.ancMeasurementEdit.setContentsMargins(0, 0, 30, 0)
         self.ancMeasurementEdit.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.ancMeasurementEdit.setStyleSheet(
             "background-color: #f5f5f5; height: 40px; border-radius: 20px; padding-left: 10px"
@@ -186,31 +193,31 @@ class PatientInformationWindow(QWidget):
         self.patientInputLayout.addWidget(FormRow(self.ancCountLabel, self.ancMeasurementEdit))
 
         self.dateLabel = Label("Date of ANC Measurement")
-        self.dateLabel.setContentsMargins(20, 0, 0, 0)
+        self.dateLabel.setContentsMargins(30, 0, 0, 0)
         self.dateEdit = QDateEdit()
-        self.dateEdit.setContentsMargins(0, 0, 20, 0)
+        self.dateEdit.setContentsMargins(0, 0, 30, 0)
         self.dateEdit.setFont(QFont("Avenir", 18))
         self.dateEdit.setFixedWidth(200)
-        self.dateEdit.setStyleSheet("""
-                QDateEdit {
-                    border-radius: 20px;
-                    padding-left: 10px;
-                    background-color: #f5f5f5;
-                    height: 40px;
-                }
-                QDateEdit::down-arrow {
-                    border-image: url(down.png);
-                    border-radius: 20px;
-                    width: 20px;
-                    height: 20px;
-                }
-                QDateEdit::up-arrow {
-                    border-image: url(arrowhead-up.png);
-                    border-radius: 20px;
-                    width: 20px;
-                    height: 20px;
-                }     
-        """)
+        # self.dateEdit.setStyleSheet("""
+        #         QDateEdit {
+        #             border-radius: 20px;
+        #             padding-left: 10px;
+        #             background-color: #f5f5f5;
+        #             height: 40px;
+        #         }
+        #         QDateEdit::down-arrow {
+        #             border-image: url(down.png);
+        #             border-radius: 20px;
+        #             width: 20px;
+        #             height: 20px;
+        #         }
+        #         QDateEdit::up-arrow {
+        #             border-image: url(arrowhead-up.png);
+        #             border-radius: 20px;
+        #             width: 20px;
+        #             height: 20px;
+        #         }     
+        # """)
   
         self.patientInputLayout.addWidget(FormRow(self.dateLabel, self.dateEdit))
 
@@ -230,7 +237,7 @@ class PatientInformationWindow(QWidget):
         self.buttonBox.addButton(self.buttonBox.standardButtons().Save)
         self.buttonBox.addButton(self.buttonBox.standardButtons().Ok)
         self.buttonBox.setFont(QFont("Avenir", 12))
-        self.buttonBox.setFixedWidth(200)
+        self.buttonBox.setFixedWidth(250)
         self.buttonBox.setStyleSheet(
             "background-color: #aaaaee; border-radius: 5px; padding: 10px"
         )
@@ -245,6 +252,7 @@ class PatientInformationWindow(QWidget):
             self.showDashboardWindow
         )
         self.buttonBox.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.buttonBox.setContentsMargins(0, 0, 30, 0)
         self.patientInputLayout.addWidget(FormRow(self.errorLabel, self.buttonBox))
 
         self.patientBottomLayout.addWidget(self.patientInputRight, 2)
@@ -272,6 +280,10 @@ class PatientInformationWindow(QWidget):
             if len(self.ancMeasurement) == 1:
                 pen = None
                 self.ancLine = self.graphWidgetANC.plot(
+                    x=[self.ancMeasurementDate[0].timestamp(), self.ancMeasurementDate[0].timestamp() + 2628288 * 6], y=[self.ancMeasurement[0], self.ancMeasurement[0] + 1], name="ANC Measurement", pen=pen, symbol="o", symbolSize=7, symbolBrush=("#aaaaee")
+                )
+                self.graphWidgetANC.clear()
+                self.ancLine = self.graphWidgetANC.plot(
                     x=[self.ancMeasurementDate[0].timestamp()], y=[self.ancMeasurement[0]], name="ANC Measurement", pen=pen, symbol="o", symbolSize=7, symbolBrush=("#aaaaee")
                 )
             else:
@@ -288,6 +300,10 @@ class PatientInformationWindow(QWidget):
             self.dosageLegend = self.graphWidgetDosages.addLegend()
             if len(self.ancMeasurement) == 1:
                 pen = None
+                self.dosageLine = self.graphWidgetDosages.plot(
+                    x=[self.dosagePrescribedDate[0].timestamp(), self.dosagePrescribedDate[0].timestamp() + 2628288 * 6], y=[self.dosageAmount[0], self.dosageAmount[0] + 1], name="Dosage Amount Prescribed", pen=pen, symbol="o", symbolSize=7, symbolBrush=("#aaaaee")
+                )
+                self.graphWidgetDosages.clear()
                 self.dosageLine = self.graphWidgetDosages.plot(
                     x=[x.timestamp() for x in self.dosagePrescribedDate], y=self.dosageAmount, name="Dosage Amount Prescribed", pen=pen, symbol="o", symbolSize=7, symbolBrush=("#aaaaee")
                 )

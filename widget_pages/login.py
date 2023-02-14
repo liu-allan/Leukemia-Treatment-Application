@@ -40,24 +40,68 @@ class LoginWindow(QWidget):
         self.picture.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.mainPageLayout.addWidget(self.picture, 50)
 
+        self.quotes = QLabel()
+        self.quotes.setObjectName("QuotesBackground")
+        self.quotes.setFrameShape(QFrame.Shape.Box)
+        self.quotes.setFixedWidth(400)
+        self.quotes.setFixedHeight(350)
+        self.quotes.setStyleSheet(
+            """
+            QLabel#QuotesBackground
+            {
+                border-radius: 20px;
+                background-color: rgba(255, 255, 255, 180);
+            }
+            """
+        )
+        self.quotes.move(215, 290)
+        self.mainPageLayout.addChildWidget(self.quotes)
+        self.quotes.raise_()
+
+        self.quotesLayout = QVBoxLayout(self.quotes)
+
         self.pictureTop = QLabel("A graphical tool in comparing two different dosage strategies used in Leukemia treatment")
+        self.pictureTop.setObjectName("QuoteTop")
         self.pictureTop.setFont(QFont("Avenir", 25))
-        self.pictureTop.setFrameShape(QFrame.Shape.Box)
+        # self.pictureTop.setFrameShape(QFrame.Shape.Box)
         self.pictureTop.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        self.pictureTop.setAlignment(Qt.AlignmentFlag.AlignVCenter)
+        self.pictureTop.setAlignment(Qt.AlignmentFlag.AlignBottom)
+        # self.pictureTop.setAlignment(Qt.AlignmentFlag.AlignVCenter)
         self.pictureTop.setWordWrap(True)
-        self.pictureTop.setFixedWidth(400)
-        self.pictureTop.setFixedHeight(350)
+        # self.pictureTop.setFixedWidth(400)
+        # self.pictureTop.setFixedHeight(350)
         self.pictureTop.setStyleSheet(
-            "border-radius: 20px; background-color: rgba(255, 255, 255, 180); color: #5a5a5a; font-weight: bold; padding: 10px"
+            """
+            QLabel#QuoteTop
+            {
+                color: #5a5a5a; font-weight: bold; padding: 10px
+            }
+            """
         )
         self.pictureTop.setContentsMargins(30, 0, 30, 0)
-        self.pictureTop.move(215, 290)
-        self.mainPageLayout.addChildWidget(self.pictureTop)
-        self.pictureTop.raise_()
+        # self.pictureTop.move(215, 290)
+        self.quotesLayout.addWidget(self.pictureTop, 2)
+        # self.pictureTop.raise_()
+
+        self.quoteBottom = QLabel("This can help oncologists to decide what strategy should be applied better for patient's health")
+        self.quoteBottom.setObjectName("QuoteBottom")
+        self.quoteBottom.setFont(QFont("Avenir", 13))
+        self.quoteBottom.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.quoteBottom.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.quoteBottom.setWordWrap(True)
+        self.quoteBottom.setStyleSheet(
+            """
+            QLabel#QuoteBottom
+            {
+                color: #5a5a5a; padding: 10px
+            }
+            """
+        )
+        self.quoteBottom.setContentsMargins(30, 0, 30, 0)
+        self.quotesLayout.addWidget(self.quoteBottom, 1)
 
         self.login = QWidget()
-        self.login.setContentsMargins(0, 0, 0, 0)
+        self.login.setContentsMargins(30, 10, 30, 0)
         self.login.setStyleSheet(
             "background-color: #ffffff; border-radius: 20px;"
         )
