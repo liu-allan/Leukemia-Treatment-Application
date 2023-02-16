@@ -11,6 +11,7 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QDateEdit,
     QDialogButtonBox,
+    QPushButton,
     QVBoxLayout,
     QHBoxLayout,
     QSpacerItem,
@@ -68,11 +69,46 @@ class PatientInformationWindow(QWidget):
         self.sideBarLayout.setContentsMargins(10, 0, 10, 0)
 
         self.sideBar = QWidget()
+        self.sideBar.setObjectName("SideBar")
         self.sideBar.setContentsMargins(0, 0, 0, 0)
         self.sideBar.setStyleSheet(
-            "background-color: #bfd8d2; height: 750; border-radius: 20px;"
+            """
+            QWidget#SideBar{
+                background-color: #bfd8d2;
+                height: auto;
+                border-radius: 20px;
+            }
+            """
         )
         self.sideBarLayout.addWidget(self.sideBar, 1)
+
+        self.menuLayout = QVBoxLayout(self.sideBar)
+
+        self.spacer = QSpacerItem(
+            1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
+        )
+        self.menuLayout.addSpacerItem(self.spacer)
+        self.backButton = QPushButton("Patient List")
+        self.backButton.setContentsMargins(0, 0, 0, 0)
+        self.backButton.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.backButton.setFont(QFont("Avenir", 18))
+        self.backButton.setStyleSheet("background-color: #bfd8d2; border-radius: 20px")
+        self.menuLayout.addWidget(self.backButton, alignment=Qt.AlignmentFlag.AlignCenter)
+
+        self.patientInformationButton = QPushButton("Patient Information")
+        self.patientInformationButton.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.patientInformationButton.setContentsMargins(0, 0, 0, 0)
+        self.patientInformationButton.setFont(QFont("Avenir", 18))
+        self.patientInformationButton.setStyleSheet("background-color: #bfd8d2; border-radius: 20px")
+        self.menuLayout.addWidget(self.patientInformationButton, alignment=Qt.AlignmentFlag.AlignCenter)
+
+        self.dashboardButton = QPushButton("Dashboard")
+        self.dashboardButton.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.dashboardButton.setContentsMargins(0, 0, 0, 0)
+        self.dashboardButton.setFont(QFont("Avenir", 18))
+        self.dashboardButton.setStyleSheet("background-color: #bfd8d2; border-radius: 20px")
+        self.menuLayout.addWidget(self.dashboardButton, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.menuLayout.addSpacerItem(self.spacer)
 
         self.patientInfo = QWidget()
         self.patientInfo.setContentsMargins(0, 0, 0, 0)

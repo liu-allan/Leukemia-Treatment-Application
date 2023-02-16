@@ -131,10 +131,9 @@ class LoginWindow(QWidget):
         self.layout.addWidget(self.titleLabel)
 
         self.usernameLineEdit = QLineEdit()
-        self.usernameLineEdit.setPlaceholderText("Username")
         self.usernameLineEdit.setFont(QFont("Avenir", 18))
         self.usernameLineEdit.setContentsMargins(0, 0, 0, 10)
-
+        self.usernameLineEdit.setPlaceholderText("Username")
         self.usernameLineEdit.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.usernameLineEdit.setStyleSheet(
             "background-color: #f5f5f5; height: 60px; border-radius: 20px;"
@@ -170,6 +169,16 @@ class LoginWindow(QWidget):
         self.layout.addWidget(self.loginPushButton, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.layout.addSpacerItem(self.spacer)
+
+        self.copyRightLabel = QLabel("Copyright @ 2023. LeukemiaCompare. All rights reserved.")
+        self.copyRightLabel.setFont(QFont("Avenir", 12))
+        self.copyRightLabel.setContentsMargins(0, 0, 0, 10)
+        self.copyRightLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.copyRightLabel.setAlignment(Qt.AlignmentFlag.AlignBottom)
+        self.copyRightLabel.setStyleSheet(
+            "color: #5a5a5a"
+        )
+        self.layout.addWidget(self.copyRightLabel, alignment=Qt.AlignmentFlag.AlignCenter)
 
     # self.usernameLineEdit.textChanged.connect(self._on_line_edit_text_changed)
     # self.clear_icon = qta.icon('mdi.delete-circle-outline', color='gray', color_active='black', scale_factor=3) 
