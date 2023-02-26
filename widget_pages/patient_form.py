@@ -113,8 +113,8 @@ class PatientFormWindow(QWidget):
         self.dosageEdit = LineEdit("mg")
         self.patientFormLayout.addWidget(FormRow(self.dosageLabel, self.dosageEdit))
 
-        self.ancCountLabel = Label("ANC Measurement (g/L)")
-        self.ancMeasurementEdit = LineEdit("g/L")
+        self.ancCountLabel = Label("ANC Measurement (# Cells/L) x 1e9")
+        self.ancMeasurementEdit = LineEdit("# Cells/L x 1e9")
         self.patientFormLayout.addWidget(FormRow(self.ancCountLabel, self.ancMeasurementEdit))
 
         self.dateLabel = Label("Date of ANC Measurement")

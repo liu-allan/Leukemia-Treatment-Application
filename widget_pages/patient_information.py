@@ -122,7 +122,7 @@ class PatientInformationWindow(QWidget):
         )
         # Add Axis Labels
         styles = {"color": "#000000", "font": QFont("Avenir", 15)}
-        self.graphWidgetANC.setLabel("left", "ANC Measurement (g/L)", **styles)
+        self.graphWidgetANC.setLabel("left", "ANC Measurement (# Cells/L) x 1e9", **styles)
         self.graphWidgetANC.setLabel("bottom", "ANC Measurement Date", **styles)
         
         # Add grid
@@ -169,8 +169,8 @@ class PatientInformationWindow(QWidget):
         self.dosageEdit = LineEdit("mg")
         self.patientInputLayout.addWidget(FormRow(self.dosageLabel, self.dosageEdit))
 
-        self.ancCountLabel = Label("ANC Measurement (g/L)")
-        self.ancMeasurementEdit = LineEdit("g/L")
+        self.ancCountLabel = Label("ANC Measurement (# Cells/L) x 1e9")
+        self.ancMeasurementEdit = LineEdit("# Cells/L x 1e9")
         self.patientInputLayout.addWidget(FormRow(self.ancCountLabel, self.ancMeasurementEdit))
 
         self.dateLabel = Label("Date of ANC Measurement")
