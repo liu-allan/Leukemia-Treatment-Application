@@ -13,6 +13,8 @@ runModel(1.71, 3.0, [50.0, 70.0], [2.1, 2.0, 2.3])
 Given 2 previous dosages and ANC measurements and one new measurement (2.3), find the anticipatory dosage.
 runModel will automatically follow the reactive dosage strategy, therefore we do not need 3 dosages.
 
+The outputs are all lists of length 21*numCycles*1000
+
 """
 def runModel(bsa: float, numCycles: int, dosage: list[float], ANC_measurements: list[float]):
     
