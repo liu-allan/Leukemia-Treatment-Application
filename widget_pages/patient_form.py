@@ -165,11 +165,9 @@ class PatientFormWindow(QWidget):
 
     def selectedAllType(self, index):
         self.allType = self.allTypeSelect.itemText(index)  # Get the text at index.
-        print("Current ALL type: ", self.allType)
 
     def selectedBloodType(self, index):
         self.bloodType = self.bloodTypeSelect.itemText(index)  # Get the text at index.
-        print("Current blood type: ", self.bloodType)
 
     def displayParameters(self):
         self.patientLineEdit.clear()
@@ -186,9 +184,7 @@ class PatientFormWindow(QWidget):
             self.patientLineEdit.setText(self.patient.name)
             self.weightEdit.setText(str(self.patient.weight))
             self.heightEdit.setText(str(self.patient.height))
-            print(self.patient.bloodType)
             self.bloodTypeSelect.setCurrentText(self.patient.bloodType)
-            print(self.patient.allType)
             self.allTypeSelect.setCurrentText(self.patient.allType)
             self.birthdayEdit.setDate(
                 QDate.fromString(self.patient.birthday, "yyyyMMdd")
@@ -234,29 +230,17 @@ class PatientFormWindow(QWidget):
             name = self.patientLineEdit.text()
             assert name != ""
             date = self.dateEdit.date().toString("yyyyMMdd")
-            print(name + " " + date)
             weight = float(self.weightEdit.text())
-            print(weight)
             height = float(self.heightEdit.text())
-            print(height)
             allType = self.allTypeSelect.currentText()
-            print(allType)
             bloodType = self.bloodTypeSelect.currentText()
-            print(bloodType)
             birthday = self.birthdayEdit.date().toString("yyyyMMdd")
-            print(birthday)
             phoneNumber = self.phoneNumberFormatterReverse()
-            print(phoneNumber)
             assignedDoctor = self.patient.assignedDoctor
-            print(assignedDoctor)
             bsa = float(self.bodySurfaceAreaMeasurement.text())
-            print(bsa)
             ancMeasurement = float(self.ancMeasurementEdit.text())
-            print(ancMeasurement)
             dosageMeasurement = float(self.dosageEdit.text())
-            print(dosageMeasurement)
             age = self.calculateAge()
-            print(age)
 
             conn = self.parent().parent().getDatabaseConnection()
             patient_id = self.patient.id if self.patient else -1
@@ -358,34 +342,20 @@ class PatientFormWindow(QWidget):
     def showPatientInformationWindow(self):
         try:
             name = self.patientLineEdit.text()
-            print(name)
             assert name != ""
             date = self.dateEdit.date().toPyDate()
-            print(date)
             weight = float(self.weightEdit.text())
-            print(weight)
             height = float(self.heightEdit.text())
-            print(height)
             dosage = float(self.dosageEdit.text())
-            print(dosage)
             allType = self.allTypeSelect.currentText()
-            print(allType)
             age = self.calculateAge()
-            print(age)
             bloodType = self.bloodTypeSelect.currentText()
-            print(bloodType)
             birthday = self.birthdayEdit.date().toPyDate()
-            print(birthday)
             phoneNumber = self.phoneNumberFormatterReverse()
-            print(phoneNumber)
             assignedDoctor = self.patient.assignedDoctor
-            print(assignedDoctor)
             ancMeasurement = float(self.ancMeasurementEdit.text())
-            print(ancMeasurement)
             dosageMeasurement = float(self.dosageEdit.text())
-            print(dosageMeasurement)
             bsa = float(self.bodySurfaceAreaMeasurement.text())
-            print(bsa)
 
         except:
             msg = "Input fields must not be empty"
