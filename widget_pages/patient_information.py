@@ -266,11 +266,9 @@ class PatientInformationWindow(QWidget):
             name = self.patient.name
             assert name != ""
             date = self.dateEdit.date().toString("yyyyMMdd")
-            print(name + " " + date)
             weight = self.patient.weight
             height = self.patient.height
             bsa = math.sqrt(height * weight / 3600)
-            print(bsa)
             allType = self.patient.allType
             age = self.patient.age
             bloodType = self.patient.bloodType
@@ -279,8 +277,6 @@ class PatientInformationWindow(QWidget):
             assignedDoctor = self.patient.assignedDoctor
             ancMeasurement = float(self.ancMeasurementEdit.text())
             dosageMeasurement = float(self.dosageEdit.text())
-            print(ancMeasurement)
-            print(dosageMeasurement)
 
             conn = self.parent().parent().getDatabaseConnection()
             patient_id = self.patient.id if self.patient else -1
