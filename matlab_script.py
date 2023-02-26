@@ -14,7 +14,7 @@ Given 2 previous dosages and ANC measurements and one new measurement (2.3), fin
 runModel will automatically follow the reactive dosage strategy, therefore we do not need 3 dosages.
 
 """
-def runModel(bsa, numCycles, dosage, ANC_measurements):
+def runModel(bsa: float, numCycles: int, dosage: list[float], ANC_measurements: list[float]):
     
     eng = matlab.engine.start_matlab()
     s = eng.genpath('Leukemia-Treatment-Project')
