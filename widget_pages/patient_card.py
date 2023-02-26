@@ -224,7 +224,6 @@ class PatientCard(QWidget):
     def getPatientInfo(self, patient):
         self.patient = patient
         self.displayPatientInfo()
-        print(patient.name)
     
     def displayPatientInfo(self):
         self.patientName.clear()

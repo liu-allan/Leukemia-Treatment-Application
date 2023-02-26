@@ -140,4 +140,4 @@ class ToolBar(QWidget):
         self.parent().parent().showLoginWindow()
 
     def userProfileClick(self, s):
-        print("click", s)
+        return
