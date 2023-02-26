@@ -18,7 +18,7 @@ from PyQt6.QtWidgets import (
     QToolBar,
 )
 from PyQt6 import uic
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QFont, QIcon
 import qtawesome as qta
 
@@ -36,7 +36,7 @@ class LoginWindow(QWidget):
         self.setLayout(self.mainPageLayout)
 
         self.picture = QLabel()
-        self.picture.setStyleSheet('border-image: url("background.png"); background-repeat: no-repeat; background-position: center; height: auto; border-radius: 20px')
+        self.picture.setStyleSheet('border-image: url("icons/background.png"); background-repeat: no-repeat; background-position: center; height: auto; border-radius: 20px')
         self.picture.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.mainPageLayout.addWidget(self.picture, 50)
 
@@ -108,14 +108,27 @@ class LoginWindow(QWidget):
         self.mainPageLayout.addWidget(self.login, 50)
 
         self.layout = QVBoxLayout(self.login)
+        
+        self.title = QWidget()
+        self.title.setContentsMargins(0, 0, 0, 0)
+
+        self.titleLayout = QHBoxLayout(self.title)
+        self.titleLayout.setContentsMargins(0, 0, 10, 0)
+        self.titleLayout.setAlignment(Qt.AlignmentFlag.AlignRight)
+
+        self.appNameIcon = QLabel()
+        self.appNameIcon.setPixmap(QIcon("icons/comparation.png").pixmap(QSize(28, 28)))
+        self.titleLayout.addWidget(self.appNameIcon)
 
         self.appName = QLabel()
         self.appName.setText('<font color="black">Leukemia</font><font color="#aaaaee">Compare</font>')
         self.appName.setFont(QFont("Avenir", 30))
-        self.appName.setContentsMargins(0, 0, 10, 0)
+        self.appName.setContentsMargins(0, 0, 0, 0)
         self.appName.setAlignment(Qt.AlignmentFlag.AlignRight)
         self.appName.setStyleSheet("font-weight: bold;")
-        self.layout.addWidget(self.appName)
+        self.titleLayout.addWidget(self.appName)
+
+        self.layout.addWidget(self.title)
 
         self.spacer = QSpacerItem(
             1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
@@ -133,8 +146,8 @@ class LoginWindow(QWidget):
         self.usernameLineEdit = QLineEdit()
         self.usernameLineEdit.setFont(QFont("Avenir", 18))
         self.usernameLineEdit.setContentsMargins(0, 0, 0, 10)
-        self.usernameLineEdit.setPlaceholderText("Username")
         self.usernameLineEdit.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.usernameLineEdit.setPlaceholderText("Username")
         self.usernameLineEdit.setStyleSheet(
             "background-color: #f5f5f5; height: 60px; border-radius: 20px;"
         )
@@ -158,7 +171,10 @@ class LoginWindow(QWidget):
         self.errorLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.layout.addWidget(self.errorLabel)
 
-        self.loginPushButton = QPushButton("Login")
+        self.loginPushButton = QPushButton("Login ")
+        self.loginPushButton.setIcon(QIcon("icons/login.png"))
+        self.loginPushButton.setIconSize(QSize(20, 20))
+        self.loginPushButton.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
         self.loginPushButton.clicked.connect(self.loginPushed)
         self.loginPushButton.setCursor(Qt.CursorShape.PointingHandCursor)
         self.loginPushButton.setFixedWidth(200)
