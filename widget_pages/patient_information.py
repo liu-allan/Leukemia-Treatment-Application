@@ -168,7 +168,7 @@ class PatientInformationWindow(QWidget):
         )
         # Add Axis Labels
         styles = {"color": "#000000", "font": QFont("Avenir", 15)}
-        self.graphWidgetANC.setLabel("left", "ANC Measurement (g/L)", **styles)
+        self.graphWidgetANC.setLabel("left", "ANC Measurement (# Cells/L) x 1e9", **styles)
         self.graphWidgetANC.setLabel("bottom", "ANC Measurement Date", **styles)
         
         # Add grid
@@ -228,9 +228,9 @@ class PatientInformationWindow(QWidget):
         )
         self.patientInputLayout.addWidget(FormRow(self.dosageLabel, self.dosageEdit))
 
-        self.ancCountLabel = Label("ANC Measurement (g/L)")
+        self.ancCountLabel = Label("ANC Measurement (# Cells/L) x 1e9")
         self.ancCountLabel.setContentsMargins(30, 0, 0, 0)
-        self.ancMeasurementEdit = LineEdit("g/L")
+        self.ancMeasurementEdit = LineEdit("# Cells/L x 1e9")
         self.ancMeasurementEdit.setContentsMargins(0, 0, 30, 0)
         self.ancMeasurementEdit.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.ancMeasurementEdit.setStyleSheet(
@@ -364,11 +364,9 @@ class PatientInformationWindow(QWidget):
             name = self.patient.name
             assert name != ""
             date = self.dateEdit.date().toString("yyyyMMdd")
-            print(name + " " + date)
             weight = self.patient.weight
             height = self.patient.height
             bsa = math.sqrt(height * weight / 3600)
-            print(bsa)
             allType = self.patient.allType
             age = self.patient.age
             bloodType = self.patient.bloodType
@@ -377,8 +375,6 @@ class PatientInformationWindow(QWidget):
             assignedDoctor = self.patient.assignedDoctor
             ancMeasurement = float(self.ancMeasurementEdit.text())
             dosageMeasurement = float(self.dosageEdit.text())
-            print(ancMeasurement)
-            print(dosageMeasurement)
 
             conn = self.parent().parent().getDatabaseConnection()
             patient_id = self.patient.id if self.patient else -1
