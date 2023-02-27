@@ -179,6 +179,7 @@ class LoginWindow(QWidget):
         self.loginPushButton.setCursor(Qt.CursorShape.PointingHandCursor)
         self.loginPushButton.setFixedWidth(200)
         self.loginPushButton.setFont(QFont("Avenir", 18))
+        self.loginPushButton.setShortcut("Return")
         self.loginPushButton.setStyleSheet(
             "background-color: #aaaaee; border-radius: 20px; padding: 10px"
         )

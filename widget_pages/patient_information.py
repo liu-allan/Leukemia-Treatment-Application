@@ -16,6 +16,7 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QSpacerItem,
     QSizePolicy,
+    QMessageBox
 )
 from PyQt6.QtGui import QDoubleValidator, QFont, QIcon
 from widget_pages.patient_card import PatientCard
@@ -86,43 +87,56 @@ class PatientInformationWindow(QWidget):
         self.menuLayout = QVBoxLayout(self.sideBar)
 
         self.spacer = QSpacerItem(
-            1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
+            1, 50, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
         )
         # self.menuLayout.addSpacerItem(self.spacer)
         self.backButton = QPushButton()
         self.backButton.setIcon(QIcon("icons/user.png"))
         self.backButton.setIconSize(QSize(30, 30))
         self.backButton.setToolTip("Patient List")
-        self.backButton.setContentsMargins(0, 0, 0, 0)
+        self.backButton.setContentsMargins(0, 70, 0, 0)
         self.backButton.setCursor(Qt.CursorShape.PointingHandCursor)
         self.backButton.setFont(QFont("Avenir", 18))
         self.backButton.setStyleSheet("background-color: #bfd8d2; border-radius: 20px")
-        self.menuLayout.addWidget(self.backButton, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.backButton.clicked.connect(self.backButtonClicked)
+        self.menuLayout.addWidget(self.backButton)
 
         self.patientInformationButton = QPushButton()
-        self.patientInformationButton.setIcon(QIcon("icons/info.png"))
-        self.patientInformationButton.setIconSize(QSize(30, 30))
+        self.patientInformationButton.setIcon(QIcon("icons/information.png"))
+        self.patientInformationButton.setIconSize(QSize(35, 35))
         self.patientInformationButton.setToolTip("Patient Information")
         self.patientInformationButton.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.patientInformationButton.setContentsMargins(0, 0, 0, 0)
+        self.patientInformationButton.setContentsMargins(0, 15, 0, 0)
         self.patientInformationButton.setFont(QFont("Avenir", 18))
         self.patientInformationButton.setStyleSheet("background-color: #bfd8d2; border-radius: 20px")
-        self.menuLayout.addWidget(self.patientInformationButton, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.menuLayout.addWidget(self.patientInformationButton)
 
         self.dashboardButton = QPushButton()
         self.dashboardButton.setIcon(QIcon("icons/dashboard.png"))
         self.dashboardButton.setIconSize(QSize(30, 30))
         self.dashboardButton.setToolTip("Dashboard")
         self.dashboardButton.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.dashboardButton.setContentsMargins(0, 0, 0, 0)
+        self.dashboardButton.setContentsMargins(0, 15, 0, 0)
         self.dashboardButton.setFont(QFont("Avenir", 18))
+        self.dashboardButton.clicked.connect(self.dashboardButtonClicked)
         self.dashboardButton.setStyleSheet("background-color: #bfd8d2; border-radius: 20px")
-        self.menuLayout.addWidget(self.dashboardButton, alignment=Qt.AlignmentFlag.AlignCenter)
-        self.menuLayout.addSpacerItem(self.spacer)
+        self.menuLayout.addWidget(self.dashboardButton)
+
+        self.logoutButton = QPushButton()
+        self.logoutButton.setIcon(QIcon("icons/power-on.png"))
+        self.logoutButton.setIconSize(QSize(30, 30))
+        self.logoutButton.setToolTip("Log Out")
+        self.logoutButton.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.logoutButton.setContentsMargins(0, 0, 0, 20)
+        self.logoutButton.setFont(QFont("Avenir", 18))
+        self.logoutButton.clicked.connect(self.logoffButtonClicked)
+        self.logoutButton.setStyleSheet("background-color: #bfd8d2; border-radius: 20px")
+        self.menuLayout.addWidget(self.logoutButton)
+        self.menuLayout.addSpacing(450)
 
         self.patientInfo = QWidget()
         self.patientInfo.setContentsMargins(0, 0, 0, 0)
-        self.sideBarLayout.addWidget(self.patientInfo, 9)
+        self.sideBarLayout.addWidget(self.patientInfo, 14)
 
         self.layout = QVBoxLayout(self.patientInfo)
         self.layout.setContentsMargins(10, 0, 0, 0)
@@ -303,6 +317,44 @@ class PatientInformationWindow(QWidget):
 
         self.patientBottomLayout.addWidget(self.patientInputRight, 2)
         self.setLayout(self.sideBarLayout)
+
+    def backButtonClicked(self):
+        self.showPatientListWindow()
+    
+    def dashboardButtonClicked(self):
+        self.showDashboardWindow()
+
+    def logoffButtonClicked(self):
+        dlg = QMessageBox()
+        dlg.setWindowTitle("Log Off")
+        dlg.setText("Are you sure you want to log off?")
+        dlg.addButton("Yes", QMessageBox.ButtonRole.YesRole)
+        dlg.addButton("No", QMessageBox.ButtonRole.NoRole)
+        for button in dlg.findChild(QDialogButtonBox).findChildren(QPushButton):
+            button.setCursor(Qt.CursorShape.PointingHandCursor)
+        
+        dlg.setStyleSheet(
+            """
+                QMessageBox {
+                    background-color: #ffffff; border-radius: 20px
+                }
+            """
+        )
+
+        dlg.setFont(QFont("Avenir", 15))
+        button = dlg.exec()
+
+        # Yes button is pressed
+        if button == 0:
+            # link to login page
+            self.updateUsername("")
+            self.showLoginWindow()
+
+    def updateUsername(self, username):
+        self.parent().parent().updateUsername(username)
+
+    def showLoginWindow(self):
+        self.parent().parent().showLoginWindow()
 
     def displayParameters(self):
         self.dosageEdit.clear()
