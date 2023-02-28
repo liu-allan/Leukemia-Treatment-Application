@@ -18,8 +18,9 @@ class ToolBar(QWidget):
 
         # Top tool bar that shows page name + user account
         self.toolBar = QToolBar("tool bar")
+        self.toolBar.setContentsMargins(0, 0, 0, 0)
         self.toolBar.setStyleSheet(
-            "background-color: #a9c7c5; height : 50; border-radius: 10px;"
+            "background-color: #a9c7c5; height : 100; border-radius: 10px;"
         )
 
         self.dashboard_label = QLabel(page_name)
@@ -75,11 +76,11 @@ class ToolBar(QWidget):
         self.logout_button = QPushButton("Log Off", self)
         self.logout_button.setFixedHeight(40)
         self.logout_button.setStyleSheet(
-            "background-color: #bbbbbb; border-radius: 7px; padding: 10px"
+            "background-color: #d3d3d3; border-radius: 7px; padding: 10px"
         )
         self.logout_button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.logout_button.clicked.connect(self.logoffClicked)
-        self.logout_button.setFont(QFont("Avenir", 10))
+        self.logout_button.setFont(QFont("Avenir", 15))
         self.toolBar.addWidget(self.logout_button)
 
         spacer2 = QWidget()
@@ -139,4 +140,4 @@ class ToolBar(QWidget):
         self.parent().parent().showLoginWindow()
 
     def userProfileClick(self, s):
-        print("click", s)
+        return

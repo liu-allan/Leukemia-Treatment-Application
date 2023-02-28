@@ -16,6 +16,7 @@ from widget_pages.dashboard import DashboardWindow
 from widget_pages.login import LoginWindow
 from widget_pages.patient_information import PatientInformationWindow
 from widget_pages.patient_list import PatientListWindow
+from widget_pages.patient_form import PatientFormWindow
 from widget_pages.toolbar import ToolBar
 
 import sqlite3
@@ -43,10 +44,12 @@ class MainWindow(QMainWindow):
         self.patientListWindow = PatientListWindow()
         self.patientInfoWindow = PatientInformationWindow()
         self.dashboardWindow = DashboardWindow()
+        self.patientFormWindow = PatientFormWindow()
         self.stackLayout.addWidget(self.loginWindow)
         self.stackLayout.addWidget(self.patientListWindow)
         self.stackLayout.addWidget(self.patientInfoWindow)
         self.stackLayout.addWidget(self.dashboardWindow)
+        self.stackLayout.addWidget(self.patientFormWindow)
 
         widget = QWidget()
         widget.setLayout(pageLayout)
@@ -60,27 +63,37 @@ class MainWindow(QMainWindow):
     def updateSelectedPatient(self, patient_id):
         res = self.db_conn.execute(
             # """SELECT name, weight, height, dosage, time, anc_measurement 
-            """SELECT name, weight, height, time, anc_measurement 
+            """SELECT name, weight, height, patient_id, phone_number, birthday, age, 
+                      blood_type, all_type, body_surface_area, time, dosage_measurement, anc_measurement, oncologist_id 
                FROM measurements m 
                INNER JOIN patients p ON m.patient_id=p.id 
-                    AND m.patient_id=? ORDER BY time DESC
+                    AND m.patient_id=? ORDER BY time ASC
             """,
             (patient_id,),
         )
-        row = res.fetchone()
-        if row is None:
+        records = res.fetchall()
+        if records is None:
             self.selected_patient = None
         else:
-            name = row[0]
-            weight = row[1]
-            height = row[2]
-            # TODO: @anne will sort this dosage out, not sure what she needs for her graphs
-            # dosage = row[3]
-            dosage = 4.0
-            anc_measurements = (row[4], row[3])
+            name = records[0][0]
+            weight = records[0][1]
+            height = records[0][2]
+            patient_id = records[0][3]
+            phone_number = records[0][4]
+            birthday = records[0][5]
+            age = records[0][6]
+            blood_type = records[0][7]
+            all_type = records[0][8]
+            body_surface_area = records[0][9]
+            oncologist_id = records[0][13]
+            anc_measurements = []
+            dosage_measurements = []
+            for row in records:
+                dosage_measurements.append((row[11], row[10]))
+                anc_measurements.append((row[12], row[10]))
 
             self.selected_patient = Patient(
-                patient_id, name, weight, height, dosage, anc_measurements
+                patient_id, name, weight, height, anc_measurements, birthday, dosage_measurements, phone_number, age, blood_type, all_type, body_surface_area, oncologist_id
             )
 
     def updateToolBar(self):
@@ -108,6 +121,12 @@ class MainWindow(QMainWindow):
         self.current_page = "Dashboard"
         self.updateToolBar()
         self.dashboardWindow.updatePatientInfo()
+
+    def showPatientFormWindow(self):
+        self.stackLayout.setCurrentIndex(4)
+        self.current_page = "Patient Form"
+        self.updateToolBar()
+        self.patientFormWindow.updatePatientInfo()
 
     def getDatabaseConnection(self):
         return self.db_conn
