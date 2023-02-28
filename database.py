@@ -14,6 +14,7 @@ conn.execute(
             (username TEXT NOT NULL,
              password TEXT NOT NULL,
              full_name TEXT NOT NULL,
+             is_admin INTEGER DEFAULT "FALSE" NOT NULL,
              PRIMARY KEY(username));
     """
 )
@@ -66,8 +67,8 @@ hash = bcrypt.hashpw(bytes, salt)
 
 # conn.execute(
 #     '''
-#       INSERT INTO oncologists (username, password, full_name)
-#       VALUES ('angus', ?, 'Angus Wang')
+#       INSERT INTO oncologists (username, password, full_name, is_admin)
+#       VALUES ('angus', ?, 'Angus Wang', 'FALSE')
 #     ''',
 #     (hash,),
 # )
@@ -89,6 +90,10 @@ hash = bcrypt.hashpw(bytes, salt)
 conn.execute(
     "PRAGMA foreign_keys = ON"
 )  # enable foreign key cascade on delete
+
+# conn.execute(
+#     "DROP TABLE oncologists"
+# ) 
 
 conn.commit()  # this is necessary to confirm entry into the database
 

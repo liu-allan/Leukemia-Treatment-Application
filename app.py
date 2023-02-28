@@ -17,6 +17,7 @@ from widget_pages.login import LoginWindow
 from widget_pages.patient_information import PatientInformationWindow
 from widget_pages.patient_list import PatientListWindow
 from widget_pages.patient_form import PatientFormWindow
+from widget_pages.oncologist_form import OncologistFormWindow
 from widget_pages.toolbar import ToolBar
 
 import sqlite3
@@ -32,6 +33,7 @@ class MainWindow(QMainWindow):
         self.user_full_name = ""
         self.selected_patient = None
         self.current_page = "Login"
+        self.is_admin_user = False
 
         pageLayout = QVBoxLayout()
         self.stackLayout = QStackedLayout()
@@ -46,11 +48,13 @@ class MainWindow(QMainWindow):
         self.patientInfoWindow = PatientInformationWindow()
         self.dashboardWindow = DashboardWindow()
         self.patientFormWindow = PatientFormWindow()
+        self.oncologistFormWindow = OncologistFormWindow()
         self.stackLayout.addWidget(self.loginWindow)
         self.stackLayout.addWidget(self.patientListWindow)
         self.stackLayout.addWidget(self.patientInfoWindow)
         self.stackLayout.addWidget(self.dashboardWindow)
         self.stackLayout.addWidget(self.patientFormWindow)
+        self.stackLayout.addWidget(self.oncologistFormWindow)
 
         widget = QWidget()
         widget.setLayout(pageLayout)
@@ -119,7 +123,10 @@ class MainWindow(QMainWindow):
 
     def showPatientListWindow(self):
         self.stackLayout.setCurrentIndex(1)
-        self.current_page = "Patient List"
+        if (self.is_admin_user):
+            self.current_page = "Oncologist List"
+        else:
+            self.current_page = "Patient List"
         self.updateToolBar()
         self.patientListWindow.updatePatientList()
 
@@ -140,6 +147,11 @@ class MainWindow(QMainWindow):
         self.current_page = "Patient Form"
         self.updateToolBar()
         self.patientFormWindow.updatePatientInfo()
+
+    def showOncologistFormWindow(self):
+        self.stackLayout.setCurrentIndex(5)
+        self.current_page = "Oncologist Form"
+        self.updateToolBar()
 
     def getDatabaseConnection(self):
         return self.db_conn

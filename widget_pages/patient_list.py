@@ -26,7 +26,7 @@ class SearchMode(Enum):
     ADVANCED = 1
 
 class PatientListItem(QPushButton):
-    def __init__(self, patient_name, patient_id, user_id, birthday):
+    def __init__(self, patient_name, patient_id, user_id, birthday, is_admin=False):
         super(PatientListItem, self).__init__()
 
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
@@ -49,12 +49,14 @@ class PatientListItem(QPushButton):
             """
         )
         self.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.clicked.connect(self.showPatientInfo)
+        if (not is_admin):
+            self.clicked.connect(self.showPatientInfo)
 
         self.patient_name = patient_name
         self.patient_id = patient_id
         self.user_id = user_id
-        self.birthday = datetime.strptime(birthday, '%Y%m%d').strftime('%Y-%m-%d')
+        self.is_admin = is_admin
+        self.birthday = datetime.strptime(birthday, '%Y%m%d').strftime('%Y-%m-%d') if birthday else ""
 
         self.name_label = QLabel(self.patient_name)
         patient_name_font = QFont("Avenir", 18)
@@ -63,17 +65,23 @@ class PatientListItem(QPushButton):
         self.name_label.setFixedWidth(450)
         self.name_label.setContentsMargins(5, 10, 5, 0)
 
-        self.user_id_label = QLabel("Patient ID: " + self.user_id)
+        if (is_admin):
+            self.user_id_label = QLabel("Oncologist Username: " + self.user_id)
+        else:
+            self.user_id_label = QLabel("Patient ID: " + self.user_id)
         self.user_id_label.setFont(QFont("Avenir", 13, italic=True))
         self.user_id_label.setFixedWidth(450)
         self.user_id_label.setStyleSheet("color: #505050;")
         self.user_id_label.setContentsMargins(5, 0, 5, 10)
 
-        self.birthday_label = QLabel("DOB: " + self.birthday)
-        self.birthday_label.setFont(QFont("Avenir", 13))
-        self.birthday_label.setFixedWidth(200)
-        self.birthday_label.setStyleSheet("color: #505050;")
-        self.birthday_label.setContentsMargins(0, 0, 5, 10)
+        if (not is_admin):
+            self.birthday_label = QLabel("DOB: " + self.birthday)
+            self.birthday_label.setFont(QFont("Avenir", 13))
+            self.birthday_label.setFixedWidth(200)
+            self.birthday_label.setStyleSheet("color: #505050;")
+            self.birthday_label.setContentsMargins(0, 0, 5, 10)
+        else:
+            self.birthday_label = QLabel()
 
         self.delete_button = QPushButton("Delete")
         self.delete_button.setFont(QFont("Avenir", 15))
@@ -135,13 +143,22 @@ class PatientListItem(QPushButton):
                 "PRAGMA foreign_keys = ON"
             )  # enable foreign key cascade on delete for the measurements table
             
-            conn.execute(
-                """
-                DELETE FROM patients 
-                WHERE id=? 
-                """,
-                (self.patient_id,),
-            )
+            if (self.is_admin):
+                conn.execute(
+                    """
+                    DELETE FROM oncologists 
+                    WHERE username=? 
+                    """,
+                    (self.user_id,),
+                )
+            else:
+                conn.execute(
+                    """
+                    DELETE FROM patients 
+                    WHERE id=? 
+                    """,
+                    (self.patient_id,),
+                )
             conn.commit()
 
         except sqlite3.Error as er:
@@ -315,7 +332,10 @@ class PatientListWindow(QWidget):
     def showPatientFormWindow(self):
         # whenever you press "Add Patient", should clear state so the fields aren't pre-populated
         self.parent().parent().selected_patient = None
-        self.parent().parent().showPatientFormWindow()
+        if (self.parent().parent().is_admin_user):
+            self.parent().parent().showOncologistFormWindow()
+        else:
+            self.parent().parent().showPatientFormWindow()
 
     def showPatientInformationWindow(self, patient_id=-1):
         self.parent().parent().updateSelectedPatient(patient_id)
@@ -332,10 +352,16 @@ class PatientListWindow(QWidget):
         )
         self.list_layout = QVBoxLayout()
 
-        for patient_name, patient_id, user_id, birthday in self.patients:
-            widget = PatientListItem(patient_name, patient_id, user_id, birthday)
-            self.patient_widgets.append(widget)
-            self.list_layout.addWidget(widget)
+        if (self.parent().parent().is_admin_user):
+            for username, full_name in self.patients:
+                widget = PatientListItem(full_name, "", username, "", True)
+                self.patient_widgets.append(widget)
+                self.list_layout.addWidget(widget)
+        else:
+            for patient_name, patient_id, user_id, birthday in self.patients:
+                widget = PatientListItem(patient_name, patient_id, user_id, birthday)
+                self.patient_widgets.append(widget)
+                self.list_layout.addWidget(widget)
 
         bottom_spacer = QSpacerItem(
             1, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding
@@ -349,14 +375,23 @@ class PatientListWindow(QWidget):
     def updatePatientList(self):
         conn = self.getDatabaseConnection()
         username = self.parent().parent().username
-        res = conn.execute(
-            """SELECT name, id, user_id, birthday 
-               FROM patients p 
-               INNER JOIN oncologists o ON p.oncologist_id=o.username
-                    AND o.username=?
-            """,
-            (username,),
-        )
+
+        if (self.parent().parent().is_admin_user):
+            res = conn.execute(
+                """SELECT username, full_name
+                FROM oncologists o
+                WHERE o.is_admin='FALSE'
+                """
+            ) 
+        else:
+            res = conn.execute(
+                """SELECT name, id, user_id, birthday 
+                FROM patients p 
+                INNER JOIN oncologists o ON p.oncologist_id=o.username
+                        AND o.username=?
+                """,
+                (username,),
+            )
 
         rows = res.fetchall()
         self.patients.clear()
