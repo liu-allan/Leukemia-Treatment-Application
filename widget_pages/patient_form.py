@@ -95,6 +95,7 @@ class PatientFormWindow(QWidget):
 
         self.birthdayLabel = Label("Birthday")
         self.birthdayEdit = QDateEdit()
+        self.birthdayEdit.setFont(QFont("Avenir", 15))
         self.birthdayEdit.setFixedWidth(200)
         self.patientFormLayout.addWidget(FormRow(self.birthdayLabel, self.birthdayEdit))
 
@@ -113,12 +114,13 @@ class PatientFormWindow(QWidget):
         self.dosageEdit = LineEdit("mg")
         self.patientFormLayout.addWidget(FormRow(self.dosageLabel, self.dosageEdit))
 
-        self.ancCountLabel = Label("ANC Measurement (g/L)")
-        self.ancMeasurementEdit = LineEdit("g/L")
+        self.ancCountLabel = Label("ANC Measurement (# Cells/L) x 1e9")
+        self.ancMeasurementEdit = LineEdit("# Cells/L x 1e9")
         self.patientFormLayout.addWidget(FormRow(self.ancCountLabel, self.ancMeasurementEdit))
 
         self.dateLabel = Label("Date of ANC Measurement")
         self.dateEdit = QDateEdit()
+        self.dateEdit.setFont(QFont("Avenir", 15))
         self.dateEdit.setFixedWidth(200)
         self.patientFormLayout.addWidget(FormRow(self.dateLabel, self.dateEdit))
 
@@ -165,11 +167,9 @@ class PatientFormWindow(QWidget):
 
     def selectedAllType(self, index):
         self.allType = self.allTypeSelect.itemText(index)  # Get the text at index.
-        print("Current ALL type: ", self.allType)
 
     def selectedBloodType(self, index):
         self.bloodType = self.bloodTypeSelect.itemText(index)  # Get the text at index.
-        print("Current blood type: ", self.bloodType)
 
     def displayParameters(self):
         self.patientLineEdit.clear()
@@ -186,9 +186,7 @@ class PatientFormWindow(QWidget):
             self.patientLineEdit.setText(self.patient.name)
             self.weightEdit.setText(str(self.patient.weight))
             self.heightEdit.setText(str(self.patient.height))
-            print(self.patient.bloodType)
             self.bloodTypeSelect.setCurrentText(self.patient.bloodType)
-            print(self.patient.allType)
             self.allTypeSelect.setCurrentText(self.patient.allType)
             self.birthdayEdit.setDate(
                 QDate.fromString(self.patient.birthday, "yyyyMMdd")
@@ -234,29 +232,17 @@ class PatientFormWindow(QWidget):
             name = self.patientLineEdit.text()
             assert name != ""
             date = self.dateEdit.date().toString("yyyyMMdd")
-            print(name + " " + date)
             weight = float(self.weightEdit.text())
-            print(weight)
             height = float(self.heightEdit.text())
-            print(height)
             allType = self.allTypeSelect.currentText()
-            print(allType)
             bloodType = self.bloodTypeSelect.currentText()
-            print(bloodType)
             birthday = self.birthdayEdit.date().toString("yyyyMMdd")
-            print(birthday)
             phoneNumber = self.phoneNumberFormatterReverse()
-            print(phoneNumber)
             assignedDoctor = self.parent().parent().username
-            print(assignedDoctor)
             bsa = float(self.bodySurfaceAreaMeasurement.text())
-            print(bsa)
             ancMeasurement = float(self.ancMeasurementEdit.text())
-            print(ancMeasurement)
             dosageMeasurement = float(self.dosageEdit.text())
-            print(dosageMeasurement)
             age = self.calculateAge()
-            print(age)
             user_id = self.createUserID(name)
             
             conn = self.parent().parent().getDatabaseConnection()
@@ -369,34 +355,20 @@ class PatientFormWindow(QWidget):
     def showPatientInformationWindow(self):
         try:
             name = self.patientLineEdit.text()
-            print(name)
             assert name != ""
             date = self.dateEdit.date().toPyDate()
-            print(date)
             weight = float(self.weightEdit.text())
-            print(weight)
             height = float(self.heightEdit.text())
-            print(height)
             dosage = float(self.dosageEdit.text())
-            print(dosage)
             allType = self.allTypeSelect.currentText()
-            print(allType)
             age = self.calculateAge()
-            print(age)
             bloodType = self.bloodTypeSelect.currentText()
-            print(bloodType)
             birthday = self.birthdayEdit.date().toPyDate()
-            print(birthday)
             phoneNumber = self.phoneNumberFormatterReverse()
-            print(phoneNumber)
             assignedDoctor = self.patient.assignedDoctor
-            print(assignedDoctor)
             ancMeasurement = float(self.ancMeasurementEdit.text())
-            print(ancMeasurement)
             dosageMeasurement = float(self.dosageEdit.text())
-            print(dosageMeasurement)
             bsa = float(self.bodySurfaceAreaMeasurement.text())
-            print(bsa)
 
         except:
             msg = "Input fields must not be empty"

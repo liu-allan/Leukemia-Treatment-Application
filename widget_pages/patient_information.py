@@ -4,19 +4,21 @@ import sqlite3
 import numpy as np
 
 from PyQt6 import uic
-from PyQt6.QtCore import QDate, Qt
+from PyQt6.QtCore import QDate, Qt, QSize
 from PyQt6.QtWidgets import (
     QWidget,
     QLabel,
     QLineEdit,
     QDateEdit,
     QDialogButtonBox,
+    QPushButton,
     QVBoxLayout,
     QHBoxLayout,
     QSpacerItem,
     QSizePolicy,
+    QMessageBox
 )
-from PyQt6.QtGui import QDoubleValidator, QFont
+from PyQt6.QtGui import QDoubleValidator, QFont, QIcon
 from widget_pages.patient_card import PatientCard
 from pyqtgraph import plot
 import pyqtgraph as pg
@@ -68,15 +70,73 @@ class PatientInformationWindow(QWidget):
         self.sideBarLayout.setContentsMargins(10, 0, 10, 0)
 
         self.sideBar = QWidget()
+        self.sideBar.setObjectName("SideBar")
         self.sideBar.setContentsMargins(0, 0, 0, 0)
         self.sideBar.setStyleSheet(
-            "background-color: #bfd8d2; height: 750; border-radius: 20px;"
+            """
+            QWidget#SideBar{
+                background-color: #bfd8d2;
+                height: auto;
+                border-radius: 20px;
+            }
+            """
         )
         self.sideBarLayout.addWidget(self.sideBar, 1)
 
+        self.menuLayout = QVBoxLayout(self.sideBar)
+
+        self.spacer = QSpacerItem(
+            1, 50, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
+        # self.menuLayout.addSpacerItem(self.spacer)
+        self.backButton = QPushButton()
+        self.backButton.setIcon(QIcon("icons/user.png"))
+        self.backButton.setIconSize(QSize(30, 30))
+        self.backButton.setToolTip("Patient List")
+        self.backButton.setContentsMargins(0, 70, 0, 0)
+        self.backButton.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.backButton.setFont(QFont("Avenir", 18))
+        self.backButton.setStyleSheet("background-color: #bfd8d2; border-radius: 20px")
+        self.backButton.clicked.connect(self.backButtonClicked)
+        self.menuLayout.addWidget(self.backButton)
+
+        self.patientInformationButton = QPushButton()
+        self.patientInformationButton.setIcon(QIcon("icons/information.png"))
+        self.patientInformationButton.setIconSize(QSize(35, 35))
+        self.patientInformationButton.setToolTip("Patient Information")
+        self.patientInformationButton.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.patientInformationButton.setContentsMargins(0, 15, 0, 0)
+        self.patientInformationButton.setFont(QFont("Avenir", 18))
+        self.patientInformationButton.setStyleSheet("background-color: #bfd8d2; border-radius: 20px")
+        self.menuLayout.addWidget(self.patientInformationButton)
+
+        self.dashboardButton = QPushButton()
+        self.dashboardButton.setIcon(QIcon("icons/dashboard.png"))
+        self.dashboardButton.setIconSize(QSize(30, 30))
+        self.dashboardButton.setToolTip("Dashboard")
+        self.dashboardButton.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.dashboardButton.setContentsMargins(0, 15, 0, 0)
+        self.dashboardButton.setFont(QFont("Avenir", 18))
+        self.dashboardButton.clicked.connect(self.dashboardButtonClicked)
+        self.dashboardButton.setStyleSheet("background-color: #bfd8d2; border-radius: 20px")
+        self.menuLayout.addWidget(self.dashboardButton)
+
+        self.menuLayout.addSpacing(470)
+
+        self.logoutButton = QPushButton()
+        self.logoutButton.setIcon(QIcon("icons/power-on.png"))
+        self.logoutButton.setIconSize(QSize(30, 30))
+        self.logoutButton.setToolTip("Log Out")
+        self.logoutButton.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.logoutButton.setContentsMargins(0, 0, 0, 0)
+        self.logoutButton.setFont(QFont("Avenir", 18))
+        self.logoutButton.clicked.connect(self.logoffButtonClicked)
+        self.logoutButton.setStyleSheet("background-color: #bfd8d2; border-radius: 20px")
+        self.menuLayout.addWidget(self.logoutButton)
+
         self.patientInfo = QWidget()
         self.patientInfo.setContentsMargins(0, 0, 0, 0)
-        self.sideBarLayout.addWidget(self.patientInfo, 9)
+        self.sideBarLayout.addWidget(self.patientInfo, 19)
 
         self.layout = QVBoxLayout(self.patientInfo)
         self.layout.setContentsMargins(10, 0, 0, 0)
@@ -122,7 +182,7 @@ class PatientInformationWindow(QWidget):
         )
         # Add Axis Labels
         styles = {"color": "#000000", "font": QFont("Avenir", 15)}
-        self.graphWidgetANC.setLabel("left", "ANC Measurement (g/L)", **styles)
+        self.graphWidgetANC.setLabel("left", "ANC Measurement (# Cells/L) x 1e9", **styles)
         self.graphWidgetANC.setLabel("bottom", "ANC Measurement Date", **styles)
         
         # Add grid
@@ -156,9 +216,16 @@ class PatientInformationWindow(QWidget):
         self.patientBottomLayout.addWidget(self.patientHistoricGraphs, 3)
 
         self.patientInputRight = QWidget()
-        self.patientInputRight.setContentsMargins(0, 0, 0, 0)
+        self.patientInputRight.setObjectName("PatientInputRight")
+        self.patientInputRight.setContentsMargins(30, 0, 30, 0)
         self.patientInputRight.setStyleSheet(
-            "background-color: #ffffff; border-radius: 20px;"
+            """
+            QWidget#PatientInputRight
+            {
+                background-color: #ffffff;
+                border-radius: 20px;
+            }
+            """
         )
         self.patientBottomLayout.addWidget(self.patientInputRight, 1)
 
@@ -166,16 +233,32 @@ class PatientInformationWindow(QWidget):
         self.patientInputLayout.setContentsMargins(0, 0, 0, 0)
 
         self.dosageLabel = Label("6-MP Dosage (mg)")
+        self.dosageLabel.setContentsMargins(30, 0, 0, 0)
         self.dosageEdit = LineEdit("mg")
+        self.dosageEdit.setContentsMargins(0, 0, 30, 0)
+        self.dosageEdit.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.dosageEdit.setStyleSheet(
+            "background-color: #f5f5f5; height: 40px; border-radius: 20px; padding-left: 10px"
+        )
         self.patientInputLayout.addWidget(FormRow(self.dosageLabel, self.dosageEdit))
 
-        self.ancCountLabel = Label("ANC Measurement (g/L)")
-        self.ancMeasurementEdit = LineEdit("g/L")
+        self.ancCountLabel = Label("ANC Measurement (# Cells/L) x 1e9")
+        self.ancCountLabel.setContentsMargins(30, 0, 0, 0)
+        self.ancMeasurementEdit = LineEdit("# Cells/L x 1e9")
+        self.ancMeasurementEdit.setContentsMargins(0, 0, 30, 0)
+        self.ancMeasurementEdit.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.ancMeasurementEdit.setStyleSheet(
+            "background-color: #f5f5f5; height: 40px; border-radius: 20px; padding-left: 10px"
+        )
         self.patientInputLayout.addWidget(FormRow(self.ancCountLabel, self.ancMeasurementEdit))
 
         self.dateLabel = Label("Date of ANC Measurement")
+        self.dateLabel.setContentsMargins(30, 0, 0, 0)
         self.dateEdit = QDateEdit()
+        self.dateEdit.setContentsMargins(0, 0, 30, 0)
+        self.dateEdit.setFont(QFont("Avenir", 18))
         self.dateEdit.setFixedWidth(200)
+  
         self.patientInputLayout.addWidget(FormRow(self.dateLabel, self.dateEdit))
 
         self.errorLabel = Label("")
@@ -194,7 +277,7 @@ class PatientInformationWindow(QWidget):
         self.buttonBox.addButton(self.buttonBox.standardButtons().Save)
         self.buttonBox.addButton(self.buttonBox.standardButtons().Ok)
         self.buttonBox.setFont(QFont("Avenir", 12))
-        self.buttonBox.setFixedWidth(200)
+        self.buttonBox.setFixedWidth(250)
         self.buttonBox.setStyleSheet(
             "background-color: #aaaaee; border-radius: 5px; padding: 10px"
         )
@@ -209,10 +292,49 @@ class PatientInformationWindow(QWidget):
             self.showDashboardWindow
         )
         self.buttonBox.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.buttonBox.setContentsMargins(0, 0, 30, 0)
         self.patientInputLayout.addWidget(FormRow(self.errorLabel, self.buttonBox))
 
         self.patientBottomLayout.addWidget(self.patientInputRight, 2)
         self.setLayout(self.sideBarLayout)
+
+    def backButtonClicked(self):
+        self.showPatientListWindow()
+    
+    def dashboardButtonClicked(self):
+        self.showDashboardWindow()
+
+    def logoffButtonClicked(self):
+        dlg = QMessageBox()
+        dlg.setWindowTitle("Log Off")
+        dlg.setText("Are you sure you want to log off?")
+        dlg.addButton("Yes", QMessageBox.ButtonRole.YesRole)
+        dlg.addButton("No", QMessageBox.ButtonRole.NoRole)
+        for button in dlg.findChild(QDialogButtonBox).findChildren(QPushButton):
+            button.setCursor(Qt.CursorShape.PointingHandCursor)
+        
+        dlg.setStyleSheet(
+            """
+                QMessageBox {
+                    background-color: #ffffff; border-radius: 20px
+                }
+            """
+        )
+
+        dlg.setFont(QFont("Avenir", 15))
+        button = dlg.exec()
+
+        # Yes button is pressed
+        if button == 0:
+            # link to login page
+            self.updateUsername("")
+            self.showLoginWindow()
+
+    def updateUsername(self, username):
+        self.parent().parent().updateUsername(username)
+
+    def showLoginWindow(self):
+        self.parent().parent().showLoginWindow()
 
     def displayParameters(self):
         self.dosageEdit.clear()
@@ -236,6 +358,10 @@ class PatientInformationWindow(QWidget):
             if len(self.ancMeasurement) == 1:
                 pen = None
                 self.ancLine = self.graphWidgetANC.plot(
+                    x=[self.ancMeasurementDate[0].timestamp(), self.ancMeasurementDate[0].timestamp() + 2628288 * 6], y=[self.ancMeasurement[0], self.ancMeasurement[0] + 1], name="ANC Measurement", pen=pen, symbol="o", symbolSize=7, symbolBrush=("#aaaaee")
+                )
+                self.graphWidgetANC.clear()
+                self.ancLine = self.graphWidgetANC.plot(
                     x=[self.ancMeasurementDate[0].timestamp()], y=[self.ancMeasurement[0]], name="ANC Measurement", pen=pen, symbol="o", symbolSize=7, symbolBrush=("#aaaaee")
                 )
             else:
@@ -253,6 +379,10 @@ class PatientInformationWindow(QWidget):
             if len(self.ancMeasurement) == 1:
                 pen = None
                 self.dosageLine = self.graphWidgetDosages.plot(
+                    x=[self.dosagePrescribedDate[0].timestamp(), self.dosagePrescribedDate[0].timestamp() + 2628288 * 6], y=[self.dosageAmount[0], self.dosageAmount[0] + 1], name="Dosage Amount Prescribed", pen=pen, symbol="o", symbolSize=7, symbolBrush=("#aaaaee")
+                )
+                self.graphWidgetDosages.clear()
+                self.dosageLine = self.graphWidgetDosages.plot(
                     x=[x.timestamp() for x in self.dosagePrescribedDate], y=self.dosageAmount, name="Dosage Amount Prescribed", pen=pen, symbol="o", symbolSize=7, symbolBrush=("#aaaaee")
                 )
             else:
@@ -267,11 +397,9 @@ class PatientInformationWindow(QWidget):
             assert name != ""
             user_id = self.patient.user_id
             date = self.dateEdit.date().toString("yyyyMMdd")
-            print(name + " " + date)
             weight = self.patient.weight
             height = self.patient.height
             bsa = math.sqrt(height * weight / 3600)
-            print(bsa)
             allType = self.patient.allType
             age = self.patient.age
             bloodType = self.patient.bloodType
@@ -280,8 +408,6 @@ class PatientInformationWindow(QWidget):
             assignedDoctor = self.patient.assignedDoctor
             ancMeasurement = float(self.ancMeasurementEdit.text())
             dosageMeasurement = float(self.dosageEdit.text())
-            print(ancMeasurement)
-            print(dosageMeasurement)
 
             conn = self.parent().parent().getDatabaseConnection()
             patient_id = self.patient.id if self.patient else -1
@@ -297,7 +423,8 @@ class PatientInformationWindow(QWidget):
 
             self.parent().parent().updateSelectedPatient(patient_id)
             self.patient = self.parent().parent().selected_patient
-
+            self.displayParameters()
+            
         except sqlite3.Error as er:
             msg = "Existing entry in the database. Please check your inputs."
             self.errorLabel.setText(msg)
