@@ -50,24 +50,24 @@ class ToolBar(QWidget):
 
         # https://stackoverflow.com/questions/12734319/change-rectangular-qt-button-to-round
         self.avatar.setStyleSheet(
-            """ QPushButton {
-                                        background-color: #bfd8d2;
-                                        border-radius: 20px;
-                                        border-style: outset;
-                                        background: qradialgradient(
-                                            cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
-                                            radius: 1.35, stop: 0 #bfd8d2, stop: 1 #bfd8d2
-                                        );
-                                        border: 2px solid #bfd8d2;
-                                        padding: 5px;
-                                    }
+            """
+            QPushButton 
+            {
+                background-color: #bfd8d2;
+                border-radius: 20px;
+                border-style: outset;
+                border: 2px solid #bfd8d2;
+                padding: 5px;
+            }
 
-                                    QPushButton:hover {
-                                        background: qradialgradient(
-                                            cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
-                                            radius: 1.35, stop: 0 #bfd8d2, stop: 1 #82a3ac
-                                        );
-                                    }"""
+            QPushButton:hover 
+            {
+                background: qradialgradient(
+                    cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
+                    radius: 1.35, stop: 0 #bfd8d2, stop: 1 #82a3ac
+                );
+            }
+            """
         )
 
         # setting radius and border

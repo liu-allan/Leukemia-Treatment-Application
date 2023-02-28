@@ -23,7 +23,6 @@ from widget_pages.patient_card import PatientCard
 from pyqtgraph import plot
 import pyqtgraph as pg
 from datetime import datetime
-import qtawesome as qta
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -396,6 +395,7 @@ class PatientInformationWindow(QWidget):
         try:
             name = self.patient.name
             assert name != ""
+            user_id = self.patient.user_id
             date = self.dateEdit.date().toString("yyyyMMdd")
             weight = self.patient.weight
             height = self.patient.height
@@ -423,7 +423,8 @@ class PatientInformationWindow(QWidget):
 
             self.parent().parent().updateSelectedPatient(patient_id)
             self.patient = self.parent().parent().selected_patient
-
+            self.displayParameters()
+            
         except sqlite3.Error as er:
             msg = "Existing entry in the database. Please check your inputs."
             self.errorLabel.setText(msg)
@@ -439,6 +440,7 @@ class PatientInformationWindow(QWidget):
         else:
             self.errorLabel.clear()
             self.patient.save(
+                user_id,
                 name,
                 weight,
                 height,

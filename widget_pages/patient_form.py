@@ -238,23 +238,25 @@ class PatientFormWindow(QWidget):
             bloodType = self.bloodTypeSelect.currentText()
             birthday = self.birthdayEdit.date().toString("yyyyMMdd")
             phoneNumber = self.phoneNumberFormatterReverse()
-            assignedDoctor = self.patient.assignedDoctor
+            assignedDoctor = self.parent().parent().username
             bsa = float(self.bodySurfaceAreaMeasurement.text())
             ancMeasurement = float(self.ancMeasurementEdit.text())
             dosageMeasurement = float(self.dosageEdit.text())
             age = self.calculateAge()
-
+            user_id = self.createUserID(name)
+            
             conn = self.parent().parent().getDatabaseConnection()
             patient_id = self.patient.id if self.patient else -1
 
             if self.patient is None:
                 conn.execute(
                     """
-                        INSERT INTO patients (name, weight, height, phone_number, birthday, age, 
+                        INSERT INTO patients (user_id, name, weight, height, phone_number, birthday, age, 
                       blood_type, all_type, body_surface_area, oncologist_id)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
+                        user_id,
                         name,
                         weight,
                         height,
@@ -308,6 +310,7 @@ class PatientFormWindow(QWidget):
         else:
             self.errorLabel.clear()
             self.patient.save(
+                user_id,
                 name,
                 weight,
                 height,
@@ -337,6 +340,14 @@ class PatientFormWindow(QWidget):
         today = datetime.today().date()
         return today.year - self.birthdayEdit.date().year() - ((today.month, today.day) < (self.birthdayEdit.date().month(), self.birthdayEdit.date().day()))
 
+    # creates the unique user id for each patient
+    def createUserID(self, patient_name):
+        nameSplit = patient_name.split()
+        firstName = nameSplit[0]
+        lastName = "".join(nameSplit[1:]) # for patients with middle names
+        microsecond = datetime.now().microsecond
+        return firstName.lower() + lastName.lower() + str(microsecond)
+         
     def showPatientListWindow(self):
         self.errorLabel.clear()
         self.parent().parent().showPatientListWindow()

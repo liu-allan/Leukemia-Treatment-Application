@@ -1,70 +1,163 @@
 import logging
+import sqlite3
 from PyQt6.QtWidgets import (
     QLabel,
     QPushButton,
     QVBoxLayout,
     QHBoxLayout,
+    QGridLayout,
     QWidget,
     QSpacerItem,
     QSizePolicy,
     QScrollArea,
     QLineEdit,
+    QComboBox,
 )
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QFont
+from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtGui import QFont, QIcon, QPixmap
+
+from datetime import datetime
+from enum import Enum
 
 logging.getLogger().setLevel(logging.INFO)
 
+class SearchMode(Enum):
+    DEFAULT = 0
+    ADVANCED = 1
 
-class PatientListItem(QWidget):
-    def __init__(self, patient_name, patient_id):
+class PatientListItem(QPushButton):
+    def __init__(self, patient_name, patient_id, user_id, birthday):
         super(PatientListItem, self).__init__()
 
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+        self.setObjectName("PatientListItem")
         self.setStyleSheet(
-            "background-color: #ccccff; border-radius: 5px; padding: 10px"
+            """
+            QPushButton#PatientListItem
+            {
+                min-height: 70px;
+                background-color: #ebebf2;
+                border: 1px solid #aaaaaa;
+                border-radius: 5px;
+                padding: 10px
+            }
+
+            QPushButton#PatientListItem:hover
+            {
+                background-color: #e1e1f7;
+            }
+            """
         )
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.clicked.connect(self.showPatientInfo)
 
         self.patient_name = patient_name
         self.patient_id = patient_id
-        self.label = QLabel(self.patient_name)
-        self.label.setFont(QFont("Avenir", 12))
-        self.select_button = QPushButton("Select")
-        self.select_button.setFont(QFont("Avenir", 12))
-        self.select_button.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.select_button.setStyleSheet(
-            "background-color: #aaaaee; border-radius: 5px; padding: 10px"
+        self.user_id = user_id
+        self.birthday = datetime.strptime(birthday, '%Y%m%d').strftime('%Y-%m-%d')
+
+        self.name_label = QLabel(self.patient_name)
+        patient_name_font = QFont("Avenir", 18)
+        patient_name_font.setBold(True)
+        self.name_label.setFont(patient_name_font)
+        self.name_label.setFixedWidth(450)
+        self.name_label.setContentsMargins(5, 10, 5, 0)
+
+        self.user_id_label = QLabel("Patient ID: " + self.user_id)
+        self.user_id_label.setFont(QFont("Avenir", 13, italic=True))
+        self.user_id_label.setFixedWidth(450)
+        self.user_id_label.setStyleSheet("color: #505050;")
+        self.user_id_label.setContentsMargins(5, 0, 5, 10)
+
+        self.birthday_label = QLabel("DOB: " + self.birthday)
+        self.birthday_label.setFont(QFont("Avenir", 13))
+        self.birthday_label.setFixedWidth(200)
+        self.birthday_label.setStyleSheet("color: #505050;")
+        self.birthday_label.setContentsMargins(0, 0, 5, 10)
+
+        self.delete_button = QPushButton("Delete")
+        self.delete_button.setFont(QFont("Avenir", 15))
+        self.delete_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.delete_button.setStyleSheet(
+            """
+            QPushButton
+            {
+                background-color: #fa7a7a;
+                border: 1px solid #c23329;
+                border-radius: 5px;
+                color: #505050;
+                padding: 20px
+            }
+
+            QPushButton:hover
+            {
+                background-color: #fc5353;
+                color: #000000;
+            }
+            """
         )
-        self.middle_spacer = QSpacerItem(
+
+        name_spacer = QSpacerItem(
+            20, 1, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum
+        )
+        main_spacer = QSpacerItem(
             1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
         )
 
-        self.layout = QHBoxLayout()
-        self.layout.addWidget(self.label)
-        self.layout.addItem(self.middle_spacer)
-        self.layout.addWidget(self.select_button)
+        self.layout = QGridLayout()
+        self.layout.addWidget(self.name_label, 0, 0, 1, 1)
+        self.layout.addWidget(self.user_id_label, 1, 0, 1, 1)
+        self.layout.addItem(name_spacer, 0, 1, 2, 1)
+        self.layout.addWidget(self.birthday_label, 1, 2, 1, 1)
+        self.layout.addItem(main_spacer, 0, 3, 2, 1)
+        self.layout.addWidget(self.delete_button, 0, 4, 2, 1)
 
         self.setLayout(self.layout)
 
-        self.select_button.clicked.connect(self.showPatientInfo)
+        self.delete_button.clicked.connect(self.deletePatient)
 
     def show(self):
-        for item in [self, self.label, self.select_button]:
-            item.setVisible(True)
+        self.setVisible(True)
 
     def hide(self):
-        for item in [self, self.label, self.select_button]:
-            item.setVisible(False)
+        self.setVisible(False)
 
     def showPatientInfo(self):
         self.parent().parent().parent().parent().showPatientInformationWindow(
             self.patient_id
         )
 
+    def deletePatient(self):
+        conn = self.parent().parent().parent().parent().getDatabaseConnection()
+
+        try:
+            conn.execute(
+                "PRAGMA foreign_keys = ON"
+            )  # enable foreign key cascade on delete for the measurements table
+            
+            conn.execute(
+                """
+                DELETE FROM patients 
+                WHERE id=? 
+                """,
+                (self.patient_id,),
+            )
+            conn.commit()
+
+        except sqlite3.Error as er:
+            logging.error("Something went wrong while deleting the patient", er)
+
+        self.parent().parent().parent().parent().updatePatientList()
+
 
 class PatientListWindow(QWidget):
     def __init__(self):
         super().__init__()
+
+        # patient list window specific states
+        self.search_mode = SearchMode.DEFAULT
+        self.filter_name = ""
+        self.filter_id = ""
 
         self.patients = []
         self.patient_widgets = []
@@ -72,21 +165,106 @@ class PatientListWindow(QWidget):
         self.main_box_layout = QVBoxLayout()
         self.search_bar_layout = QHBoxLayout()
 
-        self.search_bar = QLineEdit()
-        self.search_bar.setPlaceholderText("Search patients")
-        self.search_bar.textChanged.connect(self.filterSearchItems)
-        self.search_bar_layout.addWidget(self.search_bar)
+        search_bar_spacer1 = QWidget()
+        search_bar_spacer1.setFixedWidth(15)
+        self.search_bar_layout.addWidget(search_bar_spacer1)
 
-        search_bar_spacer = QWidget()
-        search_bar_spacer.setFixedWidth(20)
-        self.search_bar_layout.addWidget(search_bar_spacer)
-
-        self.new_patient_button = QPushButton("Add Patient")
+        self.new_patient_button = QPushButton("+")
+        self.new_patient_button.setFont(QFont("Avenir", 15))
         self.new_patient_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.new_patient_button.setToolTip('Add Patient')
+        self.new_patient_button.setFixedHeight(40)
+        self.new_patient_button.setFixedWidth(40)
+        self.new_patient_button.setStyleSheet(
+            """
+            QPushButton
+            {
+                background-color: #aaaaee;
+                border-radius: 20px;
+                padding: 5px;
+            }
+
+            QPushButton:hover
+            {
+                background-color: #9898ed;
+            }
+            """
+        )
         self.new_patient_button.clicked.connect(self.showPatientFormWindow)
         self.search_bar_layout.addWidget(self.new_patient_button)
 
+        search_bar_spacer2 = QWidget()
+        search_bar_spacer2.setFixedWidth(10)
+        self.search_bar_layout.addWidget(search_bar_spacer2)
+
+        self.name_search_bar = QLineEdit()
+        self.name_search_bar.setPlaceholderText("Search Patients")
+        self.name_search_bar.setStyleSheet(
+            """
+            QLineEdit {
+                border: 1px solid #aaaaaa;
+                border-radius: 5px;
+                padding: 5px;
+            }
+            """
+        )
+        self.name_search_bar.textChanged.connect(self.filterByName)
+        self.search_bar_layout.addWidget(self.name_search_bar)
+
+        self.id_search_bar = QLineEdit()
+        self.id_search_bar.setPlaceholderText("Patient ID")
+        self.id_search_bar.setStyleSheet(
+            """
+            QLineEdit {
+                border: 1px solid #aaaaaa;
+                border-radius: 5px;
+                padding: 5px;
+            }
+            """
+        )
+        self.id_search_bar.textChanged.connect(self.filterByID)
+        self.id_search_bar.setVisible(False)
+        self.search_bar_layout.addWidget(self.id_search_bar)
+
+        search_bar_spacer3 = QWidget()
+        search_bar_spacer3.setFixedWidth(10)
+        self.search_bar_layout.addWidget(search_bar_spacer3)
+
+        self.search_mode_button = QPushButton("Advanced Search")
+        self.search_mode_button.setFont(QFont("Avenir", 13))
+        self.search_mode_button.setCheckable(True)
+        self.search_mode_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.search_mode_button.setStyleSheet(
+            """
+            QPushButton
+            {
+                background-color: #fafafa;
+                border: 1px solid #aaaaaa;
+                border-radius: 5px;
+                padding: 10px
+            }
+
+            QPushButton:hover
+            {
+                background-color: #f0f0f0;
+            }
+            """
+        )
+        self.search_mode_button.clicked.connect(self.setSearchMode)
+        self.search_bar_layout.addWidget(self.search_mode_button)
+
         self.scroll_area = QScrollArea()
+        self.scroll_area.setStyleSheet(
+            """
+            QScrollArea
+            {
+                background-color: #ffffff;
+                border: 1px solid #aaaaaa;
+                border-radius: 5px;
+                padding: 5px
+            }
+            """
+        )
         self.scroll_area.setHorizontalScrollBarPolicy(
             Qt.ScrollBarPolicy.ScrollBarAlwaysOff
         )
@@ -94,27 +272,68 @@ class PatientListWindow(QWidget):
         self.main_box_layout.addLayout(self.search_bar_layout)
         self.main_box_layout.addWidget(self.scroll_area)
         self.setLayout(self.main_box_layout)
+    
+    def setSearchMode(self):
+        if self.search_mode_button.isChecked():
+            self.search_mode = SearchMode(1)
+            self.showAdvancedOptions(True)
+        else:
+            self.search_mode = SearchMode(0)
+            self.showAdvancedOptions(False)
+    
+    def showAdvancedOptions(self, display):
+        if display:
+            self.search_mode_button.setText("Default Search")
+            self.name_search_bar.setPlaceholderText("Patient Name")
+            self.name_search_bar.clear()
+            self.id_search_bar.clear()
+            self.id_search_bar.setVisible(True)
+        else:
+            self.search_mode_button.setText("Advanced Search")
+            self.name_search_bar.setPlaceholderText("Search Patient")
+            self.name_search_bar.clear()
+            self.id_search_bar.clear()
+            self.id_search_bar.setVisible(False)
+    
+    def filterByName(self, input):
+        self.filter_name = input
+        self.filterPatients()
+    
+    def filterByID(self, input):
+        self.filter_id = input
+        self.filterPatients()
 
-    def filterSearchItems(self, input):
+    def filterPatients(self):
         for widget in self.patient_widgets:
-            if input.lower() in widget.patient_name.lower():
-                widget.show()
-            else:
+            widget.show()
+        for widget in self.patient_widgets:
+            if self.filter_name and self.filter_name.lower() not in widget.patient_name.lower():
+                widget.hide()
+            if self.filter_id and self.filter_id.lower() not in widget.user_id.lower():
                 widget.hide()
 
     def showPatientFormWindow(self):
+        # whenever you press "Add Patient", should clear state so the fields aren't pre-populated
+        self.parent().parent().selected_patient = None
         self.parent().parent().showPatientFormWindow()
 
     def showPatientInformationWindow(self, patient_id=-1):
         self.parent().parent().updateSelectedPatient(patient_id)
         self.parent().parent().showPatientInformationWindow()
 
+    def getDatabaseConnection(self):
+        return self.parent().parent().getDatabaseConnection()
+
     def displayPatientList(self):
         self.list = QWidget()
+        self.list.setObjectName("PatientList")
+        self.list.setStyleSheet(
+            "QWidget#PatientList { background-color: #ffffff; }"
+        )
         self.list_layout = QVBoxLayout()
 
-        for patient_name, patient_id in self.patients:
-            widget = PatientListItem(patient_name, patient_id)
+        for patient_name, patient_id, user_id, birthday in self.patients:
+            widget = PatientListItem(patient_name, patient_id, user_id, birthday)
             self.patient_widgets.append(widget)
             self.list_layout.addWidget(widget)
 
@@ -127,9 +346,11 @@ class PatientListWindow(QWidget):
         self.scroll_area.setWidget(self.list)
         self.scroll_area.setWidgetResizable(True)
 
-    def updatePatientList(self, conn, username):
+    def updatePatientList(self):
+        conn = self.getDatabaseConnection()
+        username = self.parent().parent().username
         res = conn.execute(
-            """SELECT name, id 
+            """SELECT name, id, user_id, birthday 
                FROM patients p 
                INNER JOIN oncologists o ON p.oncologist_id=o.username
                     AND o.username=?
@@ -138,7 +359,8 @@ class PatientListWindow(QWidget):
         )
 
         rows = res.fetchall()
-        self.patients = []
+        self.patients.clear()
+        self.patient_widgets.clear()
         if rows:
             self.patients = rows
         self.displayPatientList()

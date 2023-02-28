@@ -197,22 +197,6 @@ class LoginWindow(QWidget):
         )
         self.layout.addWidget(self.copyRightLabel, alignment=Qt.AlignmentFlag.AlignCenter)
 
-    # self.usernameLineEdit.textChanged.connect(self._on_line_edit_text_changed)
-    # self.clear_icon = qta.icon('mdi.delete-circle-outline', color='gray', color_active='black', scale_factor=3) 
-    # self.clear_action = None
-
-    # def _on_line_edit_text_changed(self):
-    #     if self.usernameLineEdit and self.usernameLineEdit.text():
-    #         if not self.clear_action:
-    #             self.clear_action = self.usernameLineEdit.addAction(self.clear_icon, QLineEdit.ActionPosition.TrailingPosition)
-    #             self.clear_action.triggered.connect(self._on_clear_clicked)
-    #     elif self.clear_action and self.usernameLineEdit and not self.usernameLineEdit.text():
-    #         self.usernameLineEdit.removeAction(self.clear_action)
-    #         self.clear_action = None
-
-    # def _on_clear_clicked(self):
-    #     self.usernameLineEdit.clear()
-
     def loginPushed(self):
         try:
             username = self.usernameLineEdit.text()

@@ -22,6 +22,7 @@ conn.execute(
     """
         CREATE TABLE IF NOT EXISTS patients
             (id INTEGER NOT NULL,
+             user_id TEXT NOT NULL,
              name TEXT NOT NULL,
              phone_number TEXT NOT NULL,
              birthday TEXT NOT NULL,
@@ -34,7 +35,7 @@ conn.execute(
              oncologist_id TEXT NOT NULL,
              PRIMARY KEY(id),
              FOREIGN KEY(oncologist_id)
-                REFERENCES oncologists(id)
+                REFERENCES oncologists(username)
                 ON DELETE CASCADE
                 ON UPDATE NO ACTION);
     """
@@ -73,17 +74,21 @@ hash = bcrypt.hashpw(bytes, salt)
 
 # conn.execute(
 #     """
-#       INSERT INTO patients (name, phone_number, birthday, age, blood_type, all_type, weight, height, body_surface_area, oncologist_id)
-#       VALUES ('Small Bob', '1234567899', '19900506', 38, 'A+', 'Immunophenotype', 1, 1, 250, 'angus');
+#       INSERT INTO patients (user_id, name, phone_number, birthday, age, blood_type, all_type, weight, height, body_surface_area, oncologist_id)
+#       VALUES ('smallbob123456', 'Small Bob', '1234567899', '19900506', 38, 'A+', 'Immunophenotype', 1, 1, 250, 'angus');
 #     """
 # )
 
 # conn.execute(
 #     """
 #       INSERT INTO measurements (time, anc_measurement, dosage_measurement, patient_id)
-#       VALUES ("20220101", 4, 4, 4);
+#       VALUES ("20220101", 4, 4, 1);
 #     """
 # )
+
+conn.execute(
+    "PRAGMA foreign_keys = ON"
+)  # enable foreign key cascade on delete
 
 conn.commit()  # this is necessary to confirm entry into the database
 
