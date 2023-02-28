@@ -83,7 +83,7 @@ class PatientListWindow(QWidget):
 
         self.new_patient_button = QPushButton("Add Patient")
         self.new_patient_button.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.new_patient_button.clicked.connect(self.showPatientInformationWindow)
+        self.new_patient_button.clicked.connect(self.showPatientFormWindow)
         self.search_bar_layout.addWidget(self.new_patient_button)
 
         self.scroll_area = QScrollArea()
@@ -101,6 +101,9 @@ class PatientListWindow(QWidget):
                 widget.show()
             else:
                 widget.hide()
+
+    def showPatientFormWindow(self):
+        self.parent().parent().showPatientFormWindow()
 
     def showPatientInformationWindow(self, patient_id=-1):
         self.parent().parent().updateSelectedPatient(patient_id)
