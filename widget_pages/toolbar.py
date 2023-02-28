@@ -10,10 +10,11 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
+from util.util import getLastNameFromFullName
 
 
 class ToolBar(QWidget):
-    def __init__(self, page_name, username):
+    def __init__(self, page_name, user_full_name):
         super().__init__()
 
         # Top tool bar that shows page name + user account
@@ -35,7 +36,12 @@ class ToolBar(QWidget):
         )
         self.toolBar.addWidget(spacer1)
 
-        self.avatar = QPushButton(username[0].upper() if username else "", self)
+        self.avatar = QPushButton(
+            getLastNameFromFullName(user_full_name)[0].upper()
+            if user_full_name
+            else "",
+            self,
+        )
         self.avatar.setCursor(Qt.CursorShape.PointingHandCursor)
         self.avatar.clicked.connect(self.userProfileClick)
         self.avatar.setFont(QFont("Avenir", 15))
@@ -67,7 +73,9 @@ class ToolBar(QWidget):
         # setting radius and border
         self.toolBar.addWidget(self.avatar)
 
-        self.name_label = QLabel("Dr. " + username if username else "")
+        self.name_label = QLabel(
+            "Dr. " + getLastNameFromFullName(user_full_name) if user_full_name else ""
+        )
         self.name_label.setAlignment(Qt.AlignmentFlag.AlignVCenter)
         self.name_label.setFont(QFont("Avenir", 20))
         self.name_label.setMargin(15)
@@ -91,7 +99,7 @@ class ToolBar(QWidget):
         self.layout.addWidget(self.toolBar)
         self.setLayout(self.layout)
 
-    def updateToolBar(self, page_name, username):
+    def updateToolBar(self, page_name, user_full_name):
         if page_name == "Login":
             for item in [
                 self,
@@ -112,8 +120,12 @@ class ToolBar(QWidget):
             ]:
                 item.setVisible(True)
         self.dashboard_label.setText(page_name)
-        self.avatar.setText(username[0].upper() if username else "")
-        self.name_label.setText("Dr. " + username if username else "")
+        self.avatar.setText(
+            getLastNameFromFullName(user_full_name)[0].upper() if user_full_name else ""
+        )
+        self.name_label.setText(
+            "Dr. " + getLastNameFromFullName(user_full_name) if user_full_name else ""
+        )
 
     def logoffClicked(self):
         dlg = QMessageBox(self)
