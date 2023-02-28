@@ -122,21 +122,22 @@ class PatientInformationWindow(QWidget):
         self.dashboardButton.setStyleSheet("background-color: #bfd8d2; border-radius: 20px")
         self.menuLayout.addWidget(self.dashboardButton)
 
+        self.menuLayout.addSpacing(470)
+
         self.logoutButton = QPushButton()
         self.logoutButton.setIcon(QIcon("icons/power-on.png"))
         self.logoutButton.setIconSize(QSize(30, 30))
         self.logoutButton.setToolTip("Log Out")
         self.logoutButton.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.logoutButton.setContentsMargins(0, 0, 0, 20)
+        self.logoutButton.setContentsMargins(0, 0, 0, 0)
         self.logoutButton.setFont(QFont("Avenir", 18))
         self.logoutButton.clicked.connect(self.logoffButtonClicked)
         self.logoutButton.setStyleSheet("background-color: #bfd8d2; border-radius: 20px")
         self.menuLayout.addWidget(self.logoutButton)
-        self.menuLayout.addSpacing(450)
 
         self.patientInfo = QWidget()
         self.patientInfo.setContentsMargins(0, 0, 0, 0)
-        self.sideBarLayout.addWidget(self.patientInfo, 14)
+        self.sideBarLayout.addWidget(self.patientInfo, 19)
 
         self.layout = QVBoxLayout(self.patientInfo)
         self.layout.setContentsMargins(10, 0, 0, 0)
@@ -258,26 +259,6 @@ class PatientInformationWindow(QWidget):
         self.dateEdit.setContentsMargins(0, 0, 30, 0)
         self.dateEdit.setFont(QFont("Avenir", 18))
         self.dateEdit.setFixedWidth(200)
-        # self.dateEdit.setStyleSheet("""
-        #         QDateEdit {
-        #             border-radius: 20px;
-        #             padding-left: 10px;
-        #             background-color: #f5f5f5;
-        #             height: 40px;
-        #         }
-        #         QDateEdit::down-arrow {
-        #             border-image: url(down.png);
-        #             border-radius: 20px;
-        #             width: 20px;
-        #             height: 20px;
-        #         }
-        #         QDateEdit::up-arrow {
-        #             border-image: url(arrowhead-up.png);
-        #             border-radius: 20px;
-        #             width: 20px;
-        #             height: 20px;
-        #         }     
-        # """)
   
         self.patientInputLayout.addWidget(FormRow(self.dateLabel, self.dateEdit))
 

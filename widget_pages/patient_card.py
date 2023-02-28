@@ -43,14 +43,17 @@ class PatientCard(QWidget):
 
         self.patient = None
 
+        self.layout_box = QHBoxLayout()
+        self.layout_box.setContentsMargins(0, 0, 0, 0)
+
         self.patient_card = QWidget()
         self.patient_card.setContentsMargins(0, 0, 0, 0)
-        self.patient_card.setStyleSheet(
-            "background-color: #ffffff; height: 250; border-radius: 20px;"
-        )
+        self.patient_card.setStyleSheet("background-color: #ffffff; height: 250; border-radius: 20px;")
 
-        self.layout_box = QHBoxLayout(self.patient_card)
-        self.layout_box.setContentsMargins(0, 0, 0, 0)
+        self.layout_box.addWidget(self.patient_card)
+
+        self.inside_layout = QHBoxLayout(self.patient_card)
+        self.inside_layout.setContentsMargins(0, 0, 0, 0)
 
         self.patient_card_left = QWidget()
         self.patient_card_left.setContentsMargins(0, 0, 0, 0)
@@ -134,14 +137,14 @@ class PatientCard(QWidget):
         self.patient_detail_layout.addWidget(self.patientBloodV, 1, 2)
 
         self.left_layout.addWidget(self.patient_detail)
-        self.layout_box.addWidget(self.patient_card_left, 1)
+        self.inside_layout.addWidget(self.patient_card_left, 1)
 
         # Birthday, phone number, patient ID, ALL type, Assigned Doctor, Body Surface Area (m^2)
         self.patient_card_right = QWidget()
         self.patient_card_right.setStyleSheet(
             "background-color: #ffffff; height: 250; border-radius: 20px;"
         )
-        self.patient_card_right.setContentsMargins(0, 15, 0, 7)
+        self.patient_card_right.setContentsMargins(10, 15, 0, 7)
 
         self.right_layout = QGridLayout(self.patient_card_right)
 
@@ -215,7 +218,7 @@ class PatientCard(QWidget):
 
         self.right_layout.addWidget(self.buttons, 3, 2)
 
-        self.layout_box.addWidget(self.patient_card_right, 3)
+        self.inside_layout.addWidget(self.patient_card_right, 3)
         self.setLayout(self.layout_box)
 
     def editClicked(self):
