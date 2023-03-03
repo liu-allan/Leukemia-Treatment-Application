@@ -209,11 +209,15 @@ class PatientInformationWindow(QWidget):
         styles = {"color": "#000000", "font": QFont("Avenir", 15)}
         self.graphWidgetDosages.setLabel("left", "Dosage Amount Prescribed", **styles)
         self.graphWidgetDosages.setLabel("bottom", "Dosage Prescription Date", **styles)
-        
+
         # Add grid
         self.graphWidgetDosages.showGrid(x=True, y=True)
 
         self.patientBottomLayout.addWidget(self.patientHistoricGraphs, 3)
+
+        # Add legends
+        self.ancLegend = self.graphWidgetANC.addLegend()
+        self.dosageLegend = self.graphWidgetDosages.addLegend()
 
         self.patientInputRight = QWidget()
         self.patientInputRight.setObjectName("PatientInputRight")
@@ -344,6 +348,8 @@ class PatientInformationWindow(QWidget):
         self.ancMeasurement.clear()
         self.dosagePrescribedDate.clear()
         self.dosageAmount.clear()
+        self.dosageLegend.clear()
+        self.ancLegend.clear()
 
         if self.patient is not None:
             self.ancMeasurementDate = [datetime.strptime(str(item[1]), '%Y%m%d') for item in self.patient.ancMeasurement]
@@ -354,7 +360,6 @@ class PatientInformationWindow(QWidget):
             )
 
             # Add legend
-            self.ancLegend = self.graphWidgetANC.addLegend()
             if len(self.ancMeasurement) == 1:
                 pen = None
                 self.ancLine = self.graphWidgetANC.plot(
@@ -375,7 +380,6 @@ class PatientInformationWindow(QWidget):
             self.dosageEdit.setText(str(self.dosageAmount[-1]))
 
             # Add legend
-            self.dosageLegend = self.graphWidgetDosages.addLegend()
             if len(self.ancMeasurement) == 1:
                 pen = None
                 self.dosageLine = self.graphWidgetDosages.plot(
