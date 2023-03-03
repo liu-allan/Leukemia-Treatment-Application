@@ -177,6 +177,7 @@ class PatientFormWindow(QWidget):
         self.heightEdit.clear()
         self.phoneNumberEdit.clear()
         self.birthdayEdit.clear()
+        self.birthdayEdit.setDate(QDate.currentDate())
         self.bodySurfaceAreaMeasurement.clear()
         self.dosageEdit.clear()
         self.ancMeasurementEdit.clear()
