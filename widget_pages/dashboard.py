@@ -239,18 +239,19 @@ class DashboardWindow(QWidget):
     def showPatientInformationWindow(self):
         self.parent().parent().showPatientInformationWindow()
 
-    def updatePatientInfo(self):
+    def updatePatientInfo(self, calculation_info):
         self.patient = self.parent().parent().selected_patient
-        self.runMatLabModel(self.patient)
+        if calculation_info[0]:
+            self.runMatLabModel(self.patient, calculation_info[1])
 
-    def runMatLabModel(self, patient):
+    def runMatLabModel(self, patient, num_cycles):
         # currently, run 1 cycle into the future, we can make this an option later
         bsa = float(patient.bsa)
-        num_cycles = float(2.0)
+        num_cycles = float(num_cycles + 1)
         dosage = [float(patient.dosageMeasurement[-1][0])]
         anc = [float(patient.ancMeasurement[-1][0])]
         print(bsa, num_cycles, dosage, anc)
-        print("running model...")
+        print("running model for {} cycles...".format(num_cycles))
         _, _, _, reactive_anc, anticipatory_anc, reactive_dosage, anticipatory_dosage = runModel(bsa, num_cycles, dosage, anc)
         print("finished running model")
         self.graph.setGraphTableData(reactive_anc, anticipatory_anc, reactive_dosage, anticipatory_dosage)

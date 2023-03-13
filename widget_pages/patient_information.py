@@ -14,11 +14,12 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QVBoxLayout,
     QHBoxLayout,
+    QGridLayout,
     QSpacerItem,
     QSizePolicy,
     QMessageBox
 )
-from PyQt6.QtGui import QDoubleValidator, QFont, QIcon
+from PyQt6.QtGui import QDoubleValidator, QIntValidator, QFont, QIcon
 from widget_pages.patient_card import PatientCard
 from pyqtgraph import plot
 import pyqtgraph as pg
@@ -148,8 +149,10 @@ class PatientInformationWindow(QWidget):
         self.patientInput.setContentsMargins(0, 10, 0, 0)
         self.layout.addWidget(self.patientInput, 3)
 
-        self.patientBottomLayout = QHBoxLayout(self.patientInput)
+        self.patientBottomLayout = QGridLayout(self.patientInput)
         self.patientBottomLayout.setContentsMargins(0, 0, 0, 0)
+        self.patientBottomLayout.setRowStretch(0, 4)
+        self.patientBottomLayout.setRowStretch(1, 1)
 
         # HISTORIC GRAPHS
         self.patientHistoricGraphs = QWidget()
@@ -213,7 +216,7 @@ class PatientInformationWindow(QWidget):
         # Add grid
         self.graphWidgetDosages.showGrid(x=True, y=True)
 
-        self.patientBottomLayout.addWidget(self.patientHistoricGraphs, 3)
+        self.patientBottomLayout.addWidget(self.patientHistoricGraphs, 0, 0, 2, 1)
 
         self.patientInputRight = QWidget()
         self.patientInputRight.setObjectName("PatientInputRight")
@@ -227,7 +230,6 @@ class PatientInformationWindow(QWidget):
             }
             """
         )
-        self.patientBottomLayout.addWidget(self.patientInputRight, 1)
 
         self.patientInputLayout = QVBoxLayout(self.patientInputRight)
         self.patientInputLayout.setContentsMargins(0, 0, 0, 0)
@@ -272,37 +274,84 @@ class PatientInformationWindow(QWidget):
         self.dateEdit.editingFinished.connect(self.valueChanged)
         self.dosageEdit.textEdited.connect(self.valueChangedDosage)
 
-        self.buttonBox = QDialogButtonBox()
-        self.buttonBox.addButton(self.buttonBox.standardButtons().Cancel)
-        self.buttonBox.addButton(self.buttonBox.standardButtons().Save)
-        self.buttonBox.addButton(self.buttonBox.standardButtons().Ok)
-        self.buttonBox.setFont(QFont("Avenir", 12))
-        self.buttonBox.setFixedWidth(250)
-        self.buttonBox.setStyleSheet(
+        self.saveButton = QPushButton("Save")
+        # self.buttonBox.addButton(self.buttonBox.standardButtons().Cancel)
+        # self.buttonBox.addButton(self.buttonBox.standardButtons().Save)
+        # self.buttonBox.addButton(self.buttonBox.standardButtons().Ok)
+        self.saveButton.setFont(QFont("Avenir", 12))
+        self.saveButton.setFixedWidth(70)
+        self.saveButton.setStyleSheet(
             "background-color: #aaaaee; border-radius: 5px; padding: 10px"
         )
 
-        self.buttonBox.button(self.buttonBox.standardButtons().Cancel).clicked.connect(
-            self.showPatientListWindow
-        )
-        self.buttonBox.button(self.buttonBox.standardButtons().Save).clicked.connect(
-            self.savePatientInformation
-        )
-        self.buttonBox.button(self.buttonBox.standardButtons().Ok).clicked.connect(
-            self.showDashboardWindow
-        )
-        self.buttonBox.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.buttonBox.setContentsMargins(0, 0, 30, 0)
-        self.patientInputLayout.addWidget(FormRow(self.errorLabel, self.buttonBox))
+        # self.buttonBox.button(self.buttonBox.standardButtons().Cancel).clicked.connect(
+        #     self.showPatientListWindow
+        # )
+        self.saveButton.clicked.connect(self.savePatientInformation)
+        # self.buttonBox.button(self.buttonBox.standardButtons().Ok).clicked.connect(
+        #     self.showDashboardWindow
+        # )
+        self.saveButton.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.saveButton.setContentsMargins(0, 0, 30, 0)
+        self.patientInputLayout.addWidget(FormRow(self.errorLabel, self.saveButton))
 
-        self.patientBottomLayout.addWidget(self.patientInputRight, 2)
+        self.patientBottomLayout.addWidget(self.patientInputRight, 0, 1, 1, 1)
+
+        # create modelInput panel in bottom right
+        self.modelInput = QWidget()
+        self.modelInput.setObjectName("modelInput")
+        self.modelInput.setContentsMargins(30, 0, 30, 0)
+        self.modelInput.setStyleSheet(
+            """
+            QWidget#modelInput
+            {
+                background-color: #ffffff;
+                border-radius: 20px;
+            }
+            """
+        )
+
+        self.modelInputLayout = QHBoxLayout(self.modelInput)
+        self.modelInputLayout.setContentsMargins(0, 0, 0, 0)
+        
+        self.numCyclesEdit = LineEdit("# calculation cycles")
+        self.numCyclesEdit.setContentsMargins(30, 0, 30, 0)
+        self.numCyclesEdit.setFixedWidth(500)
+        self.numCyclesEdit.setStyleSheet(
+            "background-color: #f5f5f5; height: 40px; border-radius: 20px; padding-left: 10px"
+        )
+        self.numCyclesEdit.setValidator(QIntValidator())
+
+        self.calculateButton = QPushButton("Calculate")
+        self.calculateButton.setFont(QFont("Avenir", 12))
+        self.calculateButton.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.calculateButton.setStyleSheet(
+            "background-color: #aaaaee; border-radius: 5px; padding: 10px"
+        )
+
+        self.cancelButton = QPushButton("Cancel")
+        self.cancelButton.setFont(QFont("Avenir", 12))
+        self.cancelButton.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.cancelButton.setStyleSheet(
+            "background-color: #aaaaee; border-radius: 5px; padding: 10px"
+        )
+
+        self.cancelButton.clicked.connect(self.showPatientListWindow)
+        self.calculateButton.clicked.connect(lambda: self.showDashboardWindow(do_calculation=True))
+
+        self.modelInputLayout.addWidget(self.numCyclesEdit)
+        self.modelInputLayout.addWidget(self.calculateButton)
+        self.modelInputLayout.addWidget(self.cancelButton)
+
+        self.patientBottomLayout.addWidget(self.modelInput, 1, 1, 1, 1)
+
         self.setLayout(self.sideBarLayout)
 
     def backButtonClicked(self):
         self.showPatientListWindow()
     
     def dashboardButtonClicked(self):
-        self.showDashboardWindow()
+        self.showDashboardWindow(do_calculation=False)
 
     def logoffButtonClicked(self):
         dlg = QMessageBox()
@@ -467,10 +516,11 @@ class PatientInformationWindow(QWidget):
     def showPatientListWindow(self):
         self.graphWidgetANC.clear()
         self.graphWidgetDosages.clear()
+        self.numCyclesEdit.clear()
         self.errorLabel.clear()
         self.parent().parent().showPatientListWindow()
 
-    def showDashboardWindow(self):
+    def showDashboardWindow(self, do_calculation):
         try:
             name = self.patient.name
             assert name != ""
@@ -486,6 +536,7 @@ class PatientInformationWindow(QWidget):
             assignedDoctor = self.patient.assignedDoctor
             ancMeasurement = float(self.ancMeasurementEdit.text())
             dosageMeasurement = float(self.dosageEdit.text())
+            numCalculationCycles = int(self.numCyclesEdit.text())
 
         except:
             msg = "Input fields must not be empty"
@@ -494,7 +545,7 @@ class PatientInformationWindow(QWidget):
             logging.error(msg)
         else:
             self.errorLabel.clear()
-            self.parent().parent().showDashboardWindow()
+            self.parent().parent().showDashboardWindow(calculation_info=(do_calculation, numCalculationCycles))
 
     def showPatientFormWindow(self):
         self.errorLabel.clear()

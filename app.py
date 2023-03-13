@@ -136,11 +136,11 @@ class MainWindow(QMainWindow):
         self.updateToolBar()
         self.patientInfoWindow.updatePatientInfo()
 
-    def showDashboardWindow(self):
+    def showDashboardWindow(self, calculation_info):
         self.stackLayout.setCurrentIndex(3)
         self.current_page = "Dashboard"
         self.updateToolBar()
-        self.dashboardWindow.updatePatientInfo()
+        self.dashboardWindow.updatePatientInfo(calculation_info=calculation_info)
 
     def showPatientFormWindow(self):
         self.stackLayout.setCurrentIndex(4)
