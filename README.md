@@ -19,6 +19,8 @@ Login with credentials. To create a new user, see section 3.0
 
 ![image](https://user-images.githubusercontent.com/44624435/226797287-7ec91a25-df3c-48b4-99d3-2bb32287f7fa.png)
 
+After logging in, log out at any time by pressing the `Log Off` button in the top right of the application. 
+
 
 ### 2.1 Patient List Page
 
