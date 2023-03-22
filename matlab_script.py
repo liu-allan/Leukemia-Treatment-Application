@@ -1,6 +1,9 @@
 import matlab.engine
 
 """
+
+This function calls runController.m found in the Leukemia-Treatment-Project directory
+
 bsa - Body Surface Area, float
 numCycles - Number of cycles to run
 dosage - mg
