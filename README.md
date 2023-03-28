@@ -4,6 +4,7 @@
 
 - Python >= 3.6.1
 - Matlab >= R2022b
+  - Statistics and Machine Learning Toolbox Add-on
 
 ## 1.0 Setup
 
