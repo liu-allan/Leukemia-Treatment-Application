@@ -165,6 +165,7 @@ class PatientFormWindow(QWidget):
         self.buttonBox = QDialogButtonBox()
         self.buttonBox.addButton(self.buttonBox.standardButtons().Cancel)
         self.buttonBox.addButton(self.buttonBox.standardButtons().Save)
+        self.buttonBox.addButton(self.buttonBox.standardButtons().Ok)
         self.buttonBox.setFont(QFont("Avenir", 12))
         self.buttonBox.setFixedWidth(200)
         self.buttonBox.setStyleSheet(
@@ -176,6 +177,9 @@ class PatientFormWindow(QWidget):
         )
         self.buttonBox.button(self.buttonBox.standardButtons().Save).clicked.connect(
             self.savePatientInformation
+        )
+        self.buttonBox.button(self.buttonBox.standardButtons().Ok).clicked.connect(
+            self.showPatientInformationWindow
         )
 
         self.buttonBox.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -376,7 +380,7 @@ class PatientFormWindow(QWidget):
             self.ancEdited = False
             self.dosageEdited = False
             self.errorLabel.clear()
-            self.parent().parent().showPatientListWindow()
+            self.parent().parent().showPatientInformationWindow()
 
     def calculateAge(self):
         today = datetime.today().date()
