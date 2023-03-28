@@ -1,5 +1,10 @@
 # Leukemia-Treatment-Application
 
+## Pre-requisites
+
+- Python >= 3.6.1
+- Matlab >= R2022b
+
 ## 1.0 Setup
 
 ```
