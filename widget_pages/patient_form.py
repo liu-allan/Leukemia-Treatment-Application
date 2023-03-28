@@ -336,7 +336,6 @@ class PatientFormWindow(QWidget):
 
             self.parent().parent().updateSelectedPatient(patient_id)
             self.patient = self.parent().parent().selected_patient
-            self.showPatientListWindow()
 
         except sqlite3.Error as er:
             msg = "Existing entry in the database. Please check your inputs."
@@ -377,7 +376,8 @@ class PatientFormWindow(QWidget):
             self.ancEdited = False
             self.dosageEdited = False
             self.errorLabel.clear()
-            
+            self.showPatientListWindow()
+
     def calculateAge(self):
         today = datetime.today().date()
         return (
