@@ -336,6 +336,7 @@ class PatientFormWindow(QWidget):
 
             self.parent().parent().updateSelectedPatient(patient_id)
             self.patient = self.parent().parent().selected_patient
+            self.showPatientListWindow()
 
         except sqlite3.Error as er:
             msg = "Existing entry in the database. Please check your inputs."
