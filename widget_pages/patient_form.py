@@ -165,7 +165,6 @@ class PatientFormWindow(QWidget):
         self.buttonBox = QDialogButtonBox()
         self.buttonBox.addButton(self.buttonBox.standardButtons().Cancel)
         self.buttonBox.addButton(self.buttonBox.standardButtons().Save)
-        self.buttonBox.addButton(self.buttonBox.standardButtons().Ok)
         self.buttonBox.setFont(QFont("Avenir", 12))
         self.buttonBox.setFixedWidth(200)
         self.buttonBox.setStyleSheet(
@@ -177,9 +176,6 @@ class PatientFormWindow(QWidget):
         )
         self.buttonBox.button(self.buttonBox.standardButtons().Save).clicked.connect(
             self.savePatientInformation
-        )
-        self.buttonBox.button(self.buttonBox.standardButtons().Ok).clicked.connect(
-            self.showPatientInformationWindow
         )
 
         self.buttonBox.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -380,7 +376,7 @@ class PatientFormWindow(QWidget):
             self.ancEdited = False
             self.dosageEdited = False
             self.errorLabel.clear()
-            self.parent().parent().showPatientInformationWindow()
+            self.showPatientListWindow()
 
     def calculateAge(self):
         today = datetime.today().date()
@@ -404,33 +400,6 @@ class PatientFormWindow(QWidget):
     def showPatientListWindow(self):
         self.errorLabel.clear()
         self.parent().parent().showPatientListWindow()
-
-    def showPatientInformationWindow(self):
-        try:
-            name = self.patientLineEdit.text()
-            assert name != ""
-            date = self.dateEdit.date().toPyDate()
-            weight = float(self.weightEdit.text())
-            height = float(self.heightEdit.text())
-            dosage = float(self.dosageEdit.text())
-            allType = self.allTypeSelect.currentText()
-            age = self.calculateAge()
-            bloodType = self.bloodTypeSelect.currentText()
-            birthday = self.birthdayEdit.date().toPyDate()
-            phoneNumber = self.phoneNumberFormatterReverse()
-            assignedDoctor = self.patient.assignedDoctor
-            ancMeasurement = float(self.ancMeasurementEdit.text())
-            dosageMeasurement = float(self.dosageEdit.text())
-            bsa = float(self.bodySurfaceAreaMeasurement.text())
-
-        except:
-            msg = "Input fields must not be empty"
-            self.errorLabel.setText(msg)
-            self.errorLabel.setStyleSheet("color:red")
-            logging.error(msg)
-        else:
-            self.errorLabel.clear()
-            self.parent().parent().showPatientInformationWindow()
 
     def valueChanged(self):
         self.ancEdited = True
