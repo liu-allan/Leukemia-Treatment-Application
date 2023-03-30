@@ -41,7 +41,6 @@ After logging in, log out at any time by pressing the `Log Off` button in the to
 
 - Fill in patient parameters 
 - Press Save to add the new patient to the list
-- Press OK to continue with this patient to the Patient Information Page
 - Press Cancel to return to the Patient List Page
 
 ![image](https://user-images.githubusercontent.com/44624435/226801284-dfb7096f-3010-4cbb-bda2-81186fad0a2c.png)
