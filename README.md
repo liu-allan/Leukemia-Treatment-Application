@@ -21,7 +21,7 @@ Open the application in the root directory of the repository.
 ```
 python app.py
 ```
-Login with credentials. To create a new user, see section 3.0
+Login with credentials. To create a new user, see [section 4.0](https://github.com/liu-allan/Leukemia-Treatment-Application/tree/documentation#20-how-to-use)
 
 ![image](https://user-images.githubusercontent.com/44624435/226797287-7ec91a25-df3c-48b4-99d3-2bb32287f7fa.png)
 
