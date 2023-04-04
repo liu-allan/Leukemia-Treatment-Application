@@ -40,8 +40,6 @@ class TabShowGraph(QMainWindow):
         self.dosageTableLayout = QVBoxLayout()
         self.dosageTableWidget.setLayout(self.dosageTableLayout)
 
-        self.graphWidget = pg.PlotWidget()
-        self.graphWidget.setCursor(Qt.CursorShape.OpenHandCursor)
         # Temp data -> will connect to matlab in the future
         # day = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         # anticipatory_neutraphil_count = [-10, 1, 10, -4, 15, -12, 20, 8, -17, 3]
@@ -57,6 +55,13 @@ class TabShowGraph(QMainWindow):
         self.rea_plot = None
         self.pos_plot = None
         self.neg_plot = None
+
+        self.graphContainer = QWidget()
+        self.graphContainer.setMinimumHeight(300)
+        self.graphContainerLayout = QVBoxLayout(self.graphContainer)
+
+        self.graphWidget = pg.PlotWidget()
+        self.graphWidget.setCursor(Qt.CursorShape.OpenHandCursor)
         
         # Add Background colour to white
         self.graphWidget.setBackground("w")
@@ -81,6 +86,8 @@ class TabShowGraph(QMainWindow):
 
         self.plotANCGraph()
 
+        self.graphContainerLayout.addWidget(self.graphWidget)
+
         # Creating tables for dosages
         # ant_dosages = [50, 30, 100, 25, 30, 80, 50]
         # self.anticipatory_dosage_title = QLabel("Anticipatory dosages")
@@ -98,7 +105,7 @@ class TabShowGraph(QMainWindow):
         # self.graphLayout.addWidget(self.reactive_dosage_title)
         # self.graphLayout.addWidget(self.reactive_dosage_table)
         self.graphLayout.addWidget(self.noResultsWidget)
-        self.graphLayout.addWidget(self.graphWidget)
+        self.graphLayout.addWidget(self.graphContainer)
         self.graphLayout.addWidget(self.dosageTableWidget)
 
         self.setGraphTableData(None, None, None, None)
