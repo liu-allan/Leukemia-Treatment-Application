@@ -34,16 +34,3 @@ def runModel(bsa: float, numCycles: int, dosage: list[float], ANC_measurements: 
     anticipatory_dosage = [anticipatory_dosage[i][0] for i in indices]
 
     return time, nominal_trajectory, linearized_trajectory, reactive_trajectory, anticipatory_trajectory, reactive_dosage, anticipatory_dosage
-
-# time, _, _, reactive_trajectory, anticipatory_trajectory, reactive_dosage, anticipatory_dosage = runModel(1.71, 3.0, [50.0, 70.0], [2.1, 2.0, 2.3])
-
-# print(time)
-# print("======================================")
-# print(reactive_trajectory)
-# print("======================================")
-# print(anticipatory_trajectory)
-# print("======================================")
-# print(reactive_dosage)
-# print("======================================")
-# print(anticipatory_dosage)
-# print("======================================")

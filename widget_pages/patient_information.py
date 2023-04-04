@@ -275,22 +275,12 @@ class PatientInformationWindow(QWidget):
         self.dosageEdit.textEdited.connect(self.valueChangedDosage)
 
         self.saveButton = QPushButton("Save")
-        # self.buttonBox.addButton(self.buttonBox.standardButtons().Cancel)
-        # self.buttonBox.addButton(self.buttonBox.standardButtons().Save)
-        # self.buttonBox.addButton(self.buttonBox.standardButtons().Ok)
         self.saveButton.setFont(QFont("Avenir", 12))
         self.saveButton.setFixedWidth(70)
         self.saveButton.setStyleSheet(
             "background-color: #aaaaee; border-radius: 5px; padding: 10px"
         )
-
-        # self.buttonBox.button(self.buttonBox.standardButtons().Cancel).clicked.connect(
-        #     self.showPatientListWindow
-        # )
         self.saveButton.clicked.connect(self.savePatientInformation)
-        # self.buttonBox.button(self.buttonBox.standardButtons().Ok).clicked.connect(
-        #     self.showDashboardWindow
-        # )
         self.saveButton.setCursor(Qt.CursorShape.PointingHandCursor)
         self.saveButton.setContentsMargins(0, 0, 30, 0)
         self.patientInputLayout.addWidget(FormRow(self.errorLabel, self.saveButton))

@@ -40,10 +40,6 @@ class TabShowGraph(QMainWindow):
         self.dosageTableLayout = QVBoxLayout()
         self.dosageTableWidget.setLayout(self.dosageTableLayout)
 
-        # Temp data -> will connect to matlab in the future
-        # day = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        # anticipatory_neutraphil_count = [-10, 1, 10, -4, 15, -12, 20, 8, -17, 3]
-        # reactive_neutraphil_count = [-25, 5, 15, -15, 4, -22, -7, 25, 13, 0]
         self.boundary_positive = []
         self.boundary_negative = []
         self.day = []
@@ -88,22 +84,6 @@ class TabShowGraph(QMainWindow):
 
         self.graphContainerLayout.addWidget(self.graphWidget)
 
-        # Creating tables for dosages
-        # ant_dosages = [50, 30, 100, 25, 30, 80, 50]
-        # self.anticipatory_dosage_title = QLabel("Anticipatory dosages")
-        # self.anticipatory_dosage_title.setFont(QFont("Avenir", 15))
-        # self.anticipatory_dosage_title.setMargin(5)
-        # self.anticipatory_dosage_table = self.createTable(2, 8, ant_dosages)
-        # self.graphLayout.addWidget(self.anticipatory_dosage_title)
-        # self.graphLayout.addWidget(self.anticipatory_dosage_table)
-
-        # reac_dosages = [10, 30, 40, 20, 79, 84, 24]
-        # self.reactive_dosage_title = QLabel("Reactive dosages")
-        # self.reactive_dosage_title.setFont(QFont("Avenir", 15))
-        # self.reactive_dosage_title.setMargin(5)
-        # self.reactive_dosage_table = self.createTable(2, 8, reac_dosages)
-        # self.graphLayout.addWidget(self.reactive_dosage_title)
-        # self.graphLayout.addWidget(self.reactive_dosage_table)
         self.graphLayout.addWidget(self.noResultsWidget)
         self.graphLayout.addWidget(self.graphContainer)
         self.graphLayout.addWidget(self.dosageTableWidget)
@@ -127,8 +107,6 @@ class TabShowGraph(QMainWindow):
         self.rea_plot = self.graphWidget.plot(
             self.day, self.reactive_anc, name="Reactive", pen=pen, symbol="o", symbolSize=7, symbolBrush=('b')
         )
-        # self.plot(self.day, self.anticipatory_anc, "Anticipatory", "r")
-        # self.plot(self.day, self.reactive_anc, "Reactive", "b")
 
         pen = pg.mkPen(color="#4a707a", width=5, style=Qt.PenStyle.DashLine)
         self.pos_plot = self.graphWidget.plot(
@@ -138,8 +116,6 @@ class TabShowGraph(QMainWindow):
         self.neg_plot = self.graphWidget.plot(
             self.day, self.boundary_negative, name="Neutraphil Bottom Boundary", pen=pen, symbolBrush=("#4a707a")
         )
-        # self.plot_straight(self.day, self.boundary_positive, "Neutraphil Top Boundary", "#4a707a")
-        # self.plot_straight(self.day, self.boundary_negative, "Neutraphil Bottom Boundary", "#4a707a")
 
     def updateANCGraph(self):
         if self.ant_plot:
@@ -253,14 +229,6 @@ class TabShowGraph(QMainWindow):
         self.reactive_dosage_title.setVisible(show)
         self.reactive_dosage_table.setVisible(show)
 
-    # def showNoResults(self):
-    #     self.noResultsWidget.setVisible(True)
-    #     self.graphWidget.setVisible(False)
-    #     self.anticipatory_dosage_title.setVisible(False)
-    #     self.anticipatory_dosage_table.setVisible(False)
-    #     self.reactive_dosage_title.setVisible(False)
-    #     self.reactive_dosage_table.setVisible(False)
-
 class DashboardWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -324,7 +292,6 @@ class DashboardWindow(QWidget):
             self.graph.toggleResults(False)
 
     def runMatLabModel(self, patient, num_cycles):
-        # currently, run 1 cycle into the future, we can make this an option later
         bsa = float(patient.bsa)
         num_cycles = float(num_cycles + 1)
         dosage = [float(patient.dosageMeasurement[-1][0])]
