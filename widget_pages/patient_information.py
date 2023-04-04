@@ -521,31 +521,35 @@ class PatientInformationWindow(QWidget):
         self.parent().parent().showPatientListWindow()
 
     def showDashboardWindow(self, do_calculation):
-        try:
-            name = self.patient.name
-            assert name != ""
-            date = self.dateEdit.date().toString("yyyyMMdd")
-            weight = self.patient.weight
-            height = self.patient.height
-            bsa = math.sqrt(height * weight / 3600)
-            allType = self.patient.allType
-            age = self.patient.age
-            bloodType = self.patient.bloodType
-            birthday = self.patient.birthday
-            phoneNumber = self.patient.phoneNumber
-            assignedDoctor = self.patient.assignedDoctor
-            ancMeasurement = float(self.ancMeasurementEdit.text())
-            dosageMeasurement = float(self.dosageEdit.text())
-            numCalculationCycles = int(self.numCyclesEdit.text())
+        if do_calculation:
+            try:
+                name = self.patient.name
+                assert name != ""
+                date = self.dateEdit.date().toString("yyyyMMdd")
+                weight = self.patient.weight
+                height = self.patient.height
+                bsa = math.sqrt(height * weight / 3600)
+                allType = self.patient.allType
+                age = self.patient.age
+                bloodType = self.patient.bloodType
+                birthday = self.patient.birthday
+                phoneNumber = self.patient.phoneNumber
+                assignedDoctor = self.patient.assignedDoctor
+                # ancMeasurement = float(self.ancMeasurementEdit.text())
+                # dosageMeasurement = float(self.dosageEdit.text())
+                numCalculationCycles = int(self.numCyclesEdit.text())
 
-        except:
-            msg = "Input fields must not be empty"
-            self.errorLabel.setText(msg)
-            self.errorLabel.setStyleSheet("color:red")
-            logging.error(msg)
+            except:
+                msg = "Input fields must not be empty"
+                self.errorLabel.setText(msg)
+                self.errorLabel.setStyleSheet("color:red")
+                logging.error(msg)
+            else:
+                self.errorLabel.clear()
+                self.parent().parent().showDashboardWindow(calculation_info=(True, numCalculationCycles))
         else:
             self.errorLabel.clear()
-            self.parent().parent().showDashboardWindow(calculation_info=(do_calculation, numCalculationCycles))
+            self.parent().parent().showDashboardWindow(calculation_info=(False, 0))
 
     def showPatientFormWindow(self):
         self.errorLabel.clear()
