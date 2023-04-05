@@ -277,6 +277,7 @@ class PatientFormWindow(QWidget):
             bloodType = self.bloodTypeSelect.currentText()
             birthday = self.birthdayEdit.date().toString("yyyyMMdd")
             phoneNumber = self.phoneNumberFormatterReverse()
+            assert phoneNumber != ""
             assignedDoctor = self.parent().parent().username
             bsa = float(self.bodySurfaceAreaMeasurement.text())
             ancMeasurement = float(self.ancMeasurementEdit.text())
