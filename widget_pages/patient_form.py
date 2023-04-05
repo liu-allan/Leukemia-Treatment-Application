@@ -33,6 +33,7 @@ class Label(QLabel):
         self.setFont(QFont("Avenir", 15))
         self.setFixedWidth(width)
 
+
 class LabelBolded(QLabel):
     def __init__(self, text, textSize, margins):
         super().__init__()
@@ -42,12 +43,14 @@ class LabelBolded(QLabel):
         self.setContentsMargins(margins[0], margins[1], margins[2], margins[3])
         self.setStyleSheet("font-weight: bold;")
 
+
 class LineEdit(QLineEdit):
     def __init__(self, placeholderText, width=200):
         super().__init__()
         self.setPlaceholderText(placeholderText)
         self.setFont(QFont("Avenir", 15))
         self.setFixedWidth(width)
+
 
 class FormRow(QWidget):
     def __init__(self, label, widget):
@@ -61,6 +64,7 @@ class FormRow(QWidget):
 
         self.setLayout(layout)
 
+
 class PatientFormWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -70,7 +74,9 @@ class PatientFormWindow(QWidget):
 
         self.patientLabel = Label("Patient Name")
         self.patientLineEdit = LineEdit("Patient")
-        self.patientFormLayout.addWidget(FormRow(self.patientLabel, self.patientLineEdit))
+        self.patientFormLayout.addWidget(
+            FormRow(self.patientLabel, self.patientLineEdit)
+        )
 
         self.weightLabel = Label("Weight (kg)")
         self.weightEdit = LineEdit("kg")
@@ -84,14 +90,20 @@ class PatientFormWindow(QWidget):
         self.bodySurfaceAreaMeasurement = LineEdit("m^2")
         self.bodySurfaceAreaMeasurement.setReadOnly(True)
         self.bodySurfaceAreaMeasurement.setFixedWidth(200)
-        self.patientFormLayout.addWidget(FormRow(self.bodySurfaceAreaLabel, self.bodySurfaceAreaMeasurement))
+        self.patientFormLayout.addWidget(
+            FormRow(self.bodySurfaceAreaLabel, self.bodySurfaceAreaMeasurement)
+        )
 
         self.bloodTypeLabel = Label("Blood Type")
         self.bloodTypeSelect = QComboBox()
-        self.bloodTypeSelect.addItems(['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'])
+        self.bloodTypeSelect.addItems(
+            ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"]
+        )
         self.bloodTypeSelect.activated.connect(self.selectedBloodType)
         self.bloodTypeSelect.setFixedWidth(210)
-        self.patientFormLayout.addWidget(FormRow(self.bloodTypeLabel, self.bloodTypeSelect))
+        self.patientFormLayout.addWidget(
+            FormRow(self.bloodTypeLabel, self.bloodTypeSelect)
+        )
 
         self.birthdayLabel = Label("Birthday")
         self.birthdayEdit = QDateEdit()
@@ -101,11 +113,19 @@ class PatientFormWindow(QWidget):
 
         self.phoneNumberLabel = Label("Phone Number")
         self.phoneNumberEdit = LineEdit("xxx-xxx-xxxx")
-        self.patientFormLayout.addWidget(FormRow(self.phoneNumberLabel, self.phoneNumberEdit))
-        
+        self.patientFormLayout.addWidget(
+            FormRow(self.phoneNumberLabel, self.phoneNumberEdit)
+        )
+
         self.allTypeLabel = Label("ALL Type")
         self.allTypeSelect = QComboBox()
-        self.allTypeSelect.addItems(['Immunophenotype', 'French-American-British (FAB)', 'ALL Cytogenetic Risk Group'])
+        self.allTypeSelect.addItems(
+            [
+                "Immunophenotype",
+                "French-American-British (FAB)",
+                "ALL Cytogenetic Risk Group",
+            ]
+        )
         self.allTypeSelect.activated.connect(self.selectedAllType)
         self.allTypeSelect.setFixedWidth(210)
         self.patientFormLayout.addWidget(FormRow(self.allTypeLabel, self.allTypeSelect))
@@ -116,7 +136,9 @@ class PatientFormWindow(QWidget):
 
         self.ancCountLabel = Label("ANC Measurement (# Cells/L) x 1e9")
         self.ancMeasurementEdit = LineEdit("# Cells/L x 1e9")
-        self.patientFormLayout.addWidget(FormRow(self.ancCountLabel, self.ancMeasurementEdit))
+        self.patientFormLayout.addWidget(
+            FormRow(self.ancCountLabel, self.ancMeasurementEdit)
+        )
 
         self.dateLabel = Label("Date of ANC Measurement")
         self.dateEdit = QDateEdit()
@@ -143,7 +165,6 @@ class PatientFormWindow(QWidget):
         self.buttonBox = QDialogButtonBox()
         self.buttonBox.addButton(self.buttonBox.standardButtons().Cancel)
         self.buttonBox.addButton(self.buttonBox.standardButtons().Save)
-        self.buttonBox.addButton(self.buttonBox.standardButtons().Ok)
         self.buttonBox.setFont(QFont("Avenir", 12))
         self.buttonBox.setFixedWidth(200)
         self.buttonBox.setStyleSheet(
@@ -155,9 +176,6 @@ class PatientFormWindow(QWidget):
         )
         self.buttonBox.button(self.buttonBox.standardButtons().Save).clicked.connect(
             self.savePatientInformation
-        )
-        self.buttonBox.button(self.buttonBox.standardButtons().Ok).clicked.connect(
-            self.showPatientInformationWindow
         )
 
         self.buttonBox.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -177,6 +195,7 @@ class PatientFormWindow(QWidget):
         self.heightEdit.clear()
         self.phoneNumberEdit.clear()
         self.birthdayEdit.clear()
+        self.birthdayEdit.setDate(QDate.currentDate())
         self.bodySurfaceAreaMeasurement.clear()
         self.dosageEdit.clear()
         self.ancMeasurementEdit.clear()
@@ -193,27 +212,39 @@ class PatientFormWindow(QWidget):
             )
 
             self.phoneNumberFormatterBegin()
-            
+
             self.bodySurfaceAreaMeasurement.setText(str(self.patient.bsa))
-            self.ancMeasurementDate = [datetime.strptime(str(item[1]), '%Y%m%d') for item in self.patient.ancMeasurement]
+            self.ancMeasurementDate = [
+                datetime.strptime(str(item[1]), "%Y%m%d")
+                for item in self.patient.ancMeasurement
+            ]
             self.ancMeasurement = [item[0] for item in self.patient.ancMeasurement]
             self.ancMeasurementEdit.setText(str(self.ancMeasurement[-1]))
             self.dateEdit.setDate(
                 QDate.fromString(str(self.ancMeasurementDate[-1].date()), "yyyy-MM-dd")
             )
 
-            self.dosagePrescribedDate = [datetime.strptime(str(item[1]), '%Y%m%d') for item in self.patient.dosageMeasurement]
+            self.dosagePrescribedDate = [
+                datetime.strptime(str(item[1]), "%Y%m%d")
+                for item in self.patient.dosageMeasurement
+            ]
             self.dosageAmount = [item[0] for item in self.patient.dosageMeasurement]
             self.dosageEdit.setText(str(self.dosageAmount[-1]))
 
     def phoneNumberFormatterBegin(self):
-        self.phoneNumberEdit.setText(format(int(self.patient.phoneNumber[:-1]), ",").replace(",", "-") + self.patient.phoneNumber[-1])   
+        self.phoneNumberEdit.setText(
+            format(int(self.patient.phoneNumber[:-1]), ",").replace(",", "-")
+            + self.patient.phoneNumber[-1]
+        )
 
     def phoneNumberFormatter(self):
-        self.phoneNumberEdit.setText(format(int(self.phoneNumberEdit.text()[:-1]), ",").replace(",", "-") + self.phoneNumberEdit.text()[-1])    
+        self.phoneNumberEdit.setText(
+            format(int(self.phoneNumberEdit.text()[:-1]), ",").replace(",", "-")
+            + self.phoneNumberEdit.text()[-1]
+        )
 
     def phoneNumberFormatterReverse(self):
-        return self.phoneNumberEdit.text().replace('-', '')
+        return self.phoneNumberEdit.text().replace("-", "")
 
     def calculateBodySurfaceArea(self):
         weight = self.weightEdit.text()
@@ -226,7 +257,7 @@ class PatientFormWindow(QWidget):
         else:
             bsa = math.sqrt(height * weight / 3600)
             self.bodySurfaceAreaMeasurement.setText("{:.2f}".format(bsa))
-    
+
     def savePatientInformation(self):
         try:
             name = self.patientLineEdit.text()
@@ -244,7 +275,7 @@ class PatientFormWindow(QWidget):
             dosageMeasurement = float(self.dosageEdit.text())
             age = self.calculateAge()
             user_id = self.createUserID(name)
-            
+
             conn = self.parent().parent().getDatabaseConnection()
             patient_id = self.patient.id if self.patient else -1
 
@@ -280,7 +311,18 @@ class PatientFormWindow(QWidget):
                         SET name=?, weight=?, height=?, phone_number=?, birthday=?, age=?, blood_type=?, all_type=?, body_surface_area=? 
                         WHERE id=?
                     """,
-                    (name, weight, height, phoneNumber, birthday, age, bloodType, allType, bsa, self.patient.id),
+                    (
+                        name,
+                        weight,
+                        height,
+                        phoneNumber,
+                        birthday,
+                        age,
+                        bloodType,
+                        allType,
+                        bsa,
+                        self.patient.id,
+                    ),
                 )
 
             conn.execute(
@@ -334,54 +376,34 @@ class PatientFormWindow(QWidget):
             self.ancEdited = False
             self.dosageEdited = False
             self.errorLabel.clear()
-            self.parent().parent().showPatientInformationWindow()
+            self.showPatientListWindow()
 
     def calculateAge(self):
         today = datetime.today().date()
-        return today.year - self.birthdayEdit.date().year() - ((today.month, today.day) < (self.birthdayEdit.date().month(), self.birthdayEdit.date().day()))
+        return (
+            today.year
+            - self.birthdayEdit.date().year()
+            - (
+                (today.month, today.day)
+                < (self.birthdayEdit.date().month(), self.birthdayEdit.date().day())
+            )
+        )
 
     # creates the unique user id for each patient
     def createUserID(self, patient_name):
         nameSplit = patient_name.split()
         firstName = nameSplit[0]
-        lastName = "".join(nameSplit[1:]) # for patients with middle names
+        lastName = "".join(nameSplit[1:])  # for patients with middle names
         microsecond = datetime.now().microsecond
         return firstName.lower() + lastName.lower() + str(microsecond)
-         
+
     def showPatientListWindow(self):
         self.errorLabel.clear()
         self.parent().parent().showPatientListWindow()
 
-    def showPatientInformationWindow(self):
-        try:
-            name = self.patientLineEdit.text()
-            assert name != ""
-            date = self.dateEdit.date().toPyDate()
-            weight = float(self.weightEdit.text())
-            height = float(self.heightEdit.text())
-            dosage = float(self.dosageEdit.text())
-            allType = self.allTypeSelect.currentText()
-            age = self.calculateAge()
-            bloodType = self.bloodTypeSelect.currentText()
-            birthday = self.birthdayEdit.date().toPyDate()
-            phoneNumber = self.phoneNumberFormatterReverse()
-            assignedDoctor = self.patient.assignedDoctor
-            ancMeasurement = float(self.ancMeasurementEdit.text())
-            dosageMeasurement = float(self.dosageEdit.text())
-            bsa = float(self.bodySurfaceAreaMeasurement.text())
-
-        except:
-            msg = "Input fields must not be empty"
-            self.errorLabel.setText(msg)
-            self.errorLabel.setStyleSheet("color:red")
-            logging.error(msg)
-        else:
-            self.errorLabel.clear()
-            self.parent().parent().showPatientInformationWindow()
-
     def valueChanged(self):
         self.ancEdited = True
-    
+
     def valueChangedDosage(self):
         self.dosageEdited = True
 

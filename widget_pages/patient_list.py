@@ -12,6 +12,8 @@ from PyQt6.QtWidgets import (
     QScrollArea,
     QLineEdit,
     QComboBox,
+    QMessageBox,
+    QDialogButtonBox
 )
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QFont, QIcon, QPixmap
@@ -136,6 +138,22 @@ class PatientListItem(QPushButton):
         )
 
     def deletePatient(self):
+
+        dlg = QMessageBox(self)
+        dlg.setWindowTitle("Delete Patient")
+        dlg.setText("Are you sure you want to delete " + self.patient_name +"?")
+        dlg.setStandardButtons(
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        for button in dlg.findChild(QDialogButtonBox).findChildren(QPushButton):
+            button.setCursor(Qt.CursorShape.PointingHandCursor)
+
+        dlg.setFont(QFont("Avenir", 15))
+        button = dlg.exec()
+
+        if button == QMessageBox.StandardButton.No:
+            return
+
         conn = self.parent().parent().parent().parent().getDatabaseConnection()
 
         try:
