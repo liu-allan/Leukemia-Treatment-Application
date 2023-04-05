@@ -58,7 +58,9 @@ After logging in, log out at any time by pressing the `Log Off` button in the to
 
 ![image](https://user-images.githubusercontent.com/44624435/230220395-b7f8dfa9-6d76-401e-8e1f-6c42c81ceeed.png)
 
-Navigate to other pages by pressing the icons on the left.
+Navigate to other pages by pressing the icons on the left. If the model has already been run for the patient, the user can return to the dashboard without running the model again by pressing the Dashboard icon on the left. 
+
+![tab legend](https://user-images.githubusercontent.com/44624435/230222852-0e2b3d38-e36b-417c-b5ba-2b42753016fa.png)
 
 ### 2.4 Dashboard
 
