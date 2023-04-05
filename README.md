@@ -52,7 +52,7 @@ After logging in, log out at any time by pressing the `Log Off` button in the to
 - Press Edit to change patient parameters.
 - If there is new data, input the prescribed dosage, ANC measurement and date of measurement.
 - Press Save to save the record into the database.
-- Input the number of cycles to run
+- Input the number of cycles into the future to run
 - Press Calculate to run the model with the newest and previously saved records. 
 - Press Cancel to return to the Patient List Page
 
