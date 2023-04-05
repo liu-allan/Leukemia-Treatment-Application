@@ -15,7 +15,7 @@ from PyQt6.QtWidgets import (
     QMessageBox,
     QDialogButtonBox
 )
-from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtCore import Qt, QSize, QPropertyAnimation, QAbstractAnimation
 from PyQt6.QtGui import QFont, QIcon, QPixmap
 
 from datetime import datetime
@@ -85,27 +85,26 @@ class PatientListItem(QPushButton):
         else:
             self.birthday_label = QLabel()
 
-        self.delete_button = QPushButton("Delete")
-        self.delete_button.setFont(QFont("Avenir", 15))
+        self.delete_button = QPushButton()
+        self.delete_button.setIcon(QIcon("icons/delete.png"))
+        self.delete_button.setIconSize(QSize(50, 50))
         self.delete_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        # self.delete_button.setFlat(True)
+        self.delete_button.setToolTip("Delete")
+        self.delete_button.setContentsMargins(0, 0, 10, 10)
         self.delete_button.setStyleSheet(
             """
             QPushButton
             {
-                background-color: #fa7a7a;
-                border: 1px solid #c23329;
-                border-radius: 5px;
-                color: #505050;
+                background-color: rgba(255, 255, 255, 0);
+                border-radius: 25px;
                 padding: 20px
-            }
-
-            QPushButton:hover
-            {
-                background-color: #fc5353;
-                color: #000000;
             }
             """
         )
+        self.delete_button.enterEvent = self.onButtonHover
+        self.delete_button.leaveEvent = self.onButtonUnhover
+        self.delete_button.clicked.connect(self.deletePatient)
 
         name_spacer = QSpacerItem(
             20, 1, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum
@@ -123,8 +122,20 @@ class PatientListItem(QPushButton):
         self.layout.addWidget(self.delete_button, 0, 4, 2, 1)
 
         self.setLayout(self.layout)
-
-        self.delete_button.clicked.connect(self.deletePatient)
+    
+    def onButtonHover(self, event):
+        self.animation = QPropertyAnimation(self.delete_button, b"iconSize")
+        self.animation.setDuration(200)
+        self.animation.setStartValue(self.delete_button.iconSize())
+        self.animation.setEndValue(QSize(56, 56))
+        self.animation.start()
+    
+    def onButtonUnhover(self, event):
+        self.animation = QPropertyAnimation(self.delete_button, b"iconSize")
+        self.animation.setDuration(200)
+        self.animation.setStartValue(self.delete_button.iconSize())
+        self.animation.setEndValue(QSize(50, 50))
+        self.animation.start()
 
     def show(self):
         self.setVisible(True)
