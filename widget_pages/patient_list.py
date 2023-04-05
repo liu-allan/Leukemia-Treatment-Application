@@ -319,13 +319,19 @@ class PatientListWindow(QWidget):
     def showAdvancedOptions(self, display):
         if display:
             self.search_mode_button.setText("Default Search")
-            self.name_search_bar.setPlaceholderText("Patient Name")
+            if (self.parent().parent().is_admin_user):
+                self.name_search_bar.setPlaceholderText("Oncologist Name")
+            else:
+                self.name_search_bar.setPlaceholderText("Patient Name")
             self.name_search_bar.clear()
             self.id_search_bar.clear()
             self.id_search_bar.setVisible(True)
         else:
             self.search_mode_button.setText("Advanced Search")
-            self.name_search_bar.setPlaceholderText("Search Patient")
+            if (self.parent().parent().is_admin_user):
+                self.name_search_bar.setPlaceholderText("Search Oncologist")
+            else:
+                self.name_search_bar.setPlaceholderText("Search Patient")
             self.name_search_bar.clear()
             self.id_search_bar.clear()
             self.id_search_bar.setVisible(False)
@@ -371,11 +377,15 @@ class PatientListWindow(QWidget):
         self.list_layout = QVBoxLayout()
 
         if (self.parent().parent().is_admin_user):
+            self.name_search_bar.setPlaceholderText("Search Oncologists")
+            self.id_search_bar.setPlaceholderText("Oncologist Username")
             for username, full_name in self.patients:
                 widget = PatientListItem(full_name, "", username, "", True)
                 self.patient_widgets.append(widget)
                 self.list_layout.addWidget(widget)
         else:
+            self.name_search_bar.setPlaceholderText("Search Patients")
+            self.id_search_bar.setPlaceholderText("Patient ID")
             for patient_name, patient_id, user_id, birthday in self.patients:
                 widget = PatientListItem(patient_name, patient_id, user_id, birthday)
                 self.patient_widgets.append(widget)

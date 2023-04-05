@@ -16,6 +16,7 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QSpacerItem,
     QSizePolicy,
+    QCheckBox
 )
 from PyQt6.QtGui import QDoubleValidator, QFont
 from widget_pages.patient_card import PatientCard
@@ -53,15 +54,12 @@ class LineEdit(QLineEdit):
 
 
 class FormRow(QWidget):
-    def __init__(self, label, widget):
+    def __init__(self, label, widget, spacing=50):
         super().__init__()
         layout = QHBoxLayout()
         layout.addWidget(label)
-        layout.addItem(
-            QSpacerItem(1, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
-        )
+        layout.addSpacing(spacing)
         layout.addWidget(widget)
-
         self.setLayout(layout)
 
 
@@ -100,7 +98,8 @@ class PatientFormWindow(QWidget):
             ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"]
         )
         self.bloodTypeSelect.activated.connect(self.selectedBloodType)
-        self.bloodTypeSelect.setFixedWidth(210)
+        self.bloodTypeSelect.setFixedWidth(200)
+        self.bloodTypeSelect.setFont(QFont("Avenir", 15))
         self.patientFormLayout.addWidget(
             FormRow(self.bloodTypeLabel, self.bloodTypeSelect)
         )
@@ -127,7 +126,8 @@ class PatientFormWindow(QWidget):
             ]
         )
         self.allTypeSelect.activated.connect(self.selectedAllType)
-        self.allTypeSelect.setFixedWidth(210)
+        self.allTypeSelect.setFixedWidth(200)
+        self.allTypeSelect.setFont(QFont("Avenir", 10))
         self.patientFormLayout.addWidget(FormRow(self.allTypeLabel, self.allTypeSelect))
 
         self.dosageLabel = Label("6-MP Dosage (mg)")
@@ -145,6 +145,12 @@ class PatientFormWindow(QWidget):
         self.dateEdit.setFont(QFont("Avenir", 15))
         self.dateEdit.setFixedWidth(200)
         self.patientFormLayout.addWidget(FormRow(self.dateLabel, self.dateEdit))
+
+        self.consentLabel = Label("I authorize the use and storage of my information in this application", 600)
+        self.consentCheckBox = QCheckBox()
+        self.consentCheckBox.setFixedWidth(25)
+        self.consentCheckBox.setStyleSheet("QCheckBox::indicator { width: 25px; height: 25px;}")
+        self.patientFormLayout.addWidget(FormRow(self.consentLabel, self.consentCheckBox, 25))
 
         self.errorLabel = Label("")
         self.patient = None
@@ -200,6 +206,7 @@ class PatientFormWindow(QWidget):
         self.dosageEdit.clear()
         self.ancMeasurementEdit.clear()
         self.dateEdit.setDate(QDate.currentDate())
+        self.consentCheckBox.setChecked(False)
 
         if self.patient is not None:
             self.patientLineEdit.setText(self.patient.name)
@@ -230,6 +237,7 @@ class PatientFormWindow(QWidget):
             ]
             self.dosageAmount = [item[0] for item in self.patient.dosageMeasurement]
             self.dosageEdit.setText(str(self.dosageAmount[-1]))
+            self.consentCheckBox.setChecked(True)
 
     def phoneNumberFormatterBegin(self):
         self.phoneNumberEdit.setText(
@@ -269,6 +277,7 @@ class PatientFormWindow(QWidget):
             bloodType = self.bloodTypeSelect.currentText()
             birthday = self.birthdayEdit.date().toString("yyyyMMdd")
             phoneNumber = self.phoneNumberFormatterReverse()
+            assert phoneNumber != ""
             assignedDoctor = self.parent().parent().username
             bsa = float(self.bodySurfaceAreaMeasurement.text())
             ancMeasurement = float(self.ancMeasurementEdit.text())
@@ -278,6 +287,9 @@ class PatientFormWindow(QWidget):
 
             conn = self.parent().parent().getDatabaseConnection()
             patient_id = self.patient.id if self.patient else -1
+
+            if not self.consentCheckBox.isChecked():
+                raise Exception("Patient must provide consent to store data") 
 
             if self.patient is None:
                 conn.execute(
@@ -344,7 +356,11 @@ class PatientFormWindow(QWidget):
             logging.error(er)
 
         except:
-            msg = "Input fields must not be empty"
+
+            if not self.consentCheckBox.isChecked():
+                msg = "Patient must provide consent to store data"
+            else:
+                msg = "Input fields must not be empty"
             self.errorLabel.setText(msg)
             self.errorLabel.setStyleSheet("color:red")
             logging.error(msg)
