@@ -31,7 +31,8 @@ After logging in, log out at any time by pressing the `Log Off` button in the to
 ### 2.1 Patient List Page
 
 1. To create a patient profile, click on the plus icon in the top left.
-2. To search for an existing patient, type into the search bar and press 'Advanced Search'.
+2. To search for an existing patient, type into the search bar
+    1. Press Advanced search to toggle between default and advanced search. Advanced search allows the user to search by name and ID
 3. To select an existing patient, press anywhere inside the patient's list item.
 4. To delete an existing patient, select the delete button inside the patient's list item.
 
