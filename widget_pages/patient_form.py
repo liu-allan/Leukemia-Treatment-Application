@@ -206,6 +206,7 @@ class PatientFormWindow(QWidget):
         self.dosageEdit.clear()
         self.ancMeasurementEdit.clear()
         self.dateEdit.setDate(QDate.currentDate())
+        self.consentCheckBox.setChecked(False)
 
         if self.patient is not None:
             self.patientLineEdit.setText(self.patient.name)
@@ -236,6 +237,7 @@ class PatientFormWindow(QWidget):
             ]
             self.dosageAmount = [item[0] for item in self.patient.dosageMeasurement]
             self.dosageEdit.setText(str(self.dosageAmount[-1]))
+            self.consentCheckBox.setChecked(True)
 
     def phoneNumberFormatterBegin(self):
         self.phoneNumberEdit.setText(
