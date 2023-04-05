@@ -107,9 +107,8 @@ class PatientListItem(QPushButton):
 
         self.delete_button = QPushButton()
         self.delete_button.setIcon(QIcon("icons/delete.png"))
-        self.delete_button.setIconSize(QSize(50, 50))
+        self.delete_button.setIconSize(QSize(40, 40))
         self.delete_button.setCursor(Qt.CursorShape.PointingHandCursor)
-        # self.delete_button.setFlat(True)
         self.delete_button.setToolTip("Delete")
         self.delete_button.setContentsMargins(0, 0, 10, 10)
         self.delete_button.setStyleSheet(
@@ -152,14 +151,14 @@ class PatientListItem(QPushButton):
         self.animation = QPropertyAnimation(self.delete_button, b"iconSize")
         self.animation.setDuration(200)
         self.animation.setStartValue(self.delete_button.iconSize())
-        self.animation.setEndValue(QSize(56, 56))
+        self.animation.setEndValue(QSize(46, 46))
         self.animation.start()
     
     def onButtonUnhover(self, event):
         self.animation = QPropertyAnimation(self.delete_button, b"iconSize")
         self.animation.setDuration(200)
         self.animation.setStartValue(self.delete_button.iconSize())
-        self.animation.setEndValue(QSize(50, 50))
+        self.animation.setEndValue(QSize(40, 40))
         self.animation.start()
 
     def show(self):
