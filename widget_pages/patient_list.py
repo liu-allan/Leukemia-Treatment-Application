@@ -33,15 +33,16 @@ class PatientListItem(QPushButton):
 
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
         self.setObjectName("PatientListItem")
+        self.setContentsMargins(15, 0, 0, 0)
         self.setStyleSheet(
             """
             QPushButton#PatientListItem
             {
-                min-height: 70px;
+                min-height: 100px;
                 background-color: #ebebf2;
                 border: 1px solid #aaaaaa;
-                border-radius: 5px;
-                padding: 10px
+                border-radius: 30px;
+                padding: 5px
             }
 
             QPushButton#PatientListItem:hover
@@ -59,6 +60,25 @@ class PatientListItem(QPushButton):
         self.user_id = user_id
         self.is_admin = is_admin
         self.birthday = datetime.strptime(birthday, '%Y%m%d').strftime('%Y-%m-%d') if birthday else ""
+
+        self.avatar = QPushButton(self.patient_name[0])
+        self.avatar.setObjectName("avatar")
+        self.avatar.setFont(QFont("Avenir", 25))
+        self.avatar.setFixedHeight(80)
+        self.avatar.setFixedWidth(80)
+        self.avatar.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.avatar.setStyleSheet(
+            """ 
+            QPushButton#avatar
+            {
+                background-color: #aaaaee;
+                border-radius: 40px;
+                border-style: outset;
+                border: 2px solid #aaaaee;
+                padding: 10px;
+            }
+            """
+        )
 
         self.name_label = QLabel(self.patient_name)
         patient_name_font = QFont("Avenir", 18)
@@ -106,6 +126,9 @@ class PatientListItem(QPushButton):
         self.delete_button.leaveEvent = self.onButtonUnhover
         self.delete_button.clicked.connect(self.deletePatient)
 
+        avatar_spacer = QSpacerItem(
+            10, 1, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum
+        )
         name_spacer = QSpacerItem(
             20, 1, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum
         )
@@ -114,12 +137,14 @@ class PatientListItem(QPushButton):
         )
 
         self.layout = QGridLayout()
-        self.layout.addWidget(self.name_label, 0, 0, 1, 1)
-        self.layout.addWidget(self.user_id_label, 1, 0, 1, 1)
-        self.layout.addItem(name_spacer, 0, 1, 2, 1)
-        self.layout.addWidget(self.birthday_label, 1, 2, 1, 1)
-        self.layout.addItem(main_spacer, 0, 3, 2, 1)
-        self.layout.addWidget(self.delete_button, 0, 4, 2, 1)
+        self.layout.addWidget(self.avatar, 0, 0, 2, 1)
+        self.layout.addItem(avatar_spacer, 0, 1, 2, 1)
+        self.layout.addWidget(self.name_label, 0, 2, 1, 1)
+        self.layout.addWidget(self.user_id_label, 1, 2, 1, 1)
+        self.layout.addItem(name_spacer, 0, 3, 2, 1)
+        self.layout.addWidget(self.birthday_label, 1, 4, 1, 1)
+        self.layout.addItem(main_spacer, 0, 5, 2, 1)
+        self.layout.addWidget(self.delete_button, 0, 6, 2, 1)
 
         self.setLayout(self.layout)
     
