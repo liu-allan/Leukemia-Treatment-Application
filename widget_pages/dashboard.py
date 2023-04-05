@@ -70,7 +70,7 @@ class TabShowGraph(QMainWindow):
         )
         # Add Axis Labels
         styles = {"color": "#000000", "font": QFont("Avenir", 25), "font-size": "25px"}
-        self.graphWidget.setLabel("left", "Neutraphil Count", **styles)
+        self.graphWidget.setLabel("left", "Neutrophil Count (# Cells/L) x 1e9", **styles)
         self.graphWidget.setLabel("bottom", "Day (days)", **styles)
         # Add legend
         self.graphWidget.addLegend()
