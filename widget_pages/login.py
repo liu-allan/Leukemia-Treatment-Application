@@ -24,7 +24,6 @@ import qtawesome as qta
 
 logging.getLogger().setLevel(logging.INFO)
 
-
 class LoginWindow(QWidget):
     def __init__(self):
         super().__init__()
