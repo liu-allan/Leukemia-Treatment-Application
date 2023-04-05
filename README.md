@@ -35,7 +35,7 @@ After logging in, log out at any time by pressing the `Log Off` button in the to
 3. To select an existing patient, press anywhere inside the patient's list item.
 4. To delete an existing patient, select the delete button inside the patient's list item.
 
-![Patient List Page](https://user-images.githubusercontent.com/44624435/226800089-e491592e-f9ed-4417-90a1-fd3659bde801.png)
+![Patient List Page](https://user-images.githubusercontent.com/44624435/230219923-d36b345d-eec3-4538-819f-e55752291e30.png)
 
 ### 2.2 Patient Form Page
 
@@ -43,7 +43,7 @@ After logging in, log out at any time by pressing the `Log Off` button in the to
 - Press Save to add the new patient to the list
 - Press Cancel to return to the Patient List Page
 
-![image](https://user-images.githubusercontent.com/44624435/226801284-dfb7096f-3010-4cbb-bda2-81186fad0a2c.png)
+![image](https://user-images.githubusercontent.com/44624435/230220126-69396a73-789b-462c-8148-f99022ee2b2b.png)
 
 
 ### 2.3 Patient Information Page
@@ -51,16 +51,21 @@ After logging in, log out at any time by pressing the `Log Off` button in the to
 - Press Edit to change patient parameters.
 - If there is new data, input the prescribed dosage, ANC measurement and date of measurement.
 - Press Save to save the record into the database.
-- Press OK to run the model with the newest and previously saved records. 
+- Input the number of cycles to run
+- Press Calculate to run the model with the newest and previously saved records. 
 - Press Cancel to return to the Patient List Page
 
-![image](https://user-images.githubusercontent.com/44624435/226800259-ca3993db-3005-405a-92e2-64c54bf62462.png)
+![image](https://user-images.githubusercontent.com/44624435/230220395-b7f8dfa9-6d76-401e-8e1f-6c42c81ceeed.png)
+
+Navigate to other pages by pressing the icons on the left.
 
 ### 2.4 Dashboard
 
-The model can take a few minutes (4-5 minutes per cycle) to complete, this is normal.
+The model can take a few minutes (4-5 minutes per cycle) to complete and the application will say it is not responding. This is normal.
 
 ![image](https://user-images.githubusercontent.com/44624435/226801521-8a6a05b7-9332-4b66-bea4-fbf06a8e1651.png)
+
+Navigate to previous pages using the tabs on the left.
 
 ## 3.0 Matlab Model
 
@@ -72,7 +77,7 @@ To create a new user, login with credentials: username: admin, password: admin
 
 Then click on the plus icon in the top left.
 
-![image](https://user-images.githubusercontent.com/44624435/226797151-510f8520-61a2-4c54-9a09-2142115293e0.png)
+![image](https://user-images.githubusercontent.com/44624435/230220785-ed69bebe-98d0-4843-8056-8ba1e72cbae4.png)
 
 Fill out the form and press save to complete registration.
 
