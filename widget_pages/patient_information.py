@@ -289,8 +289,6 @@ class PatientInformationWindow(QWidget):
         self.parent().parent().showLoginWindow()
 
     def displayParameters(self):
-        # self.dosageEdit.clear()
-        # self.ancMeasurementEdit.clear()
         self.dateEdit.setDate(QDate.currentDate())
         self.ancMeasurementDate.clear()
         self.ancMeasurement.clear()
