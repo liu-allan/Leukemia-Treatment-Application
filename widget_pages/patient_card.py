@@ -95,12 +95,13 @@ class PatientCard(QWidget):
         self.age_layout = QHBoxLayout(self.ageWidget)
 
         # set patient age
-        self.patientAge = LabelBolded("Age: ", 18, [10, 0, 0, 0])
+        self.patientAge = LabelBolded("Age: ", 18, [0, 0, 0, 0])
         self.age_layout.addWidget(self.patientAge)
 
-        self.patientAgeV = LabelBolded("", 18, [10, 0, 0, 0])
+        self.patientAgeV = LabelBolded("", 18, [0, 0, 0, 0])
         self.age_layout.addWidget(self.patientAgeV)
 
+        self.name_layout.addWidget(self.ageWidget)
         self.avatar_layout.addWidget(self.nameWidget, 3)
         self.left_layout.addWidget(self.avatarWidget)
 
@@ -238,7 +239,7 @@ class PatientCard(QWidget):
             self.patientHeightV.setText(str(self.patient.height))
             self.patientWeightV.setText(str(self.patient.weight))
             self.patientBloodV.setText(self.patient.bloodType)
-            self.patientIDV.setText(str(self.patient.id))
+            self.patientIDV.setText(str(self.patient.user_id))
             self.phoneNumberFormatter()
             self.allTypeV.setText(self.patient.allType)
             self.assignedDoctorV.setText(self.patient.assignedDoctor)
