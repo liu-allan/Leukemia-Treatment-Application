@@ -355,23 +355,6 @@ class PatientFormWindow(QWidget):
 
         else:
             self.errorLabel.clear()
-            self.patient.save(
-                user_id,
-                name,
-                weight,
-                height,
-                bsa,
-                allType,
-                age,
-                bloodType,
-                birthday,
-                phoneNumber,
-                assignedDoctor,
-                (dosageMeasurement, date),
-                self.dosageEdited,
-                (ancMeasurement, date),
-                self.ancEdited,
-            )
             msg = "Parameters saved successfully!"
             self.errorLabel.setText(msg)
             self.errorLabel.setStyleSheet("color:green")
