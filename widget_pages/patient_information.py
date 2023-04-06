@@ -311,6 +311,7 @@ class PatientInformationWindow(QWidget):
             "background-color: #f5f5f5; height: 40px; border-radius: 20px; padding-left: 10px"
         )
         self.numCyclesEdit.setValidator(QIntValidator())
+        self.numCyclesEdit.textChanged.connect(self.toggleCalculateButton)
 
         self.calculateButton = QPushButton("Calculate")
         self.calculateButton.setFont(QFont("Avenir", 12))
@@ -318,6 +319,7 @@ class PatientInformationWindow(QWidget):
         self.calculateButton.setStyleSheet(
             "background-color: #aaaaee; border-radius: 5px; padding: 10px"
         )
+        self.calculateButton.setEnabled(False)
 
         self.cancelButton = QPushButton("Cancel")
         self.cancelButton.setFont(QFont("Avenir", 12))
@@ -336,6 +338,12 @@ class PatientInformationWindow(QWidget):
         self.patientBottomLayout.addWidget(self.modelInput, 1, 1, 1, 1)
 
         self.setLayout(self.sideBarLayout)
+
+    def toggleCalculateButton(self, input):
+        if input and int(input) > 0:
+            self.calculateButton.setEnabled(True)
+        else:
+            self.calculateButton.setEnabled(False)
 
     def backButtonClicked(self):
         self.showPatientListWindow()
@@ -515,20 +523,7 @@ class PatientInformationWindow(QWidget):
             try:
                 name = self.patient.name
                 assert name != ""
-                date = self.dateEdit.date().toString("yyyyMMdd")
-                weight = self.patient.weight
-                height = self.patient.height
-                bsa = math.sqrt(height * weight / 3600)
-                allType = self.patient.allType
-                age = self.patient.age
-                bloodType = self.patient.bloodType
-                birthday = self.patient.birthday
-                phoneNumber = self.patient.phoneNumber
-                assignedDoctor = self.patient.assignedDoctor
-                # ancMeasurement = float(self.ancMeasurementEdit.text())
-                # dosageMeasurement = float(self.dosageEdit.text())
                 numCalculationCycles = int(self.numCyclesEdit.text())
-
             except:
                 msg = "Input fields must not be empty"
                 self.errorLabel.setText(msg)
