@@ -305,10 +305,6 @@ class PatientInformationWindow(QWidget):
                 for item in self.patient.ancMeasurement
             ]
             self.ancMeasurement = [item[0] for item in self.patient.ancMeasurement]
-            # self.ancMeasurementEdit.setText(str(self.ancMeasurement[-1]))
-            # self.dateEdit.setDate(
-            #     QDate.fromString(str(self.ancMeasurementDate[-1].date()), "yyyy-MM-dd")
-            # )
 
             # Add legend
             if len(self.ancMeasurement) == 1:
@@ -352,7 +348,6 @@ class PatientInformationWindow(QWidget):
                 for item in self.patient.dosageMeasurement
             ]
             self.dosageAmount = [item[0] for item in self.patient.dosageMeasurement]
-            # self.dosageEdit.setText(str(self.dosageAmount[-1]))
 
             # Add legend
             if len(self.ancMeasurement) == 1:

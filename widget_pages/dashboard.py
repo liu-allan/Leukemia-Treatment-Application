@@ -23,101 +23,21 @@ from widget_pages.toolbar import ToolBar
 from widget_pages.sidebar import SideBar
 
 
-# class TabShowGraph(QWidget):
-#     def __init__(self):
-#         super().__init__()
-        
-#         widget = QWidget()
-#         graphLayout = QVBoxLayout()
-
-#         self.graphWidget = pg.PlotWidget()
-#         graphLayout.addWidget(self.graphWidget)
-
-#         self.graphWidget.setCursor(Qt.CursorShape.OpenHandCursor)
-#         # Temp data -> will connect to matlab in the future
-#         day = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-#         anticipatory_neutraphil_count = [-10, 1, 10, -4, 15, -12, 20, 8, -17, 3]
-#         reactive_neutraphil_count = [-25, 5, 15, -15, 4, -22, -7, 25, 13, 0]
-#         boundary_positive = [20, 20, 20, 20, 20, 20, 20, 20, 20, 20]
-#         boundary_negative = [-20, -20, -20, -20, -20, -20, -20, -20, -20, -20]
-
-#         # Add Background colour to white
-#         self.graphWidget.setBackground("w")
-#         # Add Title
-#         self.graphWidget.setTitle(
-#             "Neutraphil Count (Anticipatory vs. Reactive)",
-#             color="#000",
-#             font=QFont("Avenir", 20),
-#             size="20pt",
-#         )
-#         # Add Axis Labels
-#         styles = {"color": "#000000", "font": QFont("Avenir", 25), "font-size": "25px"}
-#         self.graphWidget.setLabel("left", "Neutraphil Count", **styles)
-#         self.graphWidget.setLabel("bottom", "Day (days)", **styles)
-#         # Add legend
-#         self.graphWidget.addLegend()
-#         # Add grid
-#         self.graphWidget.showGrid(x=True, y=True)
-#         # Set Range
-#         self.graphWidget.setXRange(0, 11, padding=0)
-#         self.graphWidget.setYRange(-35, 35, padding=0)
-
-#         self.plot(day, anticipatory_neutraphil_count, "Anticipatory", "r")
-#         self.plot(day, reactive_neutraphil_count, "Reactive", "b")
-
-#         self.plot_straight(day, boundary_positive, "Neutraphil Top Boundary", "#4a707a")
-#         self.plot_straight(
-#             day, boundary_negative, "Neutraphil Bottom Boundary", "#4a707a"
-#         )
-
-#         # Creating tables for dosages
-#         ant_dosages = [50, 30, 100, 25, 30, 80, 50]
-#         self.anticipatory_dosage_title = QLabel("Anticipatory dosages")
-#         self.anticipatory_dosage_title.setFont(QFont("Avenir", 15))
-#         self.anticipatory_dosage_title.setMargin(5)
-#         self.anticipatory_dosage = self.createTable(2, 8, ant_dosages)
-#         graphLayout.addWidget(self.anticipatory_dosage_title)
-#         graphLayout.addWidget(self.anticipatory_dosage)
-
-#         reac_dosages = [10, 30, 40, 20, 79, 84, 24]
-#         self.reactive_dosage_title = QLabel("Reactive dosages")
-#         self.reactive_dosage_title.setFont(QFont("Avenir", 15))
-#         self.reactive_dosage_title.setMargin(5)
-#         self.reactive_dosage = self.createTable(2, 8, reac_dosages)
-#         graphLayout.addWidget(self.reactive_dosage_title)
-#         graphLayout.addWidget(self.reactive_dosage)
-
-#         widget.setLayout(graphLayout)
-
-class DashboardWindow(QWidget):
+class TabShowGraph(QWidget):
     def __init__(self):
         super().__init__()
-
-        self.patient = None
-
-        self.sideBarLayout = QHBoxLayout()
-        self.sideBarLayout.setContentsMargins(10, 0, 10, 0)
-
-        self.sideBar = SideBar("Dashboard")
-        self.sideBarLayout.addWidget(self.sideBar, 1)
-
-        self.rightLayout = QVBoxLayout()
-        self.rightLayout.setContentsMargins(0, 0, 0, 0)
-
-        self.graphs = QWidget()
-
-        self.graphLayout = QVBoxLayout(self.graphs)
+        
+        self.graphLayout = QVBoxLayout()
 
         self.graphWidget = pg.PlotWidget()
         self.graphLayout.addWidget(self.graphWidget)
 
         self.graphWidget.setCursor(Qt.CursorShape.OpenHandCursor)
-        # Temp data -> will connect to matlab in the future
-        self.day = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        self.anticipatory_neutraphil_count = [-10, 1, 10, -4, 15, -12, 20, 8, -17, 3]
-        self.reactive_neutraphil_count = [-25, 5, 15, -15, 4, -22, -7, 25, 13, 0]
-        self.boundary_positive = [20, 20, 20, 20, 20, 20, 20, 20, 20, 20]
-        self.boundary_negative = [-20, -20, -20, -20, -20, -20, -20, -20, -20, -20]
+        day = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        anticipatory_neutraphil_count = [-10, 1, 10, -4, 15, -12, 20, 8, -17, 3]
+        reactive_neutraphil_count = [-25, 5, 15, -15, 4, -22, -7, 25, 13, 0]
+        boundary_positive = [20, 20, 20, 20, 20, 20, 20, 20, 20, 20]
+        boundary_negative = [-20, -20, -20, -20, -20, -20, -20, -20, -20, -20]
 
         # Add Background colour to white
         self.graphWidget.setBackground("w")
@@ -140,13 +60,13 @@ class DashboardWindow(QWidget):
         self.graphWidget.setXRange(0, 11, padding=0)
         self.graphWidget.setYRange(-35, 35, padding=0)
 
-        self.graphWidget.plot(self.day, self.anticipatory_neutraphil_count, "Anticipatory", "r")
-        self.graphWidget.plot(self.day, self.reactive_neutraphil_count, "Reactive", "b")
+        self.plot(day, anticipatory_neutraphil_count, "Anticipatory", "r")
+        self.plot(day, reactive_neutraphil_count, "Reactive", "b")
 
-        # self.graphWidget.plot_straight(self.day, self.boundary_positive, "Neutraphil Top Boundary", "#4a707a")
-        # self.graphWidget.plot_straight(
-        #     self.day, self.boundary_negative, "Neutraphil Bottom Boundary", "#4a707a"
-        # )
+        self.plot_straight(day, boundary_positive, "Neutraphil Top Boundary", "#4a707a")
+        self.plot_straight(
+            day, boundary_negative, "Neutraphil Bottom Boundary", "#4a707a"
+        )
 
         # Creating tables for dosages
         ant_dosages = [50, 30, 100, 25, 30, 80, 50]
@@ -165,26 +85,7 @@ class DashboardWindow(QWidget):
         self.graphLayout.addWidget(self.reactive_dosage_title)
         self.graphLayout.addWidget(self.reactive_dosage)
 
-        self.sideBarLayout.addWidget(self.graphs, 19)
-
-        # # Side tabs
-        # self.tabs = QTabWidget()
-
-        # self.tabs.tabBar().setCursor(Qt.CursorShape.PointingHandCursor)
-
-        # # TODO horizontal text tabBar
-
-        # self.tabs.addTab(TabShowGraph(), "Model Output")
-        # self.tabs.addTab(QWidget(), "Patient List")
-        # self.tabs.addTab(QWidget(), "Change Parameter")
-
-        # self.tabs.currentChanged.connect(self.tabBarClicked)
-
-        # self.tabs.setTabPosition(QTabWidget.TabPosition.West)
-
-        # layout.addWidget(self.tabs)
-
-        self.setLayout(self.sideBarLayout)
+        self.setLayout(self.graphLayout)
 
     def plot(self, x, y, plotname, color):
         pen = pg.mkPen(color=color, width=5)
@@ -195,7 +96,7 @@ class DashboardWindow(QWidget):
     def plot_straight(self, x, y, plotname, color):
         pen = pg.mkPen(color=color, width=5, style=Qt.PenStyle.DashLine)
         self.graphWidget.plot(x, y, name=plotname, pen=pen, symbolBrush=(color))
-
+    
     def createTable(self, row, column, dosages_list):
         self.tableWidget = QTableWidget()
 
@@ -206,10 +107,7 @@ class DashboardWindow(QWidget):
             }"""
         )
 
-        # Row count
         self.tableWidget.setRowCount(row)
-
-        # Column count
         self.tableWidget.setColumnCount(column)
 
         item = QTableWidgetItem("Day")
@@ -242,23 +140,28 @@ class DashboardWindow(QWidget):
         self.tableWidget.verticalHeader().setVisible(False)
         self.tableWidget.horizontalHeader().setVisible(False)
 
-        # Table will fit the screen horizontally
         self.tableWidget.verticalHeader().setStretchLastSection(True)
         self.tableWidget.horizontalHeader().setSectionResizeMode(
             QHeaderView.ResizeMode.Stretch
         )
-
         return self.tableWidget
 
-    # # Setting currentIndex to 0 so that whenever the user navigates back to the dashboard
-    # # it will always show the graph tab
-    # def tabBarClicked(self, tabIndex):
-    #     if tabIndex == 1:
-    #         self.tabs.setCurrentIndex(0)
-    #         self.showPatientListWindow()
-    #     elif tabIndex == 2:
-    #         self.tabs.setCurrentIndex(0)
-    #         self.showPatientInformationWindow()
+class DashboardWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+
+        self.patient = None
+
+        self.sideBarLayout = QHBoxLayout()
+        self.sideBarLayout.setContentsMargins(10, 0, 10, 0)
+
+        self.sideBar = SideBar("Dashboard")
+        self.sideBarLayout.addWidget(self.sideBar, 1)
+
+        self.graphs = TabShowGraph()
+        self.sideBarLayout.addWidget(self.graphs, 19)
+
+        self.setLayout(self.sideBarLayout)
 
     def updateUsername(self, username):
         self.parent().parent().updateUsername(username)
