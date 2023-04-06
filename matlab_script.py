@@ -24,9 +24,8 @@ def runModel(bsa: float, numCycles: int, dosage: list[float], ANC_measurements: 
     time, nominal_trajectory, linearized_trajectory, reactive_trajectory, anticipatory_trajectory, reactive_dosage, anticipatory_dosage = eng.runController(bsa, numCycles, dosage, ANC_measurements, nargout=7)
     eng.quit()
 
-    # print("time: ", len(time), ", reactive_anc: ", len(reactive_trajectory), ", reactive_dosage: ", len(reactive_dosage), ", anticipatory_anc: ", len(anticipatory_trajectory), ", anticipatory_dosage: ", len(anticipatory_dosage))
     indices = [i for i in range(0, len(time) - len(time) % 100, 100)]
-
+    
     time = [time[i][0] for i in indices]
     reactive_trajectory = [reactive_trajectory[i][0] for i in indices]
     anticipatory_trajectory = [anticipatory_trajectory[i][0] for i in indices]
