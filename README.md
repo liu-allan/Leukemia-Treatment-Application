@@ -60,6 +60,8 @@ After logging in, log out at any time by pressing the `Log Off` button in the to
 
 Navigate to other pages by pressing the icons on the left. If the model has already been run for the patient, the user can return to the dashboard without running the model again by pressing the Dashboard icon on the left. 
 
+Note: The model only takes the most recent dosage and ANC measurement into consideration. The code needs to be modified in order to run the entire patient's history.
+
 ![tab legend](https://user-images.githubusercontent.com/44624435/230222852-0e2b3d38-e36b-417c-b5ba-2b42753016fa.png)
 
 ### 2.4 Dashboard
