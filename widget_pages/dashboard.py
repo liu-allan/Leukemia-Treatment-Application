@@ -63,7 +63,7 @@ class TabShowGraph(QMainWindow):
         self.graphWidget.setBackground("w")
         # Add Title
         self.graphWidget.setTitle(
-            "Neutraphil Count (Anticipatory vs. Reactive)",
+            "Neutrophil Count (Anticipatory vs. Reactive)",
             color="#000",
             font=QFont("Avenir", 20),
             size="20pt",
@@ -110,11 +110,11 @@ class TabShowGraph(QMainWindow):
 
         pen = pg.mkPen(color="#4a707a", width=5, style=Qt.PenStyle.DashLine)
         self.pos_plot = self.graphWidget.plot(
-            self.day, self.boundary_positive, name="Neutraphil Top Boundary", pen=pen, symbolBrush=("#4a707a")
+            self.day, self.boundary_positive, name="Neutrophil Top Boundary", pen=pen, symbolBrush=("#4a707a")
         )
         pen = pg.mkPen(color="#4a707a", width=5, style=Qt.PenStyle.DashLine)
         self.neg_plot = self.graphWidget.plot(
-            self.day, self.boundary_negative, name="Neutraphil Bottom Boundary", pen=pen, symbolBrush=("#4a707a")
+            self.day, self.boundary_negative, name="Neutrophil Bottom Boundary", pen=pen, symbolBrush=("#4a707a")
         )
 
     def updateANCGraph(self):
@@ -126,6 +126,8 @@ class TabShowGraph(QMainWindow):
             self.pos_plot.setData(self.day, self.boundary_positive)
         if self.neg_plot:
             self.neg_plot.setData(self.day, self.boundary_negative)
+        if self.day:
+            self.graphWidget.setXRange(0, len(self.day), padding=0)
 
     def updateDosageTable(self):
         clearLayout(self.dosageTableLayout)
