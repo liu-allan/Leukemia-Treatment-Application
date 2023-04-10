@@ -9,7 +9,7 @@ from PyQt6.QtWidgets import (
     QDialogButtonBox,
 )
 from PyQt6.QtGui import QFont
-from PyQt6.QtCore import Qt, QPropertyAnimation, QRect
+from PyQt6.QtCore import Qt
 from util.util import getLastNameFromFullName
 from util.animation_manager import AnimationManager
 

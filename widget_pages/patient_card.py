@@ -9,7 +9,7 @@ from PyQt6.QtWidgets import (
     QWidget
 )
 from PyQt6.QtGui import QFont
-from PyQt6.QtCore import Qt, QPropertyAnimation, QRect
+from PyQt6.QtCore import Qt
 from datetime import datetime
 from util.animation_manager import AnimationManager
 
@@ -204,6 +204,7 @@ class PatientCard(QWidget):
         self.editButton.setCursor(Qt.CursorShape.PointingHandCursor)
         self.editButton.setMinimumWidth(60)
         self.editButton.setMinimumHeight(40)
+        self.editButton.setMaximumHeight(45)
         self.editButton.setFont(QFont("Avenir", 18))
         self.editButton.setStyleSheet(
             "background-color: #aaaaee; border-radius: 10px; padding: 10px 15px;"
