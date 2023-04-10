@@ -139,7 +139,7 @@ class LoginWindow(QWidget):
         self.middleFrame.setContentsMargins(0, 0, 0, 0)
         self.middleFrame.setLayout(self.middleLayout)
         self.layout.addWidget(self.middleFrame)
-        self.anim_3 = self.slideAnimation(self.middleFrame, 70, 250, 70, 300, 1200)
+        self.anim_3 = self.slideAnimation(self.middleFrame, 42, 266, 42, 316, 1200)
         self.anim_3.setEasingCurve(QEasingCurve.Type.InOutCubic)
 
         self.titleLabel = QLabel("Welcome!")
@@ -196,6 +196,7 @@ class LoginWindow(QWidget):
         
         self.middleLayout.addWidget(self.loginPushButton, alignment=Qt.AlignmentFlag.AlignCenter)
         self.middleLayout.addSpacerItem(self.spacer)
+        self.layout.addSpacerItem(self.spacer)
 
         self.copyRightLabel = QLabel("Copyright @ 2023. LeukemiaCompare. All rights reserved.")
         self.copyRightLabel.setFont(QFont("Avenir", 12))
@@ -214,14 +215,14 @@ class LoginWindow(QWidget):
         self.animation = QPropertyAnimation(self.loginPushButton, b"geometry")
         self.animation.setDuration(200)
         self.animation.setStartValue(QRect(self.loginPushButton.pos().x(), self.loginPushButton.pos().y(), self.loginPushButton.width(),self.loginPushButton.height()))
-        self.animation.setEndValue(QRect(self.loginPushButton.pos().x(), self.loginPushButton.pos().y(), self.loginPushButton.width() + 5,self.loginPushButton.height() + 5))
+        self.animation.setEndValue(QRect(self.loginPushButton.pos().x(), self.loginPushButton.pos().y(), self.loginPushButton.width() + 5,self.loginPushButton.height()))
         self.animation.start()
     
     def onButtonUnhover(self, event):
         self.animation = QPropertyAnimation(self.loginPushButton, b"geometry")
         self.animation.setDuration(200)
         self.animation.setStartValue(QRect(self.loginPushButton.pos().x(), self.loginPushButton.pos().y(), self.loginPushButton.width(),self.loginPushButton.height()))
-        self.animation.setEndValue(QRect(self.loginPushButton.pos().x(), self.loginPushButton.pos().y(), self.loginPushButton.width() - 5,self.loginPushButton.height() - 5))
+        self.animation.setEndValue(QRect(self.loginPushButton.pos().x(), self.loginPushButton.pos().y(), self.loginPushButton.width() - 5,self.loginPushButton.height()))
         self.animation.start()
 
     def loginPushed(self):
@@ -264,14 +265,14 @@ class LoginWindow(QWidget):
         self.anim_1.setEasingCurve(QEasingCurve.Type.InOutCubic)
         self.anim_2 = self.slideAnimation(self.quotes, -100, 300, 215, 290, 1200)
         self.anim_2.setEasingCurve(QEasingCurve.Type.InOutCubic)
-        self.anim_3 = self.slideAnimation(self.middleFrame, 70, 250, 70, 300, 1200)
+        self.anim_3 = self.slideAnimation(self.middleFrame, 42, 266, 42, 316, 1200)
         self.anim_3.setEasingCurve(QEasingCurve.Type.InOutCubic)
 
         self.anim_group = QParallelAnimationGroup()
         self.anim_group.addAnimation(self.anim_1)
         self.anim_group.addAnimation(self.anim_2)
         self.anim_group.addAnimation(self.anim_3)
-        self.anim_group.start()       
+        self.anim_group.start()
 
     def slideAnimation(self, widget, start_x, start_y, end_x, end_y, duration):
         effect = QGraphicsOpacityEffect(widget)

@@ -9,7 +9,7 @@ from PyQt6.QtWidgets import (
     QDialogButtonBox,
 )
 from PyQt6.QtGui import QFont
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QPropertyAnimation, QRect
 from util.util import getLastNameFromFullName
 
 
@@ -44,7 +44,7 @@ class ToolBar(QWidget):
         )
         self.avatar.setCursor(Qt.CursorShape.PointingHandCursor)
         self.avatar.clicked.connect(self.userProfileClick)
-        self.avatar.setFont(QFont("Avenir", 15))
+        self.avatar.setFont(QFont("Avenir", 19))
         self.avatar.setFixedHeight(40)
         self.avatar.setFixedWidth(40)
 
@@ -81,15 +81,18 @@ class ToolBar(QWidget):
         self.name_label.setMargin(15)
         self.toolBar.addWidget(self.name_label)
 
-        self.logout_button = QPushButton("Log Off", self)
+        self.logout_button = QPushButton("Log Off")
         self.logout_button.setFixedHeight(40)
         self.logout_button.setStyleSheet(
-            "background-color: #d3d3d3; border-radius: 7px; padding: 10px"
+            "background-color: #e5e5e5; border-radius: 10px; padding: 10px"
         )
         self.logout_button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.logout_button.clicked.connect(self.logoffClicked)
-        self.logout_button.setFont(QFont("Avenir", 15))
+        self.logout_button.setFont(QFont("Avenir", 18))
         self.toolBar.addWidget(self.logout_button)
+
+        self.logout_button.enterEvent = self.onButtonHoverLogOff
+        self.logout_button.leaveEvent = self.onButtonUnhoverLogOff
 
         spacer2 = QWidget()
         spacer2.setFixedWidth(20)
@@ -128,19 +131,27 @@ class ToolBar(QWidget):
         )
 
     def logoffClicked(self):
-        dlg = QMessageBox(self)
+        dlg = QMessageBox()
         dlg.setWindowTitle("Log Off")
         dlg.setText("Are you sure you want to log off?")
-        dlg.setStandardButtons(
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
-        )
+        dlg.addButton("Yes", QMessageBox.ButtonRole.YesRole)
+        dlg.addButton("No", QMessageBox.ButtonRole.NoRole)
         for button in dlg.findChild(QDialogButtonBox).findChildren(QPushButton):
             button.setCursor(Qt.CursorShape.PointingHandCursor)
+
+        dlg.setStyleSheet(
+            """
+                QMessageBox {
+                    background-color: #ffffff; border-radius: 20px
+                }
+            """
+        )
 
         dlg.setFont(QFont("Avenir", 15))
         button = dlg.exec()
 
-        if button == QMessageBox.StandardButton.Yes:
+        # Yes button is pressed
+        if button == 0:
             # link to login page
             self.updateUsername("")
             self.showLoginWindow()
@@ -153,3 +164,17 @@ class ToolBar(QWidget):
 
     def userProfileClick(self, s):
         return
+
+    def onButtonHoverLogOff(self, event):
+        self.animation = QPropertyAnimation(self.logout_button, b"geometry")
+        self.animation.setDuration(200)
+        self.animation.setStartValue(QRect(self.logout_button.pos().x(), self.logout_button.pos().y(), self.logout_button.width(), self.logout_button.height()))
+        self.animation.setEndValue(QRect(self.logout_button.pos().x(), self.logout_button.pos().y(), self.logout_button.width() + 5, self.logout_button.height() + 5))
+        self.animation.start()
+    
+    def onButtonUnhoverLogOff(self, event):
+        self.animation = QPropertyAnimation(self.logout_button, b"geometry")
+        self.animation.setDuration(200)
+        self.animation.setStartValue(QRect(self.logout_button.pos().x(), self.logout_button.pos().y(), self.logout_button.width(), self.logout_button.height()))
+        self.animation.setEndValue(QRect(self.logout_button.pos().x(), self.logout_button.pos().y(), self.logout_button.width() - 5, self.logout_button.height() - 5))
+        self.animation.start()  
