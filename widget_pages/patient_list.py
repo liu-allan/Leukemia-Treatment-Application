@@ -389,7 +389,6 @@ class PatientListWindow(QWidget):
                 widget.hide()
 
     def showPatientFormWindow(self):
-        # whenever you press "Add Patient", should clear state so the fields aren't pre-populated
         self.parent().parent().selected_patient = None
         if (self.parent().parent().is_admin_user):
             self.parent().parent().showOncologistFormWindow()
@@ -402,6 +401,11 @@ class PatientListWindow(QWidget):
 
     def getDatabaseConnection(self):
         return self.parent().parent().getDatabaseConnection()
+
+    def clearStates(self):
+        self.id_search_bar.clear()
+        self.search_mode_button.setChecked(False)
+        self.setSearchMode()
 
     def displayPatientList(self):
         self.list = QWidget()
@@ -459,6 +463,7 @@ class PatientListWindow(QWidget):
         rows = res.fetchall()
         self.patients.clear()
         self.patient_widgets.clear()
+        self.clearStates()
         if rows:
             self.patients = rows
         self.displayPatientList()
