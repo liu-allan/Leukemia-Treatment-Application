@@ -12,8 +12,10 @@ from PyQt6.QtWidgets import (
     QScrollArea,
     QLineEdit,
     QComboBox,
+    QMessageBox,
+    QDialogButtonBox
 )
-from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtCore import Qt, QSize, QPropertyAnimation, QAbstractAnimation
 from PyQt6.QtGui import QFont, QIcon, QPixmap
 
 from datetime import datetime
@@ -31,15 +33,16 @@ class PatientListItem(QPushButton):
 
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
         self.setObjectName("PatientListItem")
+        self.setContentsMargins(15, 0, 0, 0)
         self.setStyleSheet(
             """
             QPushButton#PatientListItem
             {
-                min-height: 70px;
+                min-height: 100px;
                 background-color: #ebebf2;
                 border: 1px solid #aaaaaa;
-                border-radius: 5px;
-                padding: 10px
+                border-radius: 30px;
+                padding: 5px
             }
 
             QPushButton#PatientListItem:hover
@@ -57,6 +60,25 @@ class PatientListItem(QPushButton):
         self.user_id = user_id
         self.is_admin = is_admin
         self.birthday = datetime.strptime(birthday, '%Y%m%d').strftime('%Y-%m-%d') if birthday else ""
+
+        self.avatar = QPushButton(self.patient_name[0])
+        self.avatar.setObjectName("avatar")
+        self.avatar.setFont(QFont("Avenir", 25))
+        self.avatar.setFixedHeight(80)
+        self.avatar.setFixedWidth(80)
+        self.avatar.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.avatar.setStyleSheet(
+            """ 
+            QPushButton#avatar
+            {
+                background-color: #aaaaee;
+                border-radius: 40px;
+                border-style: outset;
+                border: 2px solid #aaaaee;
+                padding: 10px;
+            }
+            """
+        )
 
         self.name_label = QLabel(self.patient_name)
         patient_name_font = QFont("Avenir", 18)
@@ -83,28 +105,29 @@ class PatientListItem(QPushButton):
         else:
             self.birthday_label = QLabel()
 
-        self.delete_button = QPushButton("Delete")
-        self.delete_button.setFont(QFont("Avenir", 15))
+        self.delete_button = QPushButton()
+        self.delete_button.setIcon(QIcon("icons/delete.png"))
+        self.delete_button.setIconSize(QSize(40, 40))
         self.delete_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.delete_button.setToolTip("Delete")
+        self.delete_button.setContentsMargins(0, 0, 10, 10)
         self.delete_button.setStyleSheet(
             """
             QPushButton
             {
-                background-color: #fa7a7a;
-                border: 1px solid #c23329;
-                border-radius: 5px;
-                color: #505050;
+                background-color: rgba(255, 255, 255, 0);
+                border-radius: 25px;
                 padding: 20px
-            }
-
-            QPushButton:hover
-            {
-                background-color: #fc5353;
-                color: #000000;
             }
             """
         )
+        self.delete_button.enterEvent = self.onButtonHover
+        self.delete_button.leaveEvent = self.onButtonUnhover
+        self.delete_button.clicked.connect(self.deletePatient)
 
+        avatar_spacer = QSpacerItem(
+            10, 1, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum
+        )
         name_spacer = QSpacerItem(
             20, 1, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum
         )
@@ -113,16 +136,30 @@ class PatientListItem(QPushButton):
         )
 
         self.layout = QGridLayout()
-        self.layout.addWidget(self.name_label, 0, 0, 1, 1)
-        self.layout.addWidget(self.user_id_label, 1, 0, 1, 1)
-        self.layout.addItem(name_spacer, 0, 1, 2, 1)
-        self.layout.addWidget(self.birthday_label, 1, 2, 1, 1)
-        self.layout.addItem(main_spacer, 0, 3, 2, 1)
-        self.layout.addWidget(self.delete_button, 0, 4, 2, 1)
+        self.layout.addWidget(self.avatar, 0, 0, 2, 1)
+        self.layout.addItem(avatar_spacer, 0, 1, 2, 1)
+        self.layout.addWidget(self.name_label, 0, 2, 1, 1)
+        self.layout.addWidget(self.user_id_label, 1, 2, 1, 1)
+        self.layout.addItem(name_spacer, 0, 3, 2, 1)
+        self.layout.addWidget(self.birthday_label, 1, 4, 1, 1)
+        self.layout.addItem(main_spacer, 0, 5, 2, 1)
+        self.layout.addWidget(self.delete_button, 0, 6, 2, 1)
 
         self.setLayout(self.layout)
-
-        self.delete_button.clicked.connect(self.deletePatient)
+    
+    def onButtonHover(self, event):
+        self.animation = QPropertyAnimation(self.delete_button, b"iconSize")
+        self.animation.setDuration(200)
+        self.animation.setStartValue(self.delete_button.iconSize())
+        self.animation.setEndValue(QSize(46, 46))
+        self.animation.start()
+    
+    def onButtonUnhover(self, event):
+        self.animation = QPropertyAnimation(self.delete_button, b"iconSize")
+        self.animation.setDuration(200)
+        self.animation.setStartValue(self.delete_button.iconSize())
+        self.animation.setEndValue(QSize(40, 40))
+        self.animation.start()
 
     def show(self):
         self.setVisible(True)
@@ -136,6 +173,22 @@ class PatientListItem(QPushButton):
         )
 
     def deletePatient(self):
+
+        dlg = QMessageBox(self)
+        dlg.setWindowTitle("Delete Patient")
+        dlg.setText("Are you sure you want to delete " + self.patient_name +"?")
+        dlg.setStandardButtons(
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        for button in dlg.findChild(QDialogButtonBox).findChildren(QPushButton):
+            button.setCursor(Qt.CursorShape.PointingHandCursor)
+
+        dlg.setFont(QFont("Avenir", 15))
+        button = dlg.exec()
+
+        if button == QMessageBox.StandardButton.No:
+            return
+
         conn = self.parent().parent().parent().parent().getDatabaseConnection()
 
         try:
@@ -301,13 +354,19 @@ class PatientListWindow(QWidget):
     def showAdvancedOptions(self, display):
         if display:
             self.search_mode_button.setText("Default Search")
-            self.name_search_bar.setPlaceholderText("Patient Name")
+            if (self.parent().parent().is_admin_user):
+                self.name_search_bar.setPlaceholderText("Oncologist Name")
+            else:
+                self.name_search_bar.setPlaceholderText("Patient Name")
             self.name_search_bar.clear()
             self.id_search_bar.clear()
             self.id_search_bar.setVisible(True)
         else:
             self.search_mode_button.setText("Advanced Search")
-            self.name_search_bar.setPlaceholderText("Search Patient")
+            if (self.parent().parent().is_admin_user):
+                self.name_search_bar.setPlaceholderText("Search Oncologist")
+            else:
+                self.name_search_bar.setPlaceholderText("Search Patient")
             self.name_search_bar.clear()
             self.id_search_bar.clear()
             self.id_search_bar.setVisible(False)
@@ -353,11 +412,15 @@ class PatientListWindow(QWidget):
         self.list_layout = QVBoxLayout()
 
         if (self.parent().parent().is_admin_user):
+            self.name_search_bar.setPlaceholderText("Search Oncologists")
+            self.id_search_bar.setPlaceholderText("Oncologist Username")
             for username, full_name in self.patients:
                 widget = PatientListItem(full_name, "", username, "", True)
                 self.patient_widgets.append(widget)
                 self.list_layout.addWidget(widget)
         else:
+            self.name_search_bar.setPlaceholderText("Search Patients")
+            self.id_search_bar.setPlaceholderText("Patient ID")
             for patient_name, patient_id, user_id, birthday in self.patients:
                 widget = PatientListItem(patient_name, patient_id, user_id, birthday)
                 self.patient_widgets.append(widget)

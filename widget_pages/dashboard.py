@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import (
     QLabel,
     QPushButton,
+    QHBoxLayout,
     QVBoxLayout,
     QWidget,
     QToolBar,
@@ -21,13 +22,13 @@ import pyqtgraph as pg
 from widget_pages.toolbar import ToolBar
 from matlab_script import runModel
 from util.util import clearLayout
+from widget_pages.sidebar import SideBar
 
 
-class TabShowGraph(QMainWindow):
+class TabShowGraph(QWidget):
     def __init__(self):
         super().__init__()
 
-        widget = QWidget()
         self.graphLayout = QVBoxLayout()
 
         self.noResultsWidget = QLabel("No Results", self)
@@ -95,8 +96,7 @@ class TabShowGraph(QMainWindow):
         self.reactive_dosage_title.setVisible(False)
         self.reactive_dosage_table.setVisible(False)
 
-        widget.setLayout(self.graphLayout)
-        self.setCentralWidget(widget)
+        self.setLayout(self.graphLayout)
 
     def plotANCGraph(self):
         pen = pg.mkPen(color='r', width=5)
@@ -152,15 +152,12 @@ class TabShowGraph(QMainWindow):
 
         self.tableWidget.setStyleSheet(
             """ QTableWidget {
-                                        border: 1px solid #000;
-                                        gridline-color: 1px solid #000;
-                                    }"""
+                border: 1px solid #000;
+                gridline-color: 1px solid #000;
+            }"""
         )
 
-        # Row count
         self.tableWidget.setRowCount(row)
-
-        # Column count
         self.tableWidget.setColumnCount(column)
 
         item = QTableWidgetItem("Day")
@@ -193,12 +190,10 @@ class TabShowGraph(QMainWindow):
         self.tableWidget.verticalHeader().setVisible(False)
         self.tableWidget.horizontalHeader().setVisible(False)
 
-        # Table will fit the screen horizontally
         self.tableWidget.verticalHeader().setStretchLastSection(True)
         self.tableWidget.horizontalHeader().setSectionResizeMode(
             QHeaderView.ResizeMode.ResizeToContents
         )
-
         return self.tableWidget
 
     def setGraphTableData(self, reactive_anc, anticipatory_anc, reactive_dosage, anticipatory_dosage):
@@ -238,37 +233,16 @@ class DashboardWindow(QWidget):
         self.patient = None
         self.displayed_patient = None
 
-        layout = QVBoxLayout()
+        self.sideBarLayout = QHBoxLayout()
+        self.sideBarLayout.setContentsMargins(10, 0, 10, 0)
 
-        # Side tabs
-        self.tabs = QTabWidget()
+        self.sideBar = SideBar("Dashboard")
+        self.sideBarLayout.addWidget(self.sideBar, 1)
 
-        self.tabs.tabBar().setCursor(Qt.CursorShape.PointingHandCursor)
+        self.graphs = TabShowGraph()
+        self.sideBarLayout.addWidget(self.graphs, 19)
 
-        # TODO horizontal text tabBar
-
-        self.graph = TabShowGraph()
-        self.tabs.addTab(self.graph, "Model Output")
-        self.tabs.addTab(QWidget(), "Patient List")
-        self.tabs.addTab(QWidget(), "Change Parameter")
-
-        self.tabs.currentChanged.connect(self.tabBarClicked)
-
-        self.tabs.setTabPosition(QTabWidget.TabPosition.West)
-
-        layout.addWidget(self.tabs)
-
-        self.setLayout(layout)
-
-    # Setting currentIndex to 0 so that whenever the user navigates back to the dashboard
-    # it will always show the graph tab
-    def tabBarClicked(self, tabIndex):
-        if tabIndex == 1:
-            self.tabs.setCurrentIndex(0)
-            self.showPatientListWindow()
-        elif tabIndex == 2:
-            self.tabs.setCurrentIndex(0)
-            self.showPatientInformationWindow()
+        self.setLayout(self.sideBarLayout)
 
     def updateUsername(self, username):
         self.parent().parent().updateUsername(username)
@@ -303,3 +277,40 @@ class DashboardWindow(QWidget):
         _, _, _, reactive_anc, anticipatory_anc, reactive_dosage, anticipatory_dosage = runModel(bsa, num_cycles, dosage, anc)
         print("finished running model")
         self.graph.setGraphTableData(reactive_anc, anticipatory_anc, reactive_dosage, anticipatory_dosage)
+    
+    def backButtonClicked(self):
+        self.showPatientListWindow()
+    
+    def dashboardButtonClicked(self):
+        return
+    
+    def patientInformationButtonClicked(self):
+        self.showPatientInformationWindow()
+
+    def logoffButtonClicked(self):
+        dlg = QMessageBox()
+        dlg.setWindowTitle("Log Off")
+        dlg.setText("Are you sure you want to log off?")
+        dlg.addButton("Yes", QMessageBox.ButtonRole.YesRole)
+        dlg.addButton("No", QMessageBox.ButtonRole.NoRole)
+        for button in dlg.findChild(QDialogButtonBox).findChildren(QPushButton):
+            button.setCursor(Qt.CursorShape.PointingHandCursor)
+        
+        dlg.setStyleSheet(
+            """
+                QMessageBox {
+                    background-color: #ffffff; border-radius: 20px
+                }
+            """
+        )
+
+        dlg.setFont(QFont("Avenir", 15))
+        button = dlg.exec()
+
+        # Yes button is pressed
+        if button == 0:
+            self.dosageEdit.clear()
+            self.ancMeasurementEdit.clear()
+            # link to login page
+            self.updateUsername("")
+            self.showLoginWindow()
