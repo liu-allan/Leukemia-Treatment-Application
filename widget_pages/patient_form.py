@@ -3,6 +3,8 @@ import math
 import sqlite3
 import numpy as np
 
+from util.util import encryptData, valid_blood_types, valid_all_types, valid_gender_types
+
 from PyQt6 import uic
 from PyQt6.QtCore import QDate, Qt
 from PyQt6.QtWidgets import (
@@ -271,18 +273,20 @@ class PatientFormWindow(QWidget):
             name = self.patientLineEdit.text()
             assert name != ""
             date = self.dateEdit.date().toString("yyyyMMdd")
-            weight = float(self.weightEdit.text())
-            height = float(self.heightEdit.text())
+            weight = self.weightEdit.text()
+            height = self.heightEdit.text()
             allType = self.allTypeSelect.currentText()
+            assert allType in valid_all_types
             bloodType = self.bloodTypeSelect.currentText()
+            assert bloodType in valid_blood_types
             birthday = self.birthdayEdit.date().toString("yyyyMMdd")
             phoneNumber = self.phoneNumberFormatterReverse()
             assert phoneNumber != ""
             assignedDoctor = self.parent().parent().username
-            bsa = float(self.bodySurfaceAreaMeasurement.text())
+            bsa = self.bodySurfaceAreaMeasurement.text()
             ancMeasurement = float(self.ancMeasurementEdit.text())
             dosageMeasurement = float(self.dosageEdit.text())
-            age = self.calculateAge()
+            age = str(self.calculateAge())
             user_id = self.createUserID(name)
 
             conn = self.parent().parent().getDatabaseConnection()
@@ -292,6 +296,7 @@ class PatientFormWindow(QWidget):
                 raise Exception("Patient must provide consent to store data") 
 
             if self.patient is None:
+                password = self.parent().parent().password
                 conn.execute(
                     """
                         INSERT INTO patients (user_id, name, weight, height, phone_number, birthday, age, 
@@ -299,16 +304,16 @@ class PatientFormWindow(QWidget):
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
-                        user_id,
-                        name,
-                        weight,
-                        height,
-                        phoneNumber,
-                        birthday,
-                        age,
-                        bloodType,
-                        allType,
-                        bsa,
+                        encryptData(user_id, password),
+                        encryptData(name, password),
+                        encryptData(weight, password),
+                        encryptData(height, password),
+                        encryptData(phoneNumber, password),
+                        encryptData(birthday, password),
+                        encryptData(age, password),
+                        encryptData(bloodType, password),
+                        encryptData(allType, password),
+                        encryptData(bsa, password),
                         self.parent().parent().username,
                     ),
                 )
@@ -317,6 +322,7 @@ class PatientFormWindow(QWidget):
                 patient_id = res.fetchone()[0]
 
             else:
+                password = self.parent().parent().password
                 conn.execute(
                     """
                         UPDATE patients 
@@ -324,15 +330,15 @@ class PatientFormWindow(QWidget):
                         WHERE id=?
                     """,
                     (
-                        name,
-                        weight,
-                        height,
-                        phoneNumber,
-                        birthday,
-                        age,
-                        bloodType,
-                        allType,
-                        bsa,
+                        encryptData(name, password),
+                        encryptData(weight, password),
+                        encryptData(height, password),
+                        encryptData(phoneNumber, password),
+                        encryptData(birthday, password),
+                        encryptData(age, password),
+                        encryptData(bloodType, password),
+                        encryptData(allType, password),
+                        encryptData(bsa, password),
                         self.patient.id,
                     ),
                 )
@@ -355,7 +361,7 @@ class PatientFormWindow(QWidget):
             self.errorLabel.setStyleSheet("color:red")
             logging.error(er)
 
-        except:
+        except Exception as e:
 
             if not self.consentCheckBox.isChecked():
                 msg = "Patient must provide consent to store data"
@@ -363,7 +369,7 @@ class PatientFormWindow(QWidget):
                 msg = "Input fields must not be empty"
             self.errorLabel.setText(msg)
             self.errorLabel.setStyleSheet("color:red")
-            logging.error(msg)
+            logging.error(e)
 
         else:
             self.errorLabel.clear()

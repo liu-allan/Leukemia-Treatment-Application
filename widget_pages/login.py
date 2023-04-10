@@ -225,15 +225,16 @@ class LoginWindow(QWidget):
         else:
             self.errorLabel.setText("")
             logging.info("Login Successful")
-            self.updateUsername(username)
+            self.updateUser(username, password)
             if (row[3] == "TRUE"):
                 self.parent().parent().is_admin_user = True
             else:
                 self.parent().parent().is_admin_user = False
             self.showPatientListWindow()
 
-    def updateUsername(self, username):
+    def updateUser(self, username, password):
         self.parent().parent().updateUsername(username)
+        self.parent().parent().password = password
 
     def showPatientListWindow(self):
         self.parent().parent().showPatientListWindow()
