@@ -174,6 +174,7 @@ class TabShowGraph(QWidget):
 
         for i in range(row):
             for j in range(1, column):
+                self.tableWidget.setColumnWidth(j, 125)
 
                 if i == 0:
                     item = QTableWidgetItem(str(j))
@@ -192,7 +193,7 @@ class TabShowGraph(QWidget):
 
         self.tableWidget.verticalHeader().setStretchLastSection(True)
         self.tableWidget.horizontalHeader().setSectionResizeMode(
-            QHeaderView.ResizeMode.ResizeToContents
+            QHeaderView.ResizeMode.Fixed
         )
         return self.tableWidget
 
