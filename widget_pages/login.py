@@ -64,7 +64,7 @@ class LoginWindow(QWidget):
         self.quotes.raise_()
 
         self.quotesLayout = QVBoxLayout(self.quotes)
-        self.pictureTop = QLabel("A graphical tool in comparing two different dosage strategies used in Leukemia treatment")
+        self.pictureTop = QLabel("A graphical tool for comparing two dosage strategies used in Leukemia treatment")
         self.pictureTop.setObjectName("QuoteTop")
         self.pictureTop.setFont(QFont("Avenir", 25))
         self.pictureTop.setAlignment(Qt.AlignmentFlag.AlignLeft)
@@ -81,7 +81,7 @@ class LoginWindow(QWidget):
         self.pictureTop.setContentsMargins(30, 0, 30, 0)
         self.quotesLayout.addWidget(self.pictureTop, 2)
 
-        self.quoteBottom = QLabel("This can help oncologists to decide what strategy should be applied better for patient's health")
+        self.quoteBottom = QLabel("This application can help oncologists to decide dosages for better patient health")
         self.quoteBottom.setObjectName("QuoteBottom")
         self.quoteBottom.setFont(QFont("Avenir", 13))
         self.quoteBottom.setAlignment(Qt.AlignmentFlag.AlignLeft)
