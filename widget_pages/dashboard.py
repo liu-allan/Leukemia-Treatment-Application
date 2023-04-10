@@ -259,13 +259,13 @@ class DashboardWindow(QWidget):
     def updatePatientInfo(self, calculation_info):
         self.patient = self.parent().parent().selected_patient
         if calculation_info[0]:
-            self.graph.toggleResults(True)
+            self.graphs.toggleResults(True)
             self.runMatLabModel(calculation_info[1])
             self.displayed_patient = self.patient
         elif self.displayed_patient and self.displayed_patient.user_id == self.patient.user_id:
-            self.graph.toggleResults(True)
+            self.graphs.toggleResults(True)
         else:
-            self.graph.toggleResults(False)
+            self.graphs.toggleResults(False)
 
     def runMatLabModel(self, num_cycles):
         bsa = float(self.patient.bsa)
@@ -276,7 +276,7 @@ class DashboardWindow(QWidget):
         print("running model for {} cycles...".format(num_cycles))
         _, _, _, reactive_anc, anticipatory_anc, reactive_dosage, anticipatory_dosage = runModel(bsa, num_cycles, dosage, anc)
         print("finished running model")
-        self.graph.setGraphTableData(reactive_anc, anticipatory_anc, reactive_dosage, anticipatory_dosage)
+        self.graphs.setGraphTableData(reactive_anc, anticipatory_anc, reactive_dosage, anticipatory_dosage)
     
     def backButtonClicked(self):
         self.showPatientListWindow()
