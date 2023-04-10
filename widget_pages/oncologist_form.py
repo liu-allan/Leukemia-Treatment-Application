@@ -152,6 +152,7 @@ class OncologistFormWindow(QWidget):
         self.passwordEdit.setStyleSheet(
             "background-color: #f5f5f5; height: 40px; border-radius: 10px; padding: 0px 10px"
         )
+        self.passwordEdit.setEchoMode(QLineEdit.EchoMode.Password)
         self.oncologistFormLayout.addWidget(self.passwordEdit)
 
         self.confirmPasswordLabel = Label("Confirm Password")
@@ -165,6 +166,7 @@ class OncologistFormWindow(QWidget):
         self.confirmPasswordEdit.setStyleSheet(
             "background-color: #f5f5f5; height: 40px; border-radius: 10px; padding: 0px 10px"
         )
+        self.confirmPasswordEdit.setEchoMode(QLineEdit.EchoMode.Password)
         self.oncologistFormLayout.addWidget(self.confirmPasswordEdit)
         self.confirmPasswordEdit.textEdited.connect(self.checkPasswordMatch)
 

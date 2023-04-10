@@ -19,7 +19,7 @@ from PyQt6.QtWidgets import (
     QToolBar,
 )
 from PyQt6 import uic
-from PyQt6.QtCore import Qt, QSize, QPropertyAnimation, QParallelAnimationGroup, QPoint, QEasingCurve, QRect
+from PyQt6.QtCore import Qt, QSize, QPropertyAnimation, QParallelAnimationGroup, QPoint, QEasingCurve, QRect, QAbstractAnimation
 from PyQt6.QtGui import QFont, QIcon
 import qtawesome as qta
 
@@ -36,15 +36,15 @@ class LoginWindow(QWidget):
         self.setLayout(self.mainPageLayout)
 
         self.picture = QLabel()
-        anim_1 = self.slideAnimation(self.picture, -100, 0, 0, 0, 1200)
-        anim_1.setEasingCurve(QEasingCurve.Type.InOutCubic)
+        self.anim_1 = self.slideAnimation(self.picture, -100, 0, 0, 0, 1200)
+        self.anim_1.setEasingCurve(QEasingCurve.Type.InOutCubic)
         self.picture.setStyleSheet('border-image: url("icons/background.png"); background-repeat: no-repeat; background-position: center; height: auto; border-radius: 20px')
         self.picture.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.mainPageLayout.addWidget(self.picture, 50)
 
         self.quotes = QLabel()
-        anim_2 = self.slideAnimation(self.quotes, -100, 300, 215, 290, 1200)
-        anim_2.setEasingCurve(QEasingCurve.Type.InOutCubic)
+        self.anim_2 = self.slideAnimation(self.quotes, -100, 300, 215, 290, 1200)
+        self.anim_2.setEasingCurve(QEasingCurve.Type.InOutCubic)
 
         self.quotes.setObjectName("QuotesBackground")
         self.quotes.setFrameShape(QFrame.Shape.Box)
@@ -139,8 +139,8 @@ class LoginWindow(QWidget):
         self.middleFrame.setContentsMargins(0, 0, 0, 0)
         self.middleFrame.setLayout(self.middleLayout)
         self.layout.addWidget(self.middleFrame)
-        anim_3 = self.slideAnimation(self.middleFrame, 70, 250, 70, 300, 1200)
-        anim_3.setEasingCurve(QEasingCurve.Type.InOutCubic)
+        self.anim_3 = self.slideAnimation(self.middleFrame, 70, 250, 70, 300, 1200)
+        self.anim_3.setEasingCurve(QEasingCurve.Type.InOutCubic)
 
         self.titleLabel = QLabel("Welcome!")
         self.titleLabel.setFont(QFont("Avenir", 50))
@@ -197,12 +197,6 @@ class LoginWindow(QWidget):
         self.middleLayout.addWidget(self.loginPushButton, alignment=Qt.AlignmentFlag.AlignCenter)
         self.middleLayout.addSpacerItem(self.spacer)
 
-        self.anim_group = QParallelAnimationGroup()
-        self.anim_group.addAnimation(anim_1)
-        self.anim_group.addAnimation(anim_2)
-        self.anim_group.addAnimation(anim_3)
-        self.anim_group.start()
-
         self.copyRightLabel = QLabel("Copyright @ 2023. LeukemiaCompare. All rights reserved.")
         self.copyRightLabel.setFont(QFont("Avenir", 12))
         self.copyRightLabel.setContentsMargins(0, 0, 0, 10)
@@ -213,6 +207,8 @@ class LoginWindow(QWidget):
         )
 
         self.layout.addWidget(self.copyRightLabel, alignment=Qt.AlignmentFlag.AlignCenter)
+
+        self.loginPageAnimation()
 
     def onButtonHover(self, event):
         self.animation = QPropertyAnimation(self.loginPushButton, b"geometry")
@@ -263,8 +259,21 @@ class LoginWindow(QWidget):
                 self.parent().parent().is_admin_user = False
             self.showPatientListWindow()
 
-    def slideAnimation(self, widget, start_x, start_y, end_x, end_y, duration):
+    def loginPageAnimation(self):
+        self.anim_1 = self.slideAnimation(self.picture, -100, 0, 0, 0, 1200)
+        self.anim_1.setEasingCurve(QEasingCurve.Type.InOutCubic)
+        self.anim_2 = self.slideAnimation(self.quotes, -100, 300, 215, 290, 1200)
+        self.anim_2.setEasingCurve(QEasingCurve.Type.InOutCubic)
+        self.anim_3 = self.slideAnimation(self.middleFrame, 70, 250, 70, 300, 1200)
+        self.anim_3.setEasingCurve(QEasingCurve.Type.InOutCubic)
 
+        self.anim_group = QParallelAnimationGroup()
+        self.anim_group.addAnimation(self.anim_1)
+        self.anim_group.addAnimation(self.anim_2)
+        self.anim_group.addAnimation(self.anim_3)
+        self.anim_group.start()       
+
+    def slideAnimation(self, widget, start_x, start_y, end_x, end_y, duration):
         effect = QGraphicsOpacityEffect(widget)
         widget.setGraphicsEffect(effect)
         anim_slide = QPropertyAnimation(widget, b"pos")
@@ -272,15 +281,6 @@ class LoginWindow(QWidget):
         anim_slide.setEndValue(QPoint(end_x, end_y))
         anim_slide.setDuration(duration)
         return anim_slide
-    
-    def opacityAnimation(self, widget, start, end, duration):
-        effect = QGraphicsOpacityEffect(widget)
-        widget.setGraphicsEffect(effect)
-        anim_opa = QPropertyAnimation(widget, b"opacity")
-        anim_opa.setStartValue(start)
-        anim_opa.setEndValue(end)
-        anim_opa.setDuration(duration)
-        return anim_opa
 
     def updateUsername(self, username):
         self.parent().parent().updateUsername(username)
