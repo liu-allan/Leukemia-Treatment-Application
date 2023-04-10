@@ -268,19 +268,10 @@ class PatientInformationWindow(QWidget):
         )
         self.calculateButton.setEnabled(False)
 
-        self.cancelButton = QPushButton("Cancel")
-        self.cancelButton.setFont(QFont("Avenir", 12))
-        self.cancelButton.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.cancelButton.setStyleSheet(
-            "background-color: #aaaaee; border-radius: 5px; padding: 10px"
-        )
-
-        self.cancelButton.clicked.connect(self.showPatientListWindow)
         self.calculateButton.clicked.connect(lambda: self.showDashboardWindow(do_calculation=True))
 
         self.modelInputLayout.addWidget(self.numCyclesEdit)
         self.modelInputLayout.addWidget(self.calculateButton)
-        self.modelInputLayout.addWidget(self.cancelButton)
 
         self.patientBottomLayout.addWidget(self.modelInput, 1, 1, 1, 1)
 
