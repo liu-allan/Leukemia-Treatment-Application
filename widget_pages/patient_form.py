@@ -355,7 +355,7 @@ class PatientFormWindow(QWidget):
         self.cancelButton.setMaximumHeight(50)
         self.cancelButton.setFont(QFont("Avenir", 18))
         self.cancelButton.setStyleSheet(
-            "background-color: #aaaaee; border-radius: 10px; padding: 10px 15px;"
+            "background-color: #aaaaee; border-radius: 10px; padding: 5px 10px;"
         )
         self.bottomLayout.addWidget(self.cancelButton, 1, alignment=Qt.AlignmentFlag.AlignRight)
 
@@ -367,7 +367,7 @@ class PatientFormWindow(QWidget):
         self.saveButton.setMaximumHeight(50)
         self.saveButton.setFont(QFont("Avenir", 18))
         self.saveButton.setStyleSheet(
-            "background-color: #aaaaee; border-radius: 10px; padding: 10px 15px;"
+            "background-color: #aaaaee; border-radius: 10px; padding: 5px 10px;"
         )
         self.bottomLayout.addWidget(self.saveButton, 1, alignment=Qt.AlignmentFlag.AlignRight)
 
