@@ -11,6 +11,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt, QPropertyAnimation, QRect
 from datetime import datetime
+from util.animation_manager import AnimationManager
 
 class Label(QLabel):
     def __init__(self, text, textSize, margins, color):
@@ -203,18 +204,20 @@ class PatientCard(QWidget):
         self.editButton.setCursor(Qt.CursorShape.PointingHandCursor)
         self.editButton.setMinimumWidth(60)
         self.editButton.setMinimumHeight(40)
-        self.editButton.setMaximumHeight(50)
         self.editButton.setFont(QFont("Avenir", 18))
         self.editButton.setStyleSheet(
             "background-color: #aaaaee; border-radius: 10px; padding: 10px 15px;"
         )
         self.buttonLayout.addWidget(self.editButton, alignment=Qt.AlignmentFlag.AlignRight)
 
-        self.editButton.enterEvent = self.onButtonHoverEdit
-        self.editButton.leaveEvent = self.onButtonUnhoverEdit
+        self.animationManager = AnimationManager(widget=self.editButton)
         self.right_layout.addWidget(self.buttons, 3, 2)
         self.inside_layout.addWidget(self.patient_card_right, 3)
         self.setLayout(self.layout_box)
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.animationManager.reset()
 
     def editClicked(self):
         self.parent().parent().showPatientFormWindow()
@@ -256,18 +259,5 @@ class PatientCard(QWidget):
     def phoneNumberFormatter(self):
         self.phoneNumberV.setText(format(int(self.patient.phoneNumber[:-1]), ",").replace(",", "-") + self.patient.phoneNumber[-1])  
 
-    def onButtonHoverEdit(self, event):
-        self.animation = QPropertyAnimation(self.editButton, b"geometry")
-        self.animation.setDuration(200)
-        self.animation.setStartValue(QRect(self.editButton.pos().x(), self.editButton.pos().y(), self.editButton.width(), self.editButton.height()))
-        self.animation.setEndValue(QRect(self.editButton.pos().x(), self.editButton.pos().y(), self.editButton.width() + 5, self.editButton.height() + 5))
-        self.animation.start()
-    
-    def onButtonUnhoverEdit(self, event):
-        self.animation = QPropertyAnimation(self.editButton, b"geometry")
-        self.animation.setDuration(200)
-        self.animation.setStartValue(QRect(self.editButton.pos().x(), self.editButton.pos().y(), self.editButton.width(), self.editButton.height()))
-        self.animation.setEndValue(QRect(self.editButton.pos().x(), self.editButton.pos().y(), self.editButton.width() - 5, self.editButton.height() - 5))
-        self.animation.start()  
 
 

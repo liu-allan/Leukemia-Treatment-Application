@@ -22,6 +22,7 @@ from PyQt6 import uic
 from PyQt6.QtCore import Qt, QSize, QPropertyAnimation, QParallelAnimationGroup, QPoint, QEasingCurve, QRect, QAbstractAnimation
 from PyQt6.QtGui import QFont, QIcon
 import qtawesome as qta
+from util.animation_manager import AnimationManager
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -191,8 +192,7 @@ class LoginWindow(QWidget):
         self.loginPushButton.setStyleSheet(
             "background-color: #aaaaee; border-radius: 20px; padding: 10px; color: #000000"
         )
-        self.loginPushButton.enterEvent = self.onButtonHover
-        self.loginPushButton.leaveEvent = self.onButtonUnhover
+        self.animationManager = AnimationManager(widget=self.loginPushButton)
         
         self.middleLayout.addWidget(self.loginPushButton, alignment=Qt.AlignmentFlag.AlignCenter)
         self.middleLayout.addSpacerItem(self.spacer)
@@ -211,19 +211,9 @@ class LoginWindow(QWidget):
 
         self.loginPageAnimation()
 
-    def onButtonHover(self, event):
-        self.animation = QPropertyAnimation(self.loginPushButton, b"geometry")
-        self.animation.setDuration(200)
-        self.animation.setStartValue(QRect(self.loginPushButton.pos().x(), self.loginPushButton.pos().y(), self.loginPushButton.width(),self.loginPushButton.height()))
-        self.animation.setEndValue(QRect(self.loginPushButton.pos().x(), self.loginPushButton.pos().y(), self.loginPushButton.width() + 5,self.loginPushButton.height()))
-        self.animation.start()
-    
-    def onButtonUnhover(self, event):
-        self.animation = QPropertyAnimation(self.loginPushButton, b"geometry")
-        self.animation.setDuration(200)
-        self.animation.setStartValue(QRect(self.loginPushButton.pos().x(), self.loginPushButton.pos().y(), self.loginPushButton.width(),self.loginPushButton.height()))
-        self.animation.setEndValue(QRect(self.loginPushButton.pos().x(), self.loginPushButton.pos().y(), self.loginPushButton.width() - 5,self.loginPushButton.height()))
-        self.animation.start()
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.animationManager.reset()
 
     def loginPushed(self):
         try:

@@ -20,6 +20,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QDoubleValidator, QFont
 from pyqtgraph import plot
 from datetime import datetime
+from util.animation_manager import AnimationManager
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -370,15 +371,17 @@ class PatientFormWindow(QWidget):
         )
         self.bottomLayout.addWidget(self.saveButton, 1, alignment=Qt.AlignmentFlag.AlignRight)
 
-        self.cancelButton.enterEvent = self.onButtonHoverCancel
-        self.cancelButton.leaveEvent = self.onButtonUnhoverCancel
-
-        self.saveButton.enterEvent = self.onButtonHoverSave
-        self.saveButton.leaveEvent = self.onButtonUnhoverSave
+        self.cancelAnimationManager = AnimationManager(widget=self.cancelButton)
+        self.saveAnimationManager = AnimationManager(widget=self.saveButton)
 
         self.patientFormLayout.addLayout(self.bottomLayout)
 
         self.setLayout(self.patientFormBigLayout)
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.cancelAnimationManager.reset()
+        self.saveAnimationManager.reset()
 
     def selectedGenderType(self):
         self.radioButton = self.sender()
@@ -560,12 +563,12 @@ class PatientFormWindow(QWidget):
             self.errorLabel.setStyleSheet("color:red")
             logging.error(er)
 
-        except:
-
-            if not self.consentCheckBox.isChecked():
-                msg = "Patient must provide consent to store data"
-            else:
+        except Exception as er:
+            er = str(er)
+            if er != "Patient must provide consent to store data":
                 msg = "Input fields must not be empty"
+            else:
+                msg = "Patient must provide consent to store data"
             self.errorLabel.setText(msg)
             self.errorLabel.setStyleSheet("color:red")
             logging.error(msg)
@@ -609,34 +612,6 @@ class PatientFormWindow(QWidget):
                 < (self.birthdayEdit.date().month(), self.birthdayEdit.date().day())
             )
         )
-
-    def onButtonHoverCancel(self, event):
-        self.animation = QPropertyAnimation(self.cancelButton, b"geometry")
-        self.animation.setDuration(200)
-        self.animation.setStartValue(QRect(self.cancelButton.pos().x(), self.cancelButton.pos().y(), self.cancelButton.width(), self.cancelButton.height()))
-        self.animation.setEndValue(QRect(self.cancelButton.pos().x(), self.cancelButton.pos().y(), self.cancelButton.width() + 5, self.cancelButton.height() + 5))
-        self.animation.start()
-    
-    def onButtonUnhoverCancel(self, event):
-        self.animation = QPropertyAnimation(self.cancelButton, b"geometry")
-        self.animation.setDuration(200)
-        self.animation.setStartValue(QRect(self.cancelButton.pos().x(), self.cancelButton.pos().y(), self.cancelButton.width(), self.cancelButton.height()))
-        self.animation.setEndValue(QRect(self.cancelButton.pos().x(), self.cancelButton.pos().y(), self.cancelButton.width() - 5, self.cancelButton.height() - 5))
-        self.animation.start()
-    
-    def onButtonHoverSave(self, event):
-        self.animation = QPropertyAnimation(self.saveButton, b"geometry")
-        self.animation.setDuration(200)
-        self.animation.setStartValue(QRect(self.saveButton.pos().x(), self.saveButton.pos().y(), self.saveButton.width(), self.saveButton.height()))
-        self.animation.setEndValue(QRect(self.saveButton.pos().x(), self.saveButton.pos().y(), self.saveButton.width() + 5, self.saveButton.height() + 5))
-        self.animation.start()
-    
-    def onButtonUnhoverSave(self, event):
-        self.animation = QPropertyAnimation(self.saveButton, b"geometry")
-        self.animation.setDuration(200)
-        self.animation.setStartValue(QRect(self.saveButton.pos().x(), self.saveButton.pos().y(), self.saveButton.width(), self.saveButton.height()))
-        self.animation.setEndValue(QRect(self.saveButton.pos().x(), self.saveButton.pos().y(), self.saveButton.width() - 5, self.saveButton.height() - 5))
-        self.animation.start()
 
     # creates the unique user id for each patient
     def createUserID(self, patient_name):

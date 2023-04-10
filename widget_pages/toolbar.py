@@ -11,6 +11,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt, QPropertyAnimation, QRect
 from util.util import getLastNameFromFullName
+from util.animation_manager import AnimationManager
 
 
 class ToolBar(QWidget):
@@ -23,7 +24,7 @@ class ToolBar(QWidget):
         self.toolBar.setStyleSheet(
             "background-color: #a9c7c5; height : 100; border-radius: 10px;"
         )
-
+        
         self.dashboard_label = QLabel(page_name)
         self.dashboard_label.setAlignment(Qt.AlignmentFlag.AlignVCenter)
         self.dashboard_label.setFont(QFont("Avenir", 25))
@@ -82,7 +83,8 @@ class ToolBar(QWidget):
         self.toolBar.addWidget(self.name_label)
 
         self.logout_button = QPushButton("Log Off")
-        self.logout_button.setFixedHeight(40)
+        self.logout_button.setMinimumHeight(40)
+        self.logout_button.setMaximumHeight(45)
         self.logout_button.setStyleSheet(
             "background-color: #e5e5e5; border-radius: 10px; padding: 10px"
         )
@@ -91,8 +93,7 @@ class ToolBar(QWidget):
         self.logout_button.setFont(QFont("Avenir", 18))
         self.toolBar.addWidget(self.logout_button)
 
-        self.logout_button.enterEvent = self.onButtonHoverLogOff
-        self.logout_button.leaveEvent = self.onButtonUnhoverLogOff
+        self.animationManager = AnimationManager(widget=self.logout_button)
 
         spacer2 = QWidget()
         spacer2.setFixedWidth(20)
@@ -129,6 +130,7 @@ class ToolBar(QWidget):
         self.name_label.setText(
             "Dr. " + getLastNameFromFullName(user_full_name) if user_full_name else ""
         )
+        self.animationManager.reset()
 
     def logoffClicked(self):
         dlg = QMessageBox()
@@ -165,16 +167,4 @@ class ToolBar(QWidget):
     def userProfileClick(self, s):
         return
 
-    def onButtonHoverLogOff(self, event):
-        self.animation = QPropertyAnimation(self.logout_button, b"geometry")
-        self.animation.setDuration(200)
-        self.animation.setStartValue(QRect(self.logout_button.pos().x(), self.logout_button.pos().y(), self.logout_button.width(), self.logout_button.height()))
-        self.animation.setEndValue(QRect(self.logout_button.pos().x(), self.logout_button.pos().y(), self.logout_button.width() + 5, self.logout_button.height() + 5))
-        self.animation.start()
     
-    def onButtonUnhoverLogOff(self, event):
-        self.animation = QPropertyAnimation(self.logout_button, b"geometry")
-        self.animation.setDuration(200)
-        self.animation.setStartValue(QRect(self.logout_button.pos().x(), self.logout_button.pos().y(), self.logout_button.width(), self.logout_button.height()))
-        self.animation.setEndValue(QRect(self.logout_button.pos().x(), self.logout_button.pos().y(), self.logout_button.width() - 5, self.logout_button.height() - 5))
-        self.animation.start()  
