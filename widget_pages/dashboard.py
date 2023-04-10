@@ -20,37 +20,58 @@ from pyqtgraph import plot
 import pyqtgraph as pg
 
 from widget_pages.toolbar import ToolBar
+from matlab_script import runModel
+from util.util import clearLayout
 from widget_pages.sidebar import SideBar
 
 
 class TabShowGraph(QWidget):
     def __init__(self):
         super().__init__()
-        
+
         self.graphLayout = QVBoxLayout()
 
+        self.noResultsWidget = QLabel("No Results", self)
+        self.noResultsWidget.setFont(QFont("Avenir", 24))
+        self.noResultsWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.noResultsWidget.setAlignment(Qt.AlignCenter)
+        self.noResultsWidget.setVisible(False)
+
+        self.dosageTableWidget = QWidget()
+        self.dosageTableLayout = QVBoxLayout()
+        self.dosageTableWidget.setLayout(self.dosageTableLayout)
+
+        self.boundary_positive = []
+        self.boundary_negative = []
+        self.day = []
+        self.anticipatory_anc = []
+        self.reactive_anc = []
+        self.anticipatory_dosage = []
+        self.reactive_dosage = []
+        self.ant_plot = None
+        self.rea_plot = None
+        self.pos_plot = None
+        self.neg_plot = None
+
+        self.graphContainer = QWidget()
+        self.graphContainer.setMinimumHeight(300)
+        self.graphContainerLayout = QVBoxLayout(self.graphContainer)
+
         self.graphWidget = pg.PlotWidget()
-        self.graphLayout.addWidget(self.graphWidget)
-
         self.graphWidget.setCursor(Qt.CursorShape.OpenHandCursor)
-        day = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        anticipatory_neutraphil_count = [-10, 1, 10, -4, 15, -12, 20, 8, -17, 3]
-        reactive_neutraphil_count = [-25, 5, 15, -15, 4, -22, -7, 25, 13, 0]
-        boundary_positive = [20, 20, 20, 20, 20, 20, 20, 20, 20, 20]
-        boundary_negative = [-20, -20, -20, -20, -20, -20, -20, -20, -20, -20]
-
+        
         # Add Background colour to white
         self.graphWidget.setBackground("w")
         # Add Title
         self.graphWidget.setTitle(
-            "Neutraphil Count (Anticipatory vs. Reactive)",
+            "Neutrophil Count (Anticipatory vs. Reactive)",
             color="#000",
             font=QFont("Avenir", 20),
             size="20pt",
         )
         # Add Axis Labels
         styles = {"color": "#000000", "font": QFont("Avenir", 25), "font-size": "25px"}
-        self.graphWidget.setLabel("left", "Neutraphil Count", **styles)
+        self.graphWidget.setLabel("left", "Neutrophil Count (# Cells/L) x 1e9", **styles)
         self.graphWidget.setLabel("bottom", "Day (days)", **styles)
         # Add legend
         self.graphWidget.addLegend()
@@ -58,45 +79,74 @@ class TabShowGraph(QWidget):
         self.graphWidget.showGrid(x=True, y=True)
         # Set Range
         self.graphWidget.setXRange(0, 11, padding=0)
-        self.graphWidget.setYRange(-35, 35, padding=0)
+        self.graphWidget.setYRange(0, 6, padding=0)
 
-        self.plot(day, anticipatory_neutraphil_count, "Anticipatory", "r")
-        self.plot(day, reactive_neutraphil_count, "Reactive", "b")
+        self.plotANCGraph()
 
-        self.plot_straight(day, boundary_positive, "Neutraphil Top Boundary", "#4a707a")
-        self.plot_straight(
-            day, boundary_negative, "Neutraphil Bottom Boundary", "#4a707a"
-        )
+        self.graphContainerLayout.addWidget(self.graphWidget)
 
-        # Creating tables for dosages
-        ant_dosages = [50, 30, 100, 25, 30, 80, 50]
-        self.anticipatory_dosage_title = QLabel("Anticipatory dosages")
-        self.anticipatory_dosage_title.setFont(QFont("Avenir", 15))
-        self.anticipatory_dosage_title.setMargin(5)
-        self.anticipatory_dosage = self.createTable(2, 8, ant_dosages)
-        self.graphLayout.addWidget(self.anticipatory_dosage_title)
-        self.graphLayout.addWidget(self.anticipatory_dosage)
+        self.graphLayout.addWidget(self.noResultsWidget)
+        self.graphLayout.addWidget(self.graphContainer)
+        self.graphLayout.addWidget(self.dosageTableWidget)
 
-        reac_dosages = [10, 30, 40, 20, 79, 84, 24]
-        self.reactive_dosage_title = QLabel("Reactive dosages")
-        self.reactive_dosage_title.setFont(QFont("Avenir", 15))
-        self.reactive_dosage_title.setMargin(5)
-        self.reactive_dosage = self.createTable(2, 8, reac_dosages)
-        self.graphLayout.addWidget(self.reactive_dosage_title)
-        self.graphLayout.addWidget(self.reactive_dosage)
+        self.setGraphTableData(None, None, None, None)
+
+        self.anticipatory_dosage_title.setVisible(False)
+        self.anticipatory_dosage_table.setVisible(False)
+        self.reactive_dosage_title.setVisible(False)
+        self.reactive_dosage_table.setVisible(False)
 
         self.setLayout(self.graphLayout)
 
-    def plot(self, x, y, plotname, color):
-        pen = pg.mkPen(color=color, width=5)
-        self.graphWidget.plot(
-            x, y, name=plotname, pen=pen, symbol="o", symbolSize=7, symbolBrush=(color)
+    def plotANCGraph(self):
+        pen = pg.mkPen(color='r', width=5)
+        self.ant_plot = self.graphWidget.plot(
+            self.day, self.anticipatory_anc, name="Anticipatory", pen=pen, symbol="o", symbolSize=7, symbolBrush=('r')
+        )
+        pen = pg.mkPen(color='b', width=5)
+        self.rea_plot = self.graphWidget.plot(
+            self.day, self.reactive_anc, name="Reactive", pen=pen, symbol="o", symbolSize=7, symbolBrush=('b')
         )
 
-    def plot_straight(self, x, y, plotname, color):
-        pen = pg.mkPen(color=color, width=5, style=Qt.PenStyle.DashLine)
-        self.graphWidget.plot(x, y, name=plotname, pen=pen, symbolBrush=(color))
-    
+        pen = pg.mkPen(color="#4a707a", width=5, style=Qt.PenStyle.DashLine)
+        self.pos_plot = self.graphWidget.plot(
+            self.day, self.boundary_positive, name="Neutrophil Top Boundary", pen=pen, symbolBrush=("#4a707a")
+        )
+        pen = pg.mkPen(color="#4a707a", width=5, style=Qt.PenStyle.DashLine)
+        self.neg_plot = self.graphWidget.plot(
+            self.day, self.boundary_negative, name="Neutrophil Bottom Boundary", pen=pen, symbolBrush=("#4a707a")
+        )
+
+    def updateANCGraph(self):
+        if self.ant_plot:
+            self.ant_plot.setData(self.day, self.anticipatory_anc)
+        if self.rea_plot:
+            self.rea_plot.setData(self.day, self.reactive_anc)
+        if self.pos_plot:
+            self.pos_plot.setData(self.day, self.boundary_positive)
+        if self.neg_plot:
+            self.neg_plot.setData(self.day, self.boundary_negative)
+        if self.day:
+            self.graphWidget.setXRange(0, len(self.day), padding=0)
+
+    def updateDosageTable(self):
+        clearLayout(self.dosageTableLayout)
+
+        self.anticipatory_dosage_title = QLabel("Anticipatory dosages")
+        self.anticipatory_dosage_title.setFont(QFont("Avenir", 15))
+        self.anticipatory_dosage_title.setMargin(5)
+        self.anticipatory_dosage_table = self.createTable(2, len(self.anticipatory_dosage) + 1, self.anticipatory_dosage)
+
+        self.reactive_dosage_title = QLabel("Reactive dosages")
+        self.reactive_dosage_title.setFont(QFont("Avenir", 15))
+        self.reactive_dosage_title.setMargin(5)
+        self.reactive_dosage_table = self.createTable(2, len(self.reactive_dosage) + 1, self.reactive_dosage)
+
+        self.dosageTableLayout.addWidget(self.anticipatory_dosage_title)
+        self.dosageTableLayout.addWidget(self.anticipatory_dosage_table)
+        self.dosageTableLayout.addWidget(self.reactive_dosage_title)
+        self.dosageTableLayout.addWidget(self.reactive_dosage_table)
+
     def createTable(self, row, column, dosages_list):
         self.tableWidget = QTableWidget()
 
@@ -132,7 +182,7 @@ class TabShowGraph(QWidget):
                     item.setBackground(QColor("#bfd8d2"))
                     self.tableWidget.setItem(i, j, item)
                 elif i == 1:
-                    item = QTableWidgetItem(str(dosages_list[j - 1]))
+                    item = QTableWidgetItem("{:.2f}".format(dosages_list[j - 1]))
                     item.setFlags(Qt.ItemFlag.ItemIsEnabled)
                     item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                     self.tableWidget.setItem(i, j, item)
@@ -142,15 +192,46 @@ class TabShowGraph(QWidget):
 
         self.tableWidget.verticalHeader().setStretchLastSection(True)
         self.tableWidget.horizontalHeader().setSectionResizeMode(
-            QHeaderView.ResizeMode.Stretch
+            QHeaderView.ResizeMode.ResizeToContents
         )
         return self.tableWidget
+
+    def setGraphTableData(self, reactive_anc, anticipatory_anc, reactive_dosage, anticipatory_dosage):
+        # set graph and table parameters
+        if reactive_anc and anticipatory_anc and reactive_dosage and anticipatory_dosage:
+            self.day = [i + 1 for i in range(len(reactive_anc))]
+            self.boundary_positive = [2 for _ in range(len(self.day))]
+            self.boundary_negative = [1 for _ in range(len(self.day))]
+            self.anticipatory_anc = anticipatory_anc
+            self.reactive_anc = reactive_anc
+            self.anticipatory_dosage = anticipatory_dosage
+            self.reactive_dosage = reactive_dosage
+        else:
+            self.day = []
+            self.boundary_positive = []
+            self.boundary_negative = []
+            self.anticipatory_anc = []
+            self.reactive_anc = []
+            self.anticipatory_dosage = []
+            self.reactive_dosage = []
+
+        self.updateANCGraph()
+        self.updateDosageTable()
+    
+    def toggleResults(self, show):
+        self.noResultsWidget.setVisible(not show)
+        self.graphWidget.setVisible(show)
+        self.anticipatory_dosage_title.setVisible(show)
+        self.anticipatory_dosage_table.setVisible(show)
+        self.reactive_dosage_title.setVisible(show)
+        self.reactive_dosage_table.setVisible(show)
 
 class DashboardWindow(QWidget):
     def __init__(self):
         super().__init__()
 
         self.patient = None
+        self.displayed_patient = None
 
         self.sideBarLayout = QHBoxLayout()
         self.sideBarLayout.setContentsMargins(10, 0, 10, 0)
@@ -175,8 +256,27 @@ class DashboardWindow(QWidget):
     def showPatientInformationWindow(self):
         self.parent().parent().showPatientInformationWindow()
 
-    def updatePatientInfo(self):
+    def updatePatientInfo(self, calculation_info):
         self.patient = self.parent().parent().selected_patient
+        if calculation_info[0]:
+            self.graphs.toggleResults(True)
+            self.runMatLabModel(calculation_info[1])
+            self.displayed_patient = self.patient
+        elif self.displayed_patient and self.displayed_patient.user_id == self.patient.user_id:
+            self.graphs.toggleResults(True)
+        else:
+            self.graphs.toggleResults(False)
+
+    def runMatLabModel(self, num_cycles):
+        bsa = float(self.patient.bsa)
+        num_cycles = float(num_cycles + 1)
+        dosage = [float(self.patient.dosageMeasurement[-1][0])]
+        anc = [float(self.patient.ancMeasurement[-1][0])]
+        print(bsa, num_cycles, dosage, anc)
+        print("running model for {} cycles...".format(num_cycles))
+        _, _, _, reactive_anc, anticipatory_anc, reactive_dosage, anticipatory_dosage = runModel(bsa, num_cycles, dosage, anc)
+        print("finished running model")
+        self.graphs.setGraphTableData(reactive_anc, anticipatory_anc, reactive_dosage, anticipatory_dosage)
     
     def backButtonClicked(self):
         self.showPatientListWindow()
