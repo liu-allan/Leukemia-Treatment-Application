@@ -40,6 +40,7 @@ class LoginWindow(QWidget):
         self.mainPageLayout.addWidget(self.picture, 50)
 
         self.quotes = QLabel()
+
         self.quotes.setObjectName("QuotesBackground")
         self.quotes.setFrameShape(QFrame.Shape.Box)
         self.quotes.setFixedWidth(400)
@@ -58,31 +59,24 @@ class LoginWindow(QWidget):
         self.quotes.raise_()
 
         self.quotesLayout = QVBoxLayout(self.quotes)
-
-        self.pictureTop = QLabel("A graphical tool in comparing two different dosage strategies used in Leukemia treatment")
+        self.pictureTop = QLabel("A graphical tool for comparing two dosage strategies used in Leukemia treatment")
         self.pictureTop.setObjectName("QuoteTop")
         self.pictureTop.setFont(QFont("Avenir", 25))
-        # self.pictureTop.setFrameShape(QFrame.Shape.Box)
         self.pictureTop.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.pictureTop.setAlignment(Qt.AlignmentFlag.AlignBottom)
-        # self.pictureTop.setAlignment(Qt.AlignmentFlag.AlignVCenter)
         self.pictureTop.setWordWrap(True)
-        # self.pictureTop.setFixedWidth(400)
-        # self.pictureTop.setFixedHeight(350)
         self.pictureTop.setStyleSheet(
             """
             QLabel#QuoteTop
             {
-                color: #5a5a5a; font-weight: bold; padding: 10px
+                color: #000000; font-weight: bold; padding: 10px
             }
             """
         )
         self.pictureTop.setContentsMargins(30, 0, 30, 0)
-        # self.pictureTop.move(215, 290)
         self.quotesLayout.addWidget(self.pictureTop, 2)
-        # self.pictureTop.raise_()
 
-        self.quoteBottom = QLabel("This can help oncologists to decide what strategy should be applied better for patient's health")
+        self.quoteBottom = QLabel("This application can help oncologists to decide dosages for better patient health")
         self.quoteBottom.setObjectName("QuoteBottom")
         self.quoteBottom.setFont(QFont("Avenir", 13))
         self.quoteBottom.setAlignment(Qt.AlignmentFlag.AlignLeft)
@@ -92,7 +86,7 @@ class LoginWindow(QWidget):
             """
             QLabel#QuoteBottom
             {
-                color: #5a5a5a; padding: 10px
+                color: #000000; padding: 10px
             }
             """
         )
@@ -105,7 +99,6 @@ class LoginWindow(QWidget):
             "background-color: #ffffff; border-radius: 20px;"
         )
         self.mainPageLayout.addWidget(self.login, 50)
-
         self.layout = QVBoxLayout(self.login)
         
         self.title = QWidget()
@@ -135,12 +128,19 @@ class LoginWindow(QWidget):
 
         self.layout.addSpacerItem(self.spacer)
 
+        self.middleLayout = QVBoxLayout()
+        self.middleLayout.setContentsMargins(0, 0, 0, 0)
+        self.middleFrame = QFrame()
+        self.middleFrame.setContentsMargins(0, 0, 0, 0)
+        self.middleFrame.setLayout(self.middleLayout)
+        self.layout.addWidget(self.middleFrame)
+
         self.titleLabel = QLabel("Welcome!")
         self.titleLabel.setFont(QFont("Avenir", 50))
         self.titleLabel.setContentsMargins(0, 0, 0, 40)
         self.titleLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.titleLabel.setStyleSheet("font-weight: bold;")
-        self.layout.addWidget(self.titleLabel)
+        self.titleLabel.setStyleSheet("font-weight: bold; color: #000000")
+        self.middleLayout.addWidget(self.titleLabel)
 
         self.usernameLineEdit = QLineEdit()
         self.usernameLineEdit.setFont(QFont("Avenir", 18))
@@ -151,7 +151,7 @@ class LoginWindow(QWidget):
             "background-color: #f5f5f5; height: 60px; border-radius: 20px;"
         )
         self.usernameLineEdit.setFixedWidth(500)
-        self.layout.addWidget(self.usernameLineEdit, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.middleLayout.addWidget(self.usernameLineEdit, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.passwordLineEdit = QLineEdit()
         self.passwordLineEdit.setPlaceholderText("Password")
@@ -163,12 +163,12 @@ class LoginWindow(QWidget):
         )
         self.passwordLineEdit.setFixedWidth(500)
         self.passwordLineEdit.setEchoMode(QLineEdit.EchoMode.Password)
-        self.layout.addWidget(self.passwordLineEdit, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.middleLayout.addWidget(self.passwordLineEdit, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.errorLabel = QLabel()
         self.errorLabel.setFont(QFont("Avenir", 12))
         self.errorLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.layout.addWidget(self.errorLabel)
+        self.middleLayout.addWidget(self.errorLabel)
 
         self.loginPushButton = QPushButton("Login ")
         self.loginPushButton.setIcon(QIcon("icons/login.png"))
@@ -176,14 +176,17 @@ class LoginWindow(QWidget):
         self.loginPushButton.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
         self.loginPushButton.clicked.connect(self.loginPushed)
         self.loginPushButton.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.loginPushButton.setFixedWidth(200)
+        self.loginPushButton.setMinimumWidth(200)
+        self.loginPushButton.setMinimumHeight(45)
+        self.loginPushButton.setMaximumHeight(60)
         self.loginPushButton.setFont(QFont("Avenir", 18))
         self.loginPushButton.setShortcut("Return")
         self.loginPushButton.setStyleSheet(
-            "background-color: #aaaaee; border-radius: 20px; padding: 10px"
+            "background-color: #aaaaee; border-radius: 20px; padding: 10px; color: #000000"
         )
-        self.layout.addWidget(self.loginPushButton, alignment=Qt.AlignmentFlag.AlignCenter)
 
+        self.middleLayout.addWidget(self.loginPushButton, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.middleLayout.addSpacerItem(self.spacer)
         self.layout.addSpacerItem(self.spacer)
 
         self.copyRightLabel = QLabel("Copyright @ 2023. LeukemiaCompare. All rights reserved.")
@@ -225,15 +228,16 @@ class LoginWindow(QWidget):
         else:
             self.errorLabel.setText("")
             logging.info("Login Successful")
-            self.updateUsername(username)
+            self.updateUser(username, password)
             if (row[3] == "TRUE"):
                 self.parent().parent().is_admin_user = True
             else:
                 self.parent().parent().is_admin_user = False
             self.showPatientListWindow()
 
-    def updateUsername(self, username):
+    def updateUser(self, username, password):
         self.parent().parent().updateUsername(username)
+        self.parent().parent().password = password
 
     def showPatientListWindow(self):
         self.parent().parent().showPatientListWindow()

@@ -20,7 +20,7 @@ from PyQt6.QtGui import QFont, QIcon, QPixmap
 
 from datetime import datetime
 from enum import Enum
-
+from util.util import decryptData
 logging.getLogger().setLevel(logging.INFO)
 
 class SearchMode(Enum):
@@ -445,7 +445,11 @@ class PatientListWindow(QWidget):
             self.name_search_bar.setPlaceholderText("Search Patients")
             self.id_search_bar.setPlaceholderText("Patient ID")
             for patient_name, patient_id, user_id, birthday, phoneNumber in self.patients:
-                widget = PatientListItem(patient_name, patient_id, user_id, birthday, phoneNumber)
+                widget = PatientListItem(decryptData(patient_name, self.parent().parent().password), 
+                                         patient_id,
+                                         decryptData(user_id, self.parent().parent().password),
+                                         decryptData(birthday, self.parent().parent().password),
+                                         decryptData(phoneNumber, self.parent().parent().password))
                 self.patient_widgets.append(widget)
                 self.list_layout.addWidget(widget)
 
