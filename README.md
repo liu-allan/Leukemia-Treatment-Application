@@ -67,7 +67,7 @@ Note: The model only takes the most recent dosage and ANC measurement into consi
 
 ### 2.4 Dashboard
 
-The model can take a few minutes (4-5 minutes per cycle) to complete and the application will say it is not responding. This is normal.
+The model can take a few minutes (4-5 minutes per cycle) to complete. This is normal.
 
 ![image](https://user-images.githubusercontent.com/44624435/226801521-8a6a05b7-9332-4b66-bea4-fbf06a8e1651.png)
 
