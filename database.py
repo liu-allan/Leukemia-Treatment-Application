@@ -34,7 +34,7 @@ conn.execute(
              height TEXT NOT NULL,
              body_surface_area TEXT NOT NULL,
              oncologist_id TEXT NOT NULL,
-             gender TEXT NOT NULL DEFAULT "Male",
+             sex TEXT NOT NULL DEFAULT "Male",
              PRIMARY KEY(id),
              FOREIGN KEY(oncologist_id)
                 REFERENCES oncologists(username)

@@ -4,7 +4,7 @@ import base64, hashlib
 # sets used to help validate user input
 valid_blood_types = {'A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'}
 valid_all_types = {'Immunophenotype', 'French-American-British (FAB)', 'ALL Cytogenetic Risk Group'}
-valid_gender_types = {'Male', 'Female'}
+valid_sex_types = {'Male', 'Female'}
 
 # helper function to display the oncologist's name in the ToolBar
 def getLastNameFromFullName(full_name):

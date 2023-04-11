@@ -426,17 +426,7 @@ class PatientInformationWindow(QWidget):
         try:
             name = self.patient.name
             assert name != ""
-            user_id = self.patient.user_id
             date = self.dateEdit.date().toString("yyyyMMdd")
-            weight = self.patient.weight
-            height = self.patient.height
-            bsa = math.sqrt(height * weight / 3600)
-            allType = self.patient.allType
-            age = self.patient.age
-            bloodType = self.patient.bloodType
-            birthday = self.patient.birthday
-            phoneNumber = self.patient.phoneNumber
-            assignedDoctor = self.patient.assignedDoctor
             ancMeasurement = float(self.ancMeasurementEdit.text())
             dosageMeasurement = float(self.dosageEdit.text())
 
@@ -462,11 +452,11 @@ class PatientInformationWindow(QWidget):
             self.errorLabel.setStyleSheet("color:red")
             logging.error(er)
 
-        except:
+        except Exception as e:
             msg = "Input fields must not be empty"
             self.errorLabel.setText(msg)
             self.errorLabel.setStyleSheet("color:red")
-            logging.error(msg)
+            logging.error(e)
 
         else:
             self.errorLabel.clear()
@@ -491,11 +481,11 @@ class PatientInformationWindow(QWidget):
                 name = self.patient.name
                 assert name != ""
                 numCalculationCycles = int(self.numCyclesEdit.text())
-            except:
+            except Exception as e:
                 msg = "Input fields must not be empty"
                 self.errorLabel.setText(msg)
                 self.errorLabel.setStyleSheet("color:red")
-                logging.error(msg)
+                logging.error(e)
             else:
                 self.errorLabel.clear()
                 self.parent().parent().showDashboardWindow(calculation_info=(True, numCalculationCycles))

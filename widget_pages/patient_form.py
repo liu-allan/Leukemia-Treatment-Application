@@ -3,7 +3,7 @@ import math
 import sqlite3
 import numpy as np
 
-from util.util import encryptData, valid_blood_types, valid_all_types, valid_gender_types
+from util.util import encryptData, valid_blood_types, valid_all_types, valid_sex_types
 
 from PyQt6 import uic
 from PyQt6.QtCore import QDate, Qt
