@@ -18,7 +18,9 @@ from PyQt6.QtWidgets import (
     QRadioButton,
     QScrollArea,
     QPushButton,
-    QCheckBox
+    QCheckBox,
+    QSizePolicy,
+    QSpacerItem
 )
 from PyQt6.QtGui import QDoubleValidator, QFont
 from pyqtgraph import plot
@@ -270,49 +272,6 @@ class PatientFormWindow(QWidget):
         )
         self.patientFormLayout.addWidget(self.phoneNumberEdit)
 
-        self.medicalLayout = QGridLayout()
-        self.medicalLayout.setContentsMargins(0, 0, 0, 0)
-
-        self.ancCountLabel = Label("ANC Measurement (# Cells/L) x 1e9")
-        self.ancCountLabel.setContentsMargins(30, 10, 0, 0)
-        self.medicalLayout.addWidget(self.ancCountLabel, 0, 0, alignment=Qt.AlignmentFlag.AlignBottom)
-
-        self.dosageLabel = Label("6-MP Dosage (mg)")
-        self.dosageLabel.setContentsMargins(10, 10, 30, 0)
-        self.medicalLayout.addWidget(self.dosageLabel, 0, 1, alignment=Qt.AlignmentFlag.AlignBottom)
-
-        self.ancMeasurementEdit = QLineEdit()
-        self.ancMeasurementEdit.setContentsMargins(30, 0, 0, 0)
-        self.ancMeasurementEdit.setPlaceholderText("# Cells/L x 1e9")
-        self.ancMeasurementEdit.setFont(QFont("Avenir", 18))
-        self.ancMeasurementEdit.setStyleSheet(
-            "background-color: #f5f5f5; height: 40px; border-radius: 10px; padding: 0px 10px"
-        )
-        self.medicalLayout.addWidget(self.ancMeasurementEdit, 1, 0)
-
-        self.dosageEdit = QLineEdit()
-        self.dosageEdit.setContentsMargins(10, 0, 30, 0)
-        self.dosageEdit.setPlaceholderText("mg")
-        self.dosageEdit.setFont(QFont("Avenir", 18))
-        self.dosageEdit.setStyleSheet(
-            "background-color: #f5f5f5; height: 40px; border-radius: 10px; padding: 0px 10px"
-        )
-        self.medicalLayout.addWidget(self.dosageEdit, 1, 1)
-        self.patientFormLayout.addLayout(self.medicalLayout)
-
-        self.dateLayout = QVBoxLayout()
-        self.dateLayout.setContentsMargins(30, 0, 30, 0)
-        
-        self.dateLabel = Label("Date of ANC Measurement")
-        self.dateLabel.setContentsMargins(0, 10, 0, 0)
-        self.dateLayout.addWidget(self.dateLabel, alignment=Qt.AlignmentFlag.AlignBottom)
-
-        self.dateEdit = QDateEdit()
-        self.dateEdit.setContentsMargins(0, 0, 0, 0)
-        self.dateEdit.setFont(QFont("Avenir", 15))
-        self.dateLayout.addWidget(self.dateEdit)
-        self.patientFormLayout.addLayout(self.dateLayout)
-
         self.consentLayout = QHBoxLayout()
         self.consentLayout.setContentsMargins(30, 0, 30, 0)
 
@@ -327,6 +286,11 @@ class PatientFormWindow(QWidget):
         self.consentLayout.addWidget(self.consentCheckBox, alignment=Qt.AlignmentFlag.AlignRight)
         self.patientFormLayout.addLayout(self.consentLayout)
 
+        self.spacer = QSpacerItem(
+            1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
+        )
+        self.patientFormLayout.addSpacerItem(self.spacer)
+
         self.bottomLayout = QHBoxLayout()
         self.bottomLayout.setContentsMargins(30, 0, 30, 0)
 
@@ -336,20 +300,13 @@ class PatientFormWindow(QWidget):
         self.patient = None
         self.weightEdit.setValidator(QDoubleValidator())
         self.heightEdit.setValidator(QDoubleValidator())
-        self.dosageEdit.setValidator(QDoubleValidator())
-        self.ancMeasurementEdit.setValidator(QDoubleValidator())
-        self.ancEdited = False
-        self.dosageEdited = False
 
-        self.ancMeasurementEdit.textEdited.connect(self.valueChanged)
-        self.dosageEdit.textEdited.connect(self.valueChangedDosage)
-        self.dateEdit.editingFinished.connect(self.valueChanged)
         self.phoneNumberEdit.editingFinished.connect(self.phoneNumberFormatter)
         self.weightEdit.textEdited.connect(self.calculateBodySurfaceArea)
         self.heightEdit.textEdited.connect(self.calculateBodySurfaceArea)
-        
+
         self.cancelButton = QPushButton("Cancel")
-        self.cancelButton.clicked.connect(self.showPatientListWindow)
+        self.cancelButton.clicked.connect(self.cancelFromPatientForm)
         self.cancelButton.setCursor(Qt.CursorShape.PointingHandCursor)
         self.cancelButton.setMinimumWidth(100)
         self.cancelButton.setMinimumHeight(40)
@@ -396,9 +353,6 @@ class PatientFormWindow(QWidget):
         self.birthdayEdit.clear()
         self.birthdayEdit.setDate(QDate.currentDate())
         self.bodySurfaceAreaMeasurement.clear()
-        self.dosageEdit.clear()
-        self.ancMeasurementEdit.clear()
-        self.dateEdit.setDate(QDate.currentDate())
         self.consentCheckBox.setChecked(False)
 
         if self.patient is not None:
@@ -413,24 +367,7 @@ class PatientFormWindow(QWidget):
             )
 
             self.phoneNumberFormatterBegin()
-
             self.bodySurfaceAreaMeasurement.setText(str(self.patient.bsa))
-            self.ancMeasurementDate = [
-                datetime.strptime(str(item[1]), "%Y%m%d")
-                for item in self.patient.ancMeasurement
-            ]
-            self.ancMeasurement = [item[0] for item in self.patient.ancMeasurement]
-            self.ancMeasurementEdit.setText(str(self.ancMeasurement[-1]))
-            self.dateEdit.setDate(
-                QDate.fromString(str(self.ancMeasurementDate[-1].date()), "yyyy-MM-dd")
-            )
-
-            self.dosagePrescribedDate = [
-                datetime.strptime(str(item[1]), "%Y%m%d")
-                for item in self.patient.dosageMeasurement
-            ]
-            self.dosageAmount = [item[0] for item in self.patient.dosageMeasurement]
-            self.dosageEdit.setText(str(self.dosageAmount[-1]))
             self.consentCheckBox.setChecked(True)
         else:
             self.typeOfPatientForm.setText("New Patient Enrollment")
@@ -467,11 +404,17 @@ class PatientFormWindow(QWidget):
             bsa = math.sqrt(height * weight / 3600)
             self.bodySurfaceAreaMeasurement.setText("{:.2f}".format(bsa))
 
+    def cancelFromPatientForm(self):
+        self.errorLabel.clear()
+        if self.parent().parent().adding_new_patient:
+            self.parent().parent().showPatientListWindow()
+        else:
+            self.parent().parent().showPatientInformationWindow()
+        
     def savePatientInformation(self):
         try:
             name = self.patientFirstNameLineEdit.text() + " " + self.patientLastNameLineEdit.text()
             assert name != ""
-            date = self.dateEdit.date().toString("yyyyMMdd")
             weight = self.weightEdit.text()
             height = self.heightEdit.text()
             allType = self.allTypeSelect.currentText()
@@ -483,10 +426,9 @@ class PatientFormWindow(QWidget):
             assert phoneNumber != ""
             assignedDoctor = self.parent().parent().username
             bsa = self.bodySurfaceAreaMeasurement.text()
-            ancMeasurement = float(self.ancMeasurementEdit.text())
-            dosageMeasurement = float(self.dosageEdit.text())
             age = str(self.calculateAge())
             sex = self.sex
+            assert sex in valid_sex_types
             user_id = self.createUserID(name)
 
             conn = self.parent().parent().getDatabaseConnection()
@@ -545,13 +487,6 @@ class PatientFormWindow(QWidget):
                     ),
                 )
 
-            conn.execute(
-                """
-                    INSERT INTO measurements (time, anc_measurement, dosage_measurement, patient_id)
-                    VALUES (?, ?, ?, ?)
-                """,
-                (date, ancMeasurement, dosageMeasurement, patient_id),
-            )
             conn.commit()
 
             self.parent().parent().updateSelectedPatient(patient_id)
@@ -580,10 +515,8 @@ class PatientFormWindow(QWidget):
             self.errorLabel.setStyleSheet("color:green")
             logging.info(msg)
             logging.info(vars(self.patient))
-            self.ancEdited = False
-            self.dosageEdited = False
             self.errorLabel.clear()
-            self.showPatientListWindow()
+            self.parent().parent().showPatientInformationWindow()
 
     def calculateAge(self):
         today = datetime.today().date()
@@ -603,16 +536,6 @@ class PatientFormWindow(QWidget):
         lastName = "".join(nameSplit[1:])  # for patients with middle names
         microsecond = datetime.now().microsecond
         return firstName.lower() + lastName.lower() + str(microsecond)
-
-    def showPatientListWindow(self):
-        self.errorLabel.clear()
-        self.parent().parent().showPatientListWindow()
-
-    def valueChanged(self):
-        self.ancEdited = True
-
-    def valueChangedDosage(self):
-        self.dosageEdited = True
 
     def updatePatientInfo(self):
         self.patient = self.parent().parent().selected_patient

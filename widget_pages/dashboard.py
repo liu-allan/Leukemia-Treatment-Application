@@ -293,7 +293,7 @@ class ModelTask(QObject):
     
     def run(self):
         print("running model for {} cycles...".format(self.num_cycles))
-        _, _, _, ra, aa, rd, ad = runModel(self.bsa, self.num_cycles, self.dosage, self.anc)
+        _, _, ra, aa, rd, ad = runModel(self.bsa, self.num_cycles, self.dosage, self.anc)
         print("finished running model")
         self.returned.emit([ra, aa, rd, ad])
         self.finished.emit()
@@ -353,6 +353,8 @@ class DashboardWindow(QWidget):
         self.simulating_patient = None
         self.graphs.setGraphTableData(info_list[0], info_list[1], info_list[2], info_list[3])
         self.graphs.showLoadingScreen(False)
+        self.sideBar.lockButtons(False)
+        self.parent().parent().toolBar.lockLogoutButton(False)
 
     def runMatLabModel(self, num_cycles):
         bsa = float(self.patient.bsa)
@@ -377,6 +379,8 @@ class DashboardWindow(QWidget):
         self.simulating_patient = self.patient
 
         self.graphs.showLoadingScreen(True)
+        self.sideBar.lockButtons(True)
+        self.parent().parent().toolBar.lockLogoutButton(True)
     
     def backButtonClicked(self):
         self.showPatientListWindow()
@@ -386,31 +390,3 @@ class DashboardWindow(QWidget):
     
     def patientInformationButtonClicked(self):
         self.showPatientInformationWindow()
-
-    def logoffButtonClicked(self):
-        dlg = QMessageBox()
-        dlg.setWindowTitle("Log Off")
-        dlg.setText("Are you sure you want to log off?")
-        dlg.addButton("Yes", QMessageBox.ButtonRole.YesRole)
-        dlg.addButton("No", QMessageBox.ButtonRole.NoRole)
-        for button in dlg.findChild(QDialogButtonBox).findChildren(QPushButton):
-            button.setCursor(Qt.CursorShape.PointingHandCursor)
-        
-        dlg.setStyleSheet(
-            """
-                QMessageBox {
-                    background-color: #ffffff; border-radius: 20px
-                }
-            """
-        )
-
-        dlg.setFont(QFont("Avenir", 15))
-        button = dlg.exec()
-
-        # Yes button is pressed
-        if button == 0:
-            self.dosageEdit.clear()
-            self.ancMeasurementEdit.clear()
-            # link to login page
-            self.updateUsername("")
-            self.showLoginWindow()
