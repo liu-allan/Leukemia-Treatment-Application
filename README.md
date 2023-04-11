@@ -5,6 +5,8 @@
 - Python >= 3.6.1
 - Matlab >= R2022b
   - Statistics and Machine Learning Toolbox Add-on
+  - Symbolic Math Toolbox
+  - Simulink
 
 ## 1.0 Setup
 
