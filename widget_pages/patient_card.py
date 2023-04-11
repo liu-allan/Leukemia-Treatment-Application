@@ -250,12 +250,29 @@ class PatientCard(QWidget):
             self.patientIDV.setText(str(self.patient.user_id))
             self.phoneNumberFormatter()
             self.allTypeV.setText(self.patient.allType)
-            self.assignedDoctorV.setText(self.patient.assignedDoctor)
+            self.assignedDoctorV.setText(self.getAssignedDoctorFullName(self.patient.assignedDoctor))
             self.bodySurfaceAreaV.setText(str(self.patient.bsa))
             self.birthdayV.setText(datetime.strptime(self.patient.birthday, '%Y%m%d').strftime('%Y-%m-%d'))
             
             self.setSexIcon()
 
+    def getAssignedDoctorFullName(self, doctorID):
+        conn = self.parent().parent().parent().parent().db_conn
+
+        res = conn.execute(
+            """SELECT full_name
+            FROM oncologists o
+            WHERE o.username=?
+            """,
+            (doctorID,),
+        )
+
+        row = res.fetchone()
+        if row:
+            return row[0]
+        else:
+            return doctorID
+    
     def calculateBodySurfaceArea(self):
         weight = self.patientWeightV.text()
         height = self.patientHeightV.text()
