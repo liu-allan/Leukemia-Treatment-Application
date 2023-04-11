@@ -2,7 +2,7 @@ import bcrypt
 import logging
 import sqlite3
 
-from PyQt6.QtCore import Qt, QRect
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QWidget,
     QLabel,

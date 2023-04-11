@@ -2,7 +2,7 @@ import logging
 import math
 import sqlite3
 
-from PyQt6.QtCore import QDate, Qt, QRect
+from PyQt6.QtCore import QDate, Qt
 from PyQt6.QtWidgets import (
     QWidget,
     QLabel,
