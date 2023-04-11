@@ -299,7 +299,7 @@ class PatientFormWindow(QWidget):
         self.heightEdit.textEdited.connect(self.calculateBodySurfaceArea)
         
         self.cancelButton = QPushButton("Cancel")
-        self.cancelButton.clicked.connect(self.showPatientListWindow)
+        self.cancelButton.clicked.connect(self.cancelFromPatientForm)
         self.cancelButton.setCursor(Qt.CursorShape.PointingHandCursor)
         self.cancelButton.setMinimumWidth(100)
         self.cancelButton.setMinimumHeight(40)
@@ -397,6 +397,13 @@ class PatientFormWindow(QWidget):
             bsa = math.sqrt(height * weight / 3600)
             self.bodySurfaceAreaMeasurement.setText("{:.2f}".format(bsa))
 
+    def cancelFromPatientForm(self):
+        self.errorLabel.clear()
+        if self.parent().parent().adding_new_patient:
+            self.parent().parent().showPatientListWindow()
+        else:
+            self.parent().parent().showPatientInformationWindow()
+        
     def savePatientInformation(self):
         try:
             name = self.patientFirstNameLineEdit.text() + " " + self.patientLastNameLineEdit.text()
@@ -502,7 +509,7 @@ class PatientFormWindow(QWidget):
             logging.info(msg)
             logging.info(vars(self.patient))
             self.errorLabel.clear()
-            self.showPatientListWindow()
+            self.parent().parent().showPatientInformationWindow()
 
     def calculateAge(self):
         today = datetime.today().date()
@@ -522,10 +529,6 @@ class PatientFormWindow(QWidget):
         lastName = "".join(nameSplit[1:])  # for patients with middle names
         microsecond = datetime.now().microsecond
         return firstName.lower() + lastName.lower() + str(microsecond)
-
-    def showPatientListWindow(self):
-        self.errorLabel.clear()
-        self.parent().parent().showPatientListWindow()
 
     def updatePatientInfo(self):
         self.patient = self.parent().parent().selected_patient
