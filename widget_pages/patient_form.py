@@ -143,28 +143,28 @@ class PatientFormWindow(QWidget):
         self.patientNameLayout.addWidget(self.patientLastNameLineEdit)
         self.patientFormLayout.addLayout(self.patientNameLayout)
         
-        self.genderLabel = Label("Gender/Sex")
-        self.genderLabel.setContentsMargins(30, 10, 0, 0)
-        self.patientFormLayout.addWidget(self.genderLabel, alignment=Qt.AlignmentFlag.AlignBottom)
+        self.sexLabel = Label("Sex")
+        self.sexLabel.setContentsMargins(30, 10, 0, 0)
+        self.patientFormLayout.addWidget(self.sexLabel, alignment=Qt.AlignmentFlag.AlignBottom)
 
-        self.genderLayout = QHBoxLayout()
-        self.genderLayout.setContentsMargins(30, 0, 0, 0)
+        self.sexLayout = QHBoxLayout()
+        self.sexLayout.setContentsMargins(30, 0, 0, 0)
 
         self.maleRadioButton = QRadioButton("Male", self)
         self.maleRadioButton.setContentsMargins(0, 0, 0, 0)
         self.maleRadioButton.setChecked(True)
         self.maleRadioButton.setFont(QFont("Avenir", 18))
-        self.maleRadioButton.toggled.connect(self.selectedGenderType)
-        self.genderLayout.addWidget(self.maleRadioButton)
+        self.maleRadioButton.toggled.connect(self.selectedSexType)
+        self.sexLayout.addWidget(self.maleRadioButton)
 
         self.femaleRadioButton = QRadioButton("Female", self)
         self.femaleRadioButton.setContentsMargins(10, 0, 0, 0)
         self.femaleRadioButton.setFont(QFont("Avenir", 18))
-        self.femaleRadioButton.toggled.connect(self.selectedGenderType)
-        self.genderLayout.addWidget(self.femaleRadioButton)
-        self.gender = "Male"
+        self.femaleRadioButton.toggled.connect(self.selectedSexType)
+        self.sexLayout.addWidget(self.femaleRadioButton)
+        self.sex = "Male"
 
-        self.patientFormLayout.addLayout(self.genderLayout)
+        self.patientFormLayout.addLayout(self.sexLayout)
 
         self.birthdayLayout = QVBoxLayout()
         self.birthdayLayout.setContentsMargins(30, 0, 30, 0)
@@ -376,10 +376,10 @@ class PatientFormWindow(QWidget):
 
         self.setLayout(self.patientFormBigLayout)
 
-    def selectedGenderType(self):
-        gender = self.sender()
-        if gender.isChecked():
-            self.gender = gender.text()
+    def selectedSexType(self):
+        sex = self.sender()
+        if sex.isChecked():
+            self.sex = sex.text()
 
     def selectedAllType(self, index):
         self.allType = self.allTypeSelect.itemText(index)  # Get the text at index.
@@ -486,7 +486,7 @@ class PatientFormWindow(QWidget):
             ancMeasurement = float(self.ancMeasurementEdit.text())
             dosageMeasurement = float(self.dosageEdit.text())
             age = str(self.calculateAge())
-            sex = self.gender
+            sex = self.sex
             user_id = self.createUserID(name)
 
             conn = self.parent().parent().getDatabaseConnection()
@@ -617,7 +617,7 @@ class PatientFormWindow(QWidget):
     def updatePatientInfo(self):
         self.patient = self.parent().parent().selected_patient
         # resetting fields 
-        self.gender = "Male"
+        self.sex = "Male"
         self.maleRadioButton.setChecked(True)
         self.femaleRadioButton.setChecked(False)
         self.displayParameters()
