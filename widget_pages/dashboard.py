@@ -408,7 +408,7 @@ class DashboardWindow(QWidget):
         button = dlg.exec()
 
         # Yes button is pressed
-        if button == 0:
+        if button == QMessageBox.ButtonRole.YesRole.value:
             self.dosageEdit.clear()
             self.ancMeasurementEdit.clear()
             # link to login page

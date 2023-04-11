@@ -148,7 +148,7 @@ class ToolBar(QWidget):
         button = dlg.exec()
 
         # Yes button is pressed
-        if button == 0:
+        if button == QMessageBox.ButtonRole.YesRole.value:
             # link to login page
             self.updateUsername("")
             self.showLoginWindow()

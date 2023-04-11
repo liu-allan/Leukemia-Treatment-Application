@@ -16,7 +16,7 @@ runModel will automatically follow the reactive dosage strategy, therefore we do
 The outputs are all lists of length 21*numCycles*1000
 
 """
-def runModel(bsa: float, numCycles: int, dosage: list[float], ANC_measurements: list[float]):
+def runModel(bsa, numCycles, dosage, ANC_measurements):
     
     eng = matlab.engine.start_matlab()
     s = eng.genpath('Leukemia-Treatment-Project')
