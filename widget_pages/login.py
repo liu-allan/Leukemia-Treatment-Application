@@ -227,6 +227,7 @@ class LoginWindow(QWidget):
             logging.error(msg)
         else:
             self.errorLabel.setText("")
+            self.usernameLineEdit.setFocus()
             logging.info("Login Successful")
             self.updateUser(username, password)
             if (row[3] == "TRUE"):
