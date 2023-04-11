@@ -16,7 +16,6 @@ from PyQt6.QtWidgets import (
     QScrollArea
 )
 from PyQt6.QtGui import QFont
-from util.animation_manager import AnimationManager
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -57,7 +56,6 @@ class OncologistFormWindow(QWidget):
         self.oncologistFormWidget = QWidget()
         self.oncologistFormWidget.setContentsMargins(0, 0, 0, 0)
         self.oncologistFormWidget.setFixedWidth(640)
-        self.oncologistFormWidget.setFixedHeight(820)
         self.oncologistFormWidget.setObjectName("OncologistFormOverall")
         self.oncologistFormWidget.setStyleSheet(
             """
@@ -195,7 +193,7 @@ class OncologistFormWindow(QWidget):
         self.cancelButton.setMaximumHeight(50)
         self.cancelButton.setFont(QFont("Avenir", 18))
         self.cancelButton.setStyleSheet(
-            "background-color: #aaaaee; border-radius: 10px; padding: 10px 15px;"
+            "background-color: #aaaaee; border-radius: 10px;"
         )
         self.bottomLayout.addWidget(self.cancelButton, 1, alignment=Qt.AlignmentFlag.AlignRight)
 
@@ -207,21 +205,13 @@ class OncologistFormWindow(QWidget):
         self.saveButton.setMaximumHeight(50)
         self.saveButton.setFont(QFont("Avenir", 18))
         self.saveButton.setStyleSheet(
-            "background-color: #aaaaee; border-radius: 10px; padding: 10px 15px;"
+            "background-color: #aaaaee; border-radius: 10px;"
         )
         self.bottomLayout.addWidget(self.saveButton, 1, alignment=Qt.AlignmentFlag.AlignRight)
-        
-        self.cancelAnimationManager = AnimationManager(widget=self.cancelButton)
-        self.saveAnimationManager = AnimationManager(widget=self.saveButton)
 
         self.oncologistFormLayout.addLayout(self.bottomLayout)
 
         self.setLayout(self.oncologistFormBigLayout)
-
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        self.cancelAnimationManager.reset()
-        self.saveAnimationManager.reset()
 
     def selectedGenderType(self):
         self.radioButton = self.sender()

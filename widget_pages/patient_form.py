@@ -20,7 +20,6 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QDoubleValidator, QFont
 from pyqtgraph import plot
 from datetime import datetime
-from util.animation_manager import AnimationManager
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -71,7 +70,6 @@ class PatientFormWindow(QWidget):
         self.scroll_area = QScrollArea()
         self.scroll_area.setContentsMargins(0, 0, 0, 0)
         self.scroll_area.setFixedWidth(820)
-        self.scroll_area.setFixedHeight(840)
         self.scroll_area.setStyleSheet(
             """
             QScrollArea
@@ -356,7 +354,7 @@ class PatientFormWindow(QWidget):
         self.cancelButton.setMaximumHeight(50)
         self.cancelButton.setFont(QFont("Avenir", 18))
         self.cancelButton.setStyleSheet(
-            "background-color: #aaaaee; border-radius: 10px; padding: 5px 10px;"
+            "background-color: #aaaaee; border-radius: 10px;"
         )
         self.bottomLayout.addWidget(self.cancelButton, 1, alignment=Qt.AlignmentFlag.AlignRight)
 
@@ -368,21 +366,13 @@ class PatientFormWindow(QWidget):
         self.saveButton.setMaximumHeight(50)
         self.saveButton.setFont(QFont("Avenir", 18))
         self.saveButton.setStyleSheet(
-            "background-color: #aaaaee; border-radius: 10px; padding: 5px 10px;"
+            "background-color: #aaaaee; border-radius: 10px;"
         )
         self.bottomLayout.addWidget(self.saveButton, 1, alignment=Qt.AlignmentFlag.AlignRight)
-        
-        self.cancelAnimationManager = AnimationManager(widget=self.cancelButton)
-        self.saveAnimationManager = AnimationManager(widget=self.saveButton)
 
         self.patientFormLayout.addLayout(self.bottomLayout)
 
         self.setLayout(self.patientFormBigLayout)
-
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        self.cancelAnimationManager.reset()
-        self.saveAnimationManager.reset()
 
     def selectedGenderType(self):
         self.radioButton = self.sender()

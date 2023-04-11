@@ -11,8 +11,6 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
 from util.util import getLastNameFromFullName
-from util.animation_manager import AnimationManager
-
 
 class ToolBar(QWidget):
     def __init__(self, page_name, user_full_name):
@@ -86,14 +84,12 @@ class ToolBar(QWidget):
         self.logout_button.setMinimumHeight(35)
         self.logout_button.setMaximumHeight(40)
         self.logout_button.setStyleSheet(
-            "background-color: #e5e5e5; border-radius: 10px; padding: 10px"
+            "background-color: #e5e5e5; border-radius: 10px; padding: 5px"
         )
         self.logout_button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.logout_button.clicked.connect(self.logoffClicked)
         self.logout_button.setFont(QFont("Avenir", 18))
         self.toolBar.addWidget(self.logout_button)
-
-        self.animationManager = AnimationManager(widget=self.logout_button)
 
         spacer2 = QWidget()
         spacer2.setFixedWidth(20)
@@ -130,7 +126,6 @@ class ToolBar(QWidget):
         self.name_label.setText(
             "Dr. " + getLastNameFromFullName(user_full_name) if user_full_name else ""
         )
-        self.animationManager.reset()
 
     def logoffClicked(self):
         dlg = QMessageBox()

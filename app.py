@@ -120,7 +120,6 @@ class MainWindow(QMainWindow):
         self.stackLayout.setCurrentIndex(0)
         self.current_page = "Login"
         self.updateToolBar()
-        self.loginWindow.loginPageAnimation()
 
     def showPatientListWindow(self):
         self.stackLayout.setCurrentIndex(1)

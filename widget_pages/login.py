@@ -19,10 +19,9 @@ from PyQt6.QtWidgets import (
     QToolBar,
 )
 from PyQt6 import uic
-from PyQt6.QtCore import Qt, QSize, QPropertyAnimation, QParallelAnimationGroup, QPoint, QEasingCurve, QRect, QAbstractAnimation
+from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QFont, QIcon
 import qtawesome as qta
-from util.animation_manager import AnimationManager
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -37,15 +36,11 @@ class LoginWindow(QWidget):
         self.setLayout(self.mainPageLayout)
 
         self.picture = QLabel()
-        self.anim_1 = self.slideAnimation(self.picture, -100, 0, 0, 0, 1200)
-        self.anim_1.setEasingCurve(QEasingCurve.Type.InOutCubic)
         self.picture.setStyleSheet('border-image: url("icons/background.png"); background-repeat: no-repeat; background-position: center; height: auto; border-radius: 20px')
         self.picture.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.mainPageLayout.addWidget(self.picture, 50)
 
         self.quotes = QLabel()
-        self.anim_2 = self.slideAnimation(self.quotes, -100, 300, 215, 290, 1200)
-        self.anim_2.setEasingCurve(QEasingCurve.Type.InOutCubic)
 
         self.quotes.setObjectName("QuotesBackground")
         self.quotes.setFrameShape(QFrame.Shape.Box)
@@ -140,8 +135,6 @@ class LoginWindow(QWidget):
         self.middleFrame.setContentsMargins(0, 0, 0, 0)
         self.middleFrame.setLayout(self.middleLayout)
         self.layout.addWidget(self.middleFrame)
-        self.anim_3 = self.slideAnimation(self.middleFrame, 42, 266, 42, 316, 1200)
-        self.anim_3.setEasingCurve(QEasingCurve.Type.InOutCubic)
 
         self.titleLabel = QLabel("Welcome!")
         self.titleLabel.setFont(QFont("Avenir", 50))
@@ -192,8 +185,7 @@ class LoginWindow(QWidget):
         self.loginPushButton.setStyleSheet(
             "background-color: #aaaaee; border-radius: 20px; padding: 10px; color: #000000"
         )
-        self.animationManager = AnimationManager(widget=self.loginPushButton)
-        
+
         self.middleLayout.addWidget(self.loginPushButton, alignment=Qt.AlignmentFlag.AlignCenter)
         self.middleLayout.addSpacerItem(self.spacer)
         self.layout.addSpacerItem(self.spacer)
@@ -208,12 +200,6 @@ class LoginWindow(QWidget):
         )
 
         self.layout.addWidget(self.copyRightLabel, alignment=Qt.AlignmentFlag.AlignCenter)
-
-        self.loginPageAnimation()
-
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        self.animationManager.reset()
 
     def loginPushed(self):
         try:
@@ -249,29 +235,6 @@ class LoginWindow(QWidget):
             else:
                 self.parent().parent().is_admin_user = False
             self.showPatientListWindow()
-
-    def loginPageAnimation(self):
-        self.anim_1 = self.slideAnimation(self.picture, -100, 0, 0, 0, 1200)
-        self.anim_1.setEasingCurve(QEasingCurve.Type.InOutCubic)
-        self.anim_2 = self.slideAnimation(self.quotes, -100, 300, 215, 290, 1200)
-        self.anim_2.setEasingCurve(QEasingCurve.Type.InOutCubic)
-        self.anim_3 = self.slideAnimation(self.middleFrame, 42, 266, 42, 316, 1200)
-        self.anim_3.setEasingCurve(QEasingCurve.Type.InOutCubic)
-
-        self.anim_group = QParallelAnimationGroup()
-        self.anim_group.addAnimation(self.anim_1)
-        self.anim_group.addAnimation(self.anim_2)
-        self.anim_group.addAnimation(self.anim_3)
-        self.anim_group.start()
-
-    def slideAnimation(self, widget, start_x, start_y, end_x, end_y, duration):
-        effect = QGraphicsOpacityEffect(widget)
-        widget.setGraphicsEffect(effect)
-        anim_slide = QPropertyAnimation(widget, b"pos")
-        anim_slide.setStartValue(QPoint(start_x, start_y))
-        anim_slide.setEndValue(QPoint(end_x, end_y))
-        anim_slide.setDuration(duration)
-        return anim_slide
 
     def updateUsername(self, username):
         self.parent().parent().updateUsername(username)

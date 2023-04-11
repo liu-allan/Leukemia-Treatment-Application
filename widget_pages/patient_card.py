@@ -11,7 +11,6 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
 from datetime import datetime
-from util.animation_manager import AnimationManager
 
 class Label(QLabel):
     def __init__(self, text, textSize, margins, color):
@@ -211,14 +210,9 @@ class PatientCard(QWidget):
         )
         self.buttonLayout.addWidget(self.editButton, alignment=Qt.AlignmentFlag.AlignRight)
 
-        self.animationManager = AnimationManager(widget=self.editButton)
         self.right_layout.addWidget(self.buttons, 3, 2)
         self.inside_layout.addWidget(self.patient_card_right, 3)
         self.setLayout(self.layout_box)
-
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        self.animationManager.reset()
 
     def editClicked(self):
         self.parent().parent().showPatientFormWindow()
