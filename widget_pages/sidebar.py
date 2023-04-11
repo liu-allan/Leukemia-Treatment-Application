@@ -99,6 +99,13 @@ class SideBar(QWidget):
         self.menuLayout.addWidget(self.logoutButton)
 
         self.setLayout(self.bigLayout)
+    
+    def lockButtons(self, lock):
+        enabled = not lock
+        self.backButton.setEnabled(enabled)
+        self.patientInformationButton.setEnabled(enabled)
+        self.dashboardButton.setEnabled(enabled)
+        self.logoutButton.setEnabled(enabled)
 
     def backButtonClicked(self):
         self.parent().backButtonClicked()

@@ -353,6 +353,8 @@ class DashboardWindow(QWidget):
         self.simulating_patient = None
         self.graphs.setGraphTableData(info_list[0], info_list[1], info_list[2], info_list[3])
         self.graphs.showLoadingScreen(False)
+        self.sideBar.lockButtons(False)
+        self.parent().parent().toolBar.lockLogoutButton(False)
 
     def runMatLabModel(self, num_cycles):
         bsa = float(self.patient.bsa)
@@ -377,6 +379,8 @@ class DashboardWindow(QWidget):
         self.simulating_patient = self.patient
 
         self.graphs.showLoadingScreen(True)
+        self.sideBar.lockButtons(True)
+        self.parent().parent().toolBar.lockLogoutButton(True)
     
     def backButtonClicked(self):
         self.showPatientListWindow()

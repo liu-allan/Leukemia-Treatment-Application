@@ -152,6 +152,9 @@ class ToolBar(QWidget):
             # link to login page
             self.updateUsername("")
             self.showLoginWindow()
+        
+    def lockLogoutButton(self, lock):
+        self.logout_button.setEnabled(not lock)
 
     def updateUsername(self, username):
         self.parent().parent().updateUsername(username)
