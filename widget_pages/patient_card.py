@@ -8,7 +8,7 @@ from PyQt6.QtWidgets import (
     QGridLayout,
     QWidget
 )
-from PyQt6.QtGui import QFont
+from PyQt6.QtGui import QFont, QIcon
 from PyQt6.QtCore import Qt
 from datetime import datetime
 
@@ -35,6 +35,7 @@ class PatientCard(QWidget):
         super().__init__()
 
         self.patient = None
+        self.patientSex = ""
 
         self.layout_box = QHBoxLayout()
         self.layout_box.setContentsMargins(0, 0, 0, 0)
@@ -85,14 +86,21 @@ class PatientCard(QWidget):
 
         self.ageWidget = QWidget()
         self.ageWidget.setContentsMargins(0, 0, 0, 0)
-        self.age_layout = QHBoxLayout(self.ageWidget)
+        self.age_layout = QGridLayout(self.ageWidget)
+
+        self.maleIcon = QIcon("icons/male.png")
+        self.femaleIcon = QIcon("icons/female.png")
+
+        self.sexLabel = QLabel()
+        self.sexLabel.setPixmap(self.maleIcon.pixmap(40, 40))
+        self.age_layout.addWidget(self.sexLabel, 0, 0, 2, 1)
 
         # set patient age
-        self.patientAge = LabelBolded("Age: ", 18, [0, 0, 0, 0])
-        self.age_layout.addWidget(self.patientAge)
+        self.patientAge = Label("Age", 18, [0, 0, 0, 0], 'black')
+        self.age_layout.addWidget(self.patientAge, 0, 1, 1, 1)
 
         self.patientAgeV = LabelBolded("", 18, [0, 0, 0, 0])
-        self.age_layout.addWidget(self.patientAgeV)
+        self.age_layout.addWidget(self.patientAgeV, 1, 1, 1, 1)
 
         self.name_layout.addWidget(self.ageWidget)
         self.avatar_layout.addWidget(self.nameWidget, 3)
@@ -213,6 +221,12 @@ class PatientCard(QWidget):
         self.right_layout.addWidget(self.buttons, 3, 2)
         self.inside_layout.addWidget(self.patient_card_right, 3)
         self.setLayout(self.layout_box)
+    
+    def setSexIcon(self):
+        if self.patientSex == "Male":
+            self.sexLabel.setPixmap(self.maleIcon.pixmap(40, 40))
+        else:
+            self.sexLabel.setPixmap(self.femaleIcon.pixmap(40, 40))
 
     def editClicked(self):
         self.parent().parent().showPatientFormWindow()
@@ -228,6 +242,7 @@ class PatientCard(QWidget):
             self.patientName.setText(self.patient.name)
             self.patientAvatar.setText(self.patient.name[0])
             self.patientAgeV.setText(str(self.patient.age))
+            self.patientSex = str(self.patient.sex)
             self.patientHeightV.setText(str(self.patient.height))
             self.patientWeightV.setText(str(self.patient.weight))
             self.patientBloodV.setText(self.patient.bloodType)
@@ -236,8 +251,9 @@ class PatientCard(QWidget):
             self.allTypeV.setText(self.patient.allType)
             self.assignedDoctorV.setText(self.patient.assignedDoctor)
             self.bodySurfaceAreaV.setText(str(self.patient.bsa))
-
             self.birthdayV.setText(datetime.strptime(self.patient.birthday, '%Y%m%d').strftime('%Y-%m-%d'))
+            
+            self.setSexIcon()
 
     def calculateBodySurfaceArea(self):
         weight = self.patientWeightV.text()
