@@ -60,7 +60,7 @@ class PatientListItem(QPushButton):
         self.user_id = user_id
         self.is_admin = is_admin
         self.birthday = datetime.strptime(birthday, '%Y%m%d').strftime('%Y-%m-%d') if birthday else ""
-        self.phone_number = str(format(int(phone_number[:-1]), ",").replace(",", "-")) + str(phone_number[-1])
+        self.phone_number = str(format(int(phone_number[:-1]), ",").replace(",", "-")) + str(phone_number[-1]) if phone_number else ""
 
         self.avatar = QPushButton(self.patient_name[0])
         self.avatar.setObjectName("avatar")
