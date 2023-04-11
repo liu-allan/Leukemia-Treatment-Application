@@ -22,7 +22,7 @@ class ToolBar(QWidget):
         self.toolBar = QToolBar("tool bar")
         self.toolBar.setContentsMargins(0, 0, 0, 0)
         self.toolBar.setStyleSheet(
-            "background-color: #a9c7c5; height : 100; border-radius: 10px;"
+            "background-color: #a9c7c5; height: 100; border-radius: 10px;"
         )
         
         self.dashboard_label = QLabel(page_name)
@@ -83,8 +83,8 @@ class ToolBar(QWidget):
         self.toolBar.addWidget(self.name_label)
 
         self.logout_button = QPushButton("Log Off")
-        self.logout_button.setMinimumHeight(40)
-        self.logout_button.setMaximumHeight(45)
+        self.logout_button.setMinimumHeight(35)
+        self.logout_button.setMaximumHeight(40)
         self.logout_button.setStyleSheet(
             "background-color: #e5e5e5; border-radius: 10px; padding: 10px"
         )
