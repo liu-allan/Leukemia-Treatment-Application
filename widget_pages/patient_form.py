@@ -401,6 +401,25 @@ class PatientFormWindow(QWidget):
         self.dateEdit.setDate(QDate.currentDate())
         self.consentCheckBox.setChecked(False)
 
+        if not self.parent().parent().adding_new_patient:
+            self.dosageEdit.setVisible(False)
+            self.ancMeasurementEdit.setVisible(False)
+            self.dateEdit.setVisible(False)
+            self.ancCountLabel.setVisible(False)
+            self.dosageLabel.setVisible(False)
+            self.dateLabel.setVisible(False)
+            self.consentLabel.setVisible(False)
+            self.consentCheckBox.setVisible(False)
+        else:
+            self.dosageEdit.setVisible(True)
+            self.ancMeasurementEdit.setVisible(True)
+            self.dateEdit.setVisible(True)  
+            self.ancCountLabel.setVisible(True)
+            self.dosageLabel.setVisible(True)
+            self.dateLabel.setVisible(True)
+            self.consentLabel.setVisible(True)
+            self.consentCheckBox.setVisible(True)
+
         if self.patient is not None:
             self.getNames()
             self.typeOfPatientForm.setText("Edit Patient Data")
@@ -487,6 +506,7 @@ class PatientFormWindow(QWidget):
             dosageMeasurement = float(self.dosageEdit.text())
             age = str(self.calculateAge())
             sex = self.sex
+            assert sex in valid_sex_types
             user_id = self.createUserID(name)
 
             conn = self.parent().parent().getDatabaseConnection()
@@ -545,13 +565,14 @@ class PatientFormWindow(QWidget):
                     ),
                 )
 
-            conn.execute(
-                """
-                    INSERT INTO measurements (time, anc_measurement, dosage_measurement, patient_id)
-                    VALUES (?, ?, ?, ?)
-                """,
-                (date, ancMeasurement, dosageMeasurement, patient_id),
-            )
+            if self.parent().parent().adding_new_patient:
+                conn.execute(
+                    """
+                        INSERT INTO measurements (time, anc_measurement, dosage_measurement, patient_id)
+                        VALUES (?, ?, ?, ?)
+                    """,
+                    (date, ancMeasurement, dosageMeasurement, patient_id),
+                )
             conn.commit()
 
             self.parent().parent().updateSelectedPatient(patient_id)

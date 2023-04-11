@@ -36,6 +36,7 @@ class MainWindow(QMainWindow):
         self.selected_patient = None
         self.current_page = "Login"
         self.is_admin_user = False
+        self.adding_new_patient = True
 
         pageLayout = QVBoxLayout()
         self.stackLayout = QStackedLayout()

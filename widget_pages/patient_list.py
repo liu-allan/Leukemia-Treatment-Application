@@ -409,6 +409,7 @@ class PatientListWindow(QWidget):
 
     def showPatientFormWindow(self):
         self.parent().parent().selected_patient = None
+        self.parent().parent().adding_new_patient = True
         if (self.parent().parent().is_admin_user):
             self.parent().parent().showOncologistFormWindow()
         else:
