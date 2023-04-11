@@ -12,7 +12,6 @@ from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
 from util.util import getLastNameFromFullName
 
-
 class ToolBar(QWidget):
     def __init__(self, page_name, user_full_name):
         super().__init__()
@@ -21,9 +20,9 @@ class ToolBar(QWidget):
         self.toolBar = QToolBar("tool bar")
         self.toolBar.setContentsMargins(0, 0, 0, 0)
         self.toolBar.setStyleSheet(
-            "background-color: #a9c7c5; height : 100; border-radius: 10px;"
+            "background-color: #a9c7c5; height: 100; border-radius: 10px;"
         )
-
+        
         self.dashboard_label = QLabel(page_name)
         self.dashboard_label.setAlignment(Qt.AlignmentFlag.AlignVCenter)
         self.dashboard_label.setFont(QFont("Avenir", 25))
@@ -44,7 +43,7 @@ class ToolBar(QWidget):
         )
         self.avatar.setCursor(Qt.CursorShape.PointingHandCursor)
         self.avatar.clicked.connect(self.userProfileClick)
-        self.avatar.setFont(QFont("Avenir", 15))
+        self.avatar.setFont(QFont("Avenir", 19))
         self.avatar.setFixedHeight(40)
         self.avatar.setFixedWidth(40)
 
@@ -81,14 +80,15 @@ class ToolBar(QWidget):
         self.name_label.setMargin(15)
         self.toolBar.addWidget(self.name_label)
 
-        self.logout_button = QPushButton("Log Off", self)
-        self.logout_button.setFixedHeight(40)
+        self.logout_button = QPushButton("Log Off")
+        self.logout_button.setMinimumHeight(35)
+        self.logout_button.setMaximumHeight(40)
         self.logout_button.setStyleSheet(
-            "background-color: #d3d3d3; border-radius: 7px; padding: 10px"
+            "background-color: #e5e5e5; border-radius: 10px; padding: 5px"
         )
         self.logout_button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.logout_button.clicked.connect(self.logoffClicked)
-        self.logout_button.setFont(QFont("Avenir", 15))
+        self.logout_button.setFont(QFont("Avenir", 18))
         self.toolBar.addWidget(self.logout_button)
 
         spacer2 = QWidget()
@@ -128,19 +128,27 @@ class ToolBar(QWidget):
         )
 
     def logoffClicked(self):
-        dlg = QMessageBox(self)
+        dlg = QMessageBox()
         dlg.setWindowTitle("Log Off")
         dlg.setText("Are you sure you want to log off?")
-        dlg.setStandardButtons(
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
-        )
+        dlg.addButton("Yes", QMessageBox.ButtonRole.YesRole)
+        dlg.addButton("No", QMessageBox.ButtonRole.NoRole)
         for button in dlg.findChild(QDialogButtonBox).findChildren(QPushButton):
             button.setCursor(Qt.CursorShape.PointingHandCursor)
+
+        dlg.setStyleSheet(
+            """
+                QMessageBox {
+                    background-color: #ffffff; border-radius: 20px
+                }
+            """
+        )
 
         dlg.setFont(QFont("Avenir", 15))
         button = dlg.exec()
 
-        if button == QMessageBox.StandardButton.Yes:
+        # Yes button is pressed
+        if button == 0:
             # link to login page
             self.updateUsername("")
             self.showLoginWindow()
@@ -153,3 +161,5 @@ class ToolBar(QWidget):
 
     def userProfileClick(self, s):
         return
+
+    

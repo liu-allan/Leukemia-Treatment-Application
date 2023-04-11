@@ -1,27 +1,24 @@
 import logging
 import math
 import sqlite3
-import numpy as np
 
-from PyQt6 import uic
 from PyQt6.QtCore import QDate, Qt
 from PyQt6.QtWidgets import (
     QWidget,
     QLabel,
     QLineEdit,
     QDateEdit,
-    QDialogButtonBox,
     QComboBox,
     QVBoxLayout,
     QHBoxLayout,
-    QSpacerItem,
-    QSizePolicy,
+    QGridLayout,
+    QRadioButton,
+    QScrollArea,
+    QPushButton,
     QCheckBox
 )
 from PyQt6.QtGui import QDoubleValidator, QFont
-from widget_pages.patient_card import PatientCard
 from pyqtgraph import plot
-import pyqtgraph as pg
 from datetime import datetime
 
 logging.getLogger().setLevel(logging.INFO)
@@ -31,7 +28,7 @@ class Label(QLabel):
     def __init__(self, text, width=400):
         super().__init__()
         self.setText(text)
-        self.setFont(QFont("Avenir", 15))
+        self.setFont(QFont("Avenir", 18))
         self.setFixedWidth(width)
 
 
@@ -49,7 +46,7 @@ class LineEdit(QLineEdit):
     def __init__(self, placeholderText, width=200):
         super().__init__()
         self.setPlaceholderText(placeholderText)
-        self.setFont(QFont("Avenir", 15))
+        self.setFont(QFont("Avenir", 18))
         self.setFixedWidth(width)
 
 
@@ -67,57 +64,186 @@ class PatientFormWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.patientFormLayout = QVBoxLayout()
-        self.patientFormLayout.setContentsMargins(0, 0, 0, 0)
+        self.patientFormBigLayout = QVBoxLayout()
+        self.patientFormBigLayout.setContentsMargins(0, 0, 0, 0)
+
+        self.scroll_area = QScrollArea()
+        self.scroll_area.setContentsMargins(0, 0, 0, 0)
+        self.scroll_area.setFixedWidth(820)
+        self.scroll_area.setStyleSheet(
+            """
+            QScrollArea
+            {
+                background-color: #ffffff;
+                border-radius: 20px;
+                border: 1px solid #aaaaaa;
+                height: auto;
+                padding: 5px
+            }
+            """
+        )
+        self.scroll_area.setHorizontalScrollBarPolicy(
+            Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+        )
+        self.scroll_area.setWidgetResizable(True)
+        self.patientFormBigLayout.addWidget(self.scroll_area, alignment=Qt.AlignmentFlag.AlignHCenter)
+        
+        self.patientFormWidget = QWidget()
+        self.patientFormWidget.setContentsMargins(0, 0, 0, 0)
+        self.patientFormWidget.setFixedWidth(810)
+        self.patientFormWidget.setObjectName("PatientFormOverall")
+        self.patientFormWidget.setStyleSheet(
+            """
+            QWidget#PatientFormOverall
+            {
+                background-color: #ffffff;
+                border-radius: 20px;
+            }
+            """
+        )
+        self.scroll_area.setWidget(self.patientFormWidget)
+
+        self.patientFormLayout = QVBoxLayout(self.patientFormWidget)
+        self.patientFormLayout.setContentsMargins(0, 20, 0, 10)
+
+        self.typeOfPatientForm = Label("")
+        self.typeOfPatientForm.setContentsMargins(0, 10, 0, 10)
+        self.typeOfPatientForm.setFont(QFont("Avenir", 30))
+        self.typeOfPatientForm.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.typeOfPatientForm.setFixedWidth(self.scroll_area.width() - 60)
+        self.typeOfPatientForm.setStyleSheet("background-color: rgba(170, 170, 238, 100); height: 60px; border-radius: 20px;")
+        self.patientFormLayout.addWidget(self.typeOfPatientForm, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.patientLabel = Label("Patient Name")
-        self.patientLineEdit = LineEdit("Patient")
-        self.patientFormLayout.addWidget(
-            FormRow(self.patientLabel, self.patientLineEdit)
+        self.patientLabel.setContentsMargins(30, 20, 0, 0)
+        self.patientFormLayout.addWidget(self.patientLabel, alignment=Qt.AlignmentFlag.AlignBottom)
+
+        self.patientNameLayout = QHBoxLayout()
+        self.patientNameLayout.setContentsMargins(0, 0, 0, 0)
+
+        self.patientFirstNameLineEdit = QLineEdit()
+        self.patientFirstNameLineEdit.setContentsMargins(30, 0, 0, 0)
+        self.patientFirstNameLineEdit.setPlaceholderText("First Name")
+        self.patientFirstNameLineEdit.setFont(QFont("Avenir", 18))
+        self.patientFirstNameLineEdit.setStyleSheet(
+            "background-color: #f5f5f5; height: 40px; border-radius: 10px; padding: 0px 10px"
         )
+        self.patientNameLayout.addWidget(self.patientFirstNameLineEdit)
+
+        self.patientLastNameLineEdit = QLineEdit()
+        self.patientLastNameLineEdit.setContentsMargins(10, 0, 30, 0)
+        self.patientLastNameLineEdit.setPlaceholderText("Last Name")
+        self.patientLastNameLineEdit.setFont(QFont("Avenir", 18))
+        self.patientLastNameLineEdit.setStyleSheet(
+            "background-color: #f5f5f5; height: 40px; border-radius: 10px; padding: 0px 10px"
+        )
+        self.patientNameLayout.addWidget(self.patientLastNameLineEdit)
+        self.patientFormLayout.addLayout(self.patientNameLayout)
+        
+        self.genderLabel = Label("Gender/Sex")
+        self.genderLabel.setContentsMargins(30, 10, 0, 0)
+        self.patientFormLayout.addWidget(self.genderLabel, alignment=Qt.AlignmentFlag.AlignBottom)
+
+        self.genderLayout = QHBoxLayout()
+        self.genderLayout.setContentsMargins(30, 0, 0, 0)
+
+        self.radioButton = QRadioButton("Male")
+        self.radioButton.setContentsMargins(0, 0, 0, 0)
+        self.radioButton.setChecked(True)
+        self.radioButton.gender = "Male"
+        self.radioButton.setFont(QFont("Avenir", 18))
+        self.radioButton.toggled.connect(self.selectedGenderType)
+        self.genderLayout.addWidget(self.radioButton)
+
+        self.radioButton = QRadioButton("Female")
+        self.radioButton.setContentsMargins(10, 0, 0, 0)
+        self.radioButton.setFont(QFont("Avenir", 18))
+        self.radioButton.gender = "Female"
+        self.radioButton.toggled.connect(self.selectedGenderType)
+        self.genderLayout.addWidget(self.radioButton)
+
+        self.patientFormLayout.addLayout(self.genderLayout)
+
+        self.birthdayLayout = QVBoxLayout()
+        self.birthdayLayout.setContentsMargins(30, 0, 30, 0)
+        
+        self.birthdayLabel = Label("Birthday")
+        self.birthdayLabel.setContentsMargins(0, 10, 0, 0)
+        self.birthdayLayout.addWidget(self.birthdayLabel, alignment=Qt.AlignmentFlag.AlignBottom)
+
+        self.birthdayEdit = QDateEdit()
+        self.birthdayEdit.setContentsMargins(0, 0, 0, 0)
+        self.birthdayEdit.setFont(QFont("Avenir", 15))
+        self.birthdayLayout.addWidget(self.birthdayEdit)
+        self.patientFormLayout.addLayout(self.birthdayLayout)
+
+        self.bodyLayout = QGridLayout()
+        self.bodyLayout.setContentsMargins(0, 0, 0, 0)
 
         self.weightLabel = Label("Weight (kg)")
-        self.weightEdit = LineEdit("kg")
-        self.patientFormLayout.addWidget(FormRow(self.weightLabel, self.weightEdit))
+        self.weightLabel.setContentsMargins(30, 10, 0, 0)
+        self.bodyLayout.addWidget(self.weightLabel, 0, 0, alignment=Qt.AlignmentFlag.AlignBottom)
 
         self.heightLabel = Label("Height (cm)")
-        self.heightEdit = LineEdit("cm")
-        self.patientFormLayout.addWidget(FormRow(self.heightLabel, self.heightEdit))
+        self.heightLabel.setContentsMargins(10, 10, 0, 0)
+        self.bodyLayout.addWidget(self.heightLabel, 0, 1, alignment=Qt.AlignmentFlag.AlignBottom)
 
         self.bodySurfaceAreaLabel = Label("Body Surface Area (m^2)")
-        self.bodySurfaceAreaMeasurement = LineEdit("m^2")
-        self.bodySurfaceAreaMeasurement.setReadOnly(True)
-        self.bodySurfaceAreaMeasurement.setFixedWidth(200)
-        self.patientFormLayout.addWidget(
-            FormRow(self.bodySurfaceAreaLabel, self.bodySurfaceAreaMeasurement)
+        self.bodySurfaceAreaLabel.setContentsMargins(10, 10, 30, 0)
+        self.bodyLayout.addWidget(self.bodySurfaceAreaLabel, 0, 2, alignment=Qt.AlignmentFlag.AlignBottom)
+
+        self.weightEdit = QLineEdit()
+        self.weightEdit.setContentsMargins(30, 0, 0, 0)
+        self.weightEdit.setPlaceholderText("kg")
+        self.weightEdit.setFont(QFont("Avenir", 18))
+        self.weightEdit.setStyleSheet(
+            "background-color: #f5f5f5; height: 40px; border-radius: 10px; padding: 0px 10px"
         )
+        self.bodyLayout.addWidget(self.weightEdit, 1, 0)
+
+        self.heightEdit = QLineEdit()
+        self.heightEdit.setContentsMargins(10, 0, 0, 0)
+        self.heightEdit.setPlaceholderText("cm")
+        self.heightEdit.setFont(QFont("Avenir", 18))
+        self.heightEdit.setStyleSheet(
+            "background-color: #f5f5f5; height: 40px; border-radius: 10px; padding: 0px 10px"
+        )
+        self.bodyLayout.addWidget(self.heightEdit, 1, 1)
+
+        self.bodySurfaceAreaMeasurement = QLineEdit()
+        self.bodySurfaceAreaMeasurement.setContentsMargins(10, 0, 30, 0)
+        self.bodySurfaceAreaMeasurement.setPlaceholderText("m^2")
+        self.bodySurfaceAreaMeasurement.setReadOnly(True)
+        self.bodySurfaceAreaMeasurement.setFont(QFont("Avenir", 18))
+        self.bodySurfaceAreaMeasurement.setStyleSheet(
+            "background-color: #f5f5f5; height: 40px; border-radius: 10px; padding: 0px 10px"
+        )
+        self.bodyLayout.addWidget(self.bodySurfaceAreaMeasurement, 1, 2)
+        self.patientFormLayout.addLayout(self.bodyLayout)
+
+        self.bloodAndALLLayout = QGridLayout()
+        self.bloodAndALLLayout.setContentsMargins(30, 0, 30, 0)
 
         self.bloodTypeLabel = Label("Blood Type")
+        self.bloodTypeLabel.setContentsMargins(0, 10, 0, 0)
+        self.bloodAndALLLayout.addWidget(self.bloodTypeLabel, 0, 0, alignment=Qt.AlignmentFlag.AlignBottom)
+        
+        self.allTypeLabel = Label("ALL Type")
+        self.allTypeLabel.setContentsMargins(10, 10, 0, 0)
+        self.bloodAndALLLayout.addWidget(self.allTypeLabel, 0, 1, alignment=Qt.AlignmentFlag.AlignBottom)
+
         self.bloodTypeSelect = QComboBox()
+        self.bloodTypeSelect.setContentsMargins(0, 0, 0, 0)
+        self.bloodTypeSelect.setFont(QFont("Avenir", 15))
         self.bloodTypeSelect.addItems(
             ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"]
         )
         self.bloodTypeSelect.activated.connect(self.selectedBloodType)
-        self.bloodTypeSelect.setFixedWidth(200)
-        self.bloodTypeSelect.setFont(QFont("Avenir", 15))
-        self.patientFormLayout.addWidget(
-            FormRow(self.bloodTypeLabel, self.bloodTypeSelect)
-        )
+        self.bloodAndALLLayout.addWidget(self.bloodTypeSelect, 1, 0)
 
-        self.birthdayLabel = Label("Birthday")
-        self.birthdayEdit = QDateEdit()
-        self.birthdayEdit.setFont(QFont("Avenir", 15))
-        self.birthdayEdit.setFixedWidth(200)
-        self.patientFormLayout.addWidget(FormRow(self.birthdayLabel, self.birthdayEdit))
-
-        self.phoneNumberLabel = Label("Phone Number")
-        self.phoneNumberEdit = LineEdit("xxx-xxx-xxxx")
-        self.patientFormLayout.addWidget(
-            FormRow(self.phoneNumberLabel, self.phoneNumberEdit)
-        )
-
-        self.allTypeLabel = Label("ALL Type")
         self.allTypeSelect = QComboBox()
+        self.allTypeSelect.setContentsMargins(10, 0, 0, 0)
+        self.allTypeSelect.setFont(QFont("Avenir", 15))
         self.allTypeSelect.addItems(
             [
                 "Immunophenotype",
@@ -126,33 +252,85 @@ class PatientFormWindow(QWidget):
             ]
         )
         self.allTypeSelect.activated.connect(self.selectedAllType)
-        self.allTypeSelect.setFixedWidth(200)
-        self.allTypeSelect.setFont(QFont("Avenir", 10))
-        self.patientFormLayout.addWidget(FormRow(self.allTypeLabel, self.allTypeSelect))
+        self.bloodAndALLLayout.addWidget(self.allTypeSelect, 1, 1)
+        self.patientFormLayout.addLayout(self.bloodAndALLLayout)
+        
+        self.phoneNumberLabel = Label("Phone Number")
+        self.phoneNumberLabel.setContentsMargins(30, 10, 0, 0)
+        self.patientFormLayout.addWidget(self.phoneNumberLabel, alignment=Qt.AlignmentFlag.AlignBottom)
 
-        self.dosageLabel = Label("6-MP Dosage (mg)")
-        self.dosageEdit = LineEdit("mg")
-        self.patientFormLayout.addWidget(FormRow(self.dosageLabel, self.dosageEdit))
+        self.phoneNumberEdit = QLineEdit()
+        self.phoneNumberEdit.setContentsMargins(30, 0, 30, 0)
+        self.phoneNumberEdit.setPlaceholderText("xxx-xxx-xxxx")
+        self.phoneNumberEdit.setFont(QFont("Avenir", 18))
+        self.phoneNumberEdit.setStyleSheet(
+            "background-color: #f5f5f5; height: 40px; border-radius: 10px; padding: 0px 10px"
+        )
+        self.patientFormLayout.addWidget(self.phoneNumberEdit)
+
+        self.medicalLayout = QGridLayout()
+        self.medicalLayout.setContentsMargins(0, 0, 0, 0)
 
         self.ancCountLabel = Label("ANC Measurement (# Cells/L) x 1e9")
-        self.ancMeasurementEdit = LineEdit("# Cells/L x 1e9")
-        self.patientFormLayout.addWidget(
-            FormRow(self.ancCountLabel, self.ancMeasurementEdit)
+        self.ancCountLabel.setContentsMargins(30, 10, 0, 0)
+        self.medicalLayout.addWidget(self.ancCountLabel, 0, 0, alignment=Qt.AlignmentFlag.AlignBottom)
+
+        self.dosageLabel = Label("6-MP Dosage (mg)")
+        self.dosageLabel.setContentsMargins(10, 10, 30, 0)
+        self.medicalLayout.addWidget(self.dosageLabel, 0, 1, alignment=Qt.AlignmentFlag.AlignBottom)
+
+        self.ancMeasurementEdit = QLineEdit()
+        self.ancMeasurementEdit.setContentsMargins(30, 0, 0, 0)
+        self.ancMeasurementEdit.setPlaceholderText("# Cells/L x 1e9")
+        self.ancMeasurementEdit.setFont(QFont("Avenir", 18))
+        self.ancMeasurementEdit.setStyleSheet(
+            "background-color: #f5f5f5; height: 40px; border-radius: 10px; padding: 0px 10px"
         )
+        self.medicalLayout.addWidget(self.ancMeasurementEdit, 1, 0)
 
+        self.dosageEdit = QLineEdit()
+        self.dosageEdit.setContentsMargins(10, 0, 30, 0)
+        self.dosageEdit.setPlaceholderText("mg")
+        self.dosageEdit.setFont(QFont("Avenir", 18))
+        self.dosageEdit.setStyleSheet(
+            "background-color: #f5f5f5; height: 40px; border-radius: 10px; padding: 0px 10px"
+        )
+        self.medicalLayout.addWidget(self.dosageEdit, 1, 1)
+        self.patientFormLayout.addLayout(self.medicalLayout)
+
+        self.dateLayout = QVBoxLayout()
+        self.dateLayout.setContentsMargins(30, 0, 30, 0)
+        
         self.dateLabel = Label("Date of ANC Measurement")
-        self.dateEdit = QDateEdit()
-        self.dateEdit.setFont(QFont("Avenir", 15))
-        self.dateEdit.setFixedWidth(200)
-        self.patientFormLayout.addWidget(FormRow(self.dateLabel, self.dateEdit))
+        self.dateLabel.setContentsMargins(0, 10, 0, 0)
+        self.dateLayout.addWidget(self.dateLabel, alignment=Qt.AlignmentFlag.AlignBottom)
 
-        self.consentLabel = Label("I authorize the use and storage of my information in this application", 600)
+        self.dateEdit = QDateEdit()
+        self.dateEdit.setContentsMargins(0, 0, 0, 0)
+        self.dateEdit.setFont(QFont("Avenir", 15))
+        self.dateLayout.addWidget(self.dateEdit)
+        self.patientFormLayout.addLayout(self.dateLayout)
+
+        self.consentLayout = QHBoxLayout()
+        self.consentLayout.setContentsMargins(30, 0, 30, 0)
+
+        self.consentLabel = QLabel("I authorize the use and storage of my information in this application")
+        self.consentLabel.setFont(QFont("Avenir", 18))
+        self.consentLabel.setContentsMargins(0, 10, 0, 0)
+        self.consentLayout.addWidget(self.consentLabel, alignment=Qt.AlignmentFlag.AlignLeft)
+
         self.consentCheckBox = QCheckBox()
+        self.consentCheckBox.setContentsMargins(10, 10, 0, 0)
         self.consentCheckBox.setFixedWidth(25)
-        self.consentCheckBox.setStyleSheet("QCheckBox::indicator { width: 25px; height: 25px;}")
-        self.patientFormLayout.addWidget(FormRow(self.consentLabel, self.consentCheckBox, 25))
+        self.consentLayout.addWidget(self.consentCheckBox, alignment=Qt.AlignmentFlag.AlignRight)
+        self.patientFormLayout.addLayout(self.consentLayout)
+
+        self.bottomLayout = QHBoxLayout()
+        self.bottomLayout.setContentsMargins(30, 0, 30, 0)
 
         self.errorLabel = Label("")
+        self.errorLabel.setContentsMargins(0, 0, 0, 0)
+        self.bottomLayout.addWidget(self.errorLabel, 8, alignment=Qt.AlignmentFlag.AlignLeft)
         self.patient = None
         self.weightEdit.setValidator(QDoubleValidator())
         self.heightEdit.setValidator(QDoubleValidator())
@@ -167,27 +345,39 @@ class PatientFormWindow(QWidget):
         self.phoneNumberEdit.editingFinished.connect(self.phoneNumberFormatter)
         self.weightEdit.textEdited.connect(self.calculateBodySurfaceArea)
         self.heightEdit.textEdited.connect(self.calculateBodySurfaceArea)
-
-        self.buttonBox = QDialogButtonBox()
-        self.buttonBox.addButton(self.buttonBox.standardButtons().Cancel)
-        self.buttonBox.addButton(self.buttonBox.standardButtons().Save)
-        self.buttonBox.setFont(QFont("Avenir", 12))
-        self.buttonBox.setFixedWidth(200)
-        self.buttonBox.setStyleSheet(
-            "background-color: #aaaaee; border-radius: 5px; padding: 10px"
+        
+        self.cancelButton = QPushButton("Cancel")
+        self.cancelButton.clicked.connect(self.showPatientListWindow)
+        self.cancelButton.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.cancelButton.setMinimumWidth(100)
+        self.cancelButton.setMinimumHeight(40)
+        self.cancelButton.setMaximumHeight(50)
+        self.cancelButton.setFont(QFont("Avenir", 18))
+        self.cancelButton.setStyleSheet(
+            "background-color: #aaaaee; border-radius: 10px;"
         )
+        self.bottomLayout.addWidget(self.cancelButton, 1, alignment=Qt.AlignmentFlag.AlignRight)
 
-        self.buttonBox.button(self.buttonBox.standardButtons().Cancel).clicked.connect(
-            self.showPatientListWindow
+        self.saveButton = QPushButton("Save")
+        self.saveButton.clicked.connect(self.savePatientInformation)
+        self.saveButton.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.saveButton.setMinimumWidth(100)
+        self.saveButton.setMinimumHeight(40)
+        self.saveButton.setMaximumHeight(50)
+        self.saveButton.setFont(QFont("Avenir", 18))
+        self.saveButton.setStyleSheet(
+            "background-color: #aaaaee; border-radius: 10px;"
         )
-        self.buttonBox.button(self.buttonBox.standardButtons().Save).clicked.connect(
-            self.savePatientInformation
-        )
+        self.bottomLayout.addWidget(self.saveButton, 1, alignment=Qt.AlignmentFlag.AlignRight)
 
-        self.buttonBox.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.patientFormLayout.addWidget(FormRow(self.errorLabel, self.buttonBox))
+        self.patientFormLayout.addLayout(self.bottomLayout)
 
-        self.setLayout(self.patientFormLayout)
+        self.setLayout(self.patientFormBigLayout)
+
+    def selectedGenderType(self):
+        self.radioButton = self.sender()
+        if self.radioButton.isChecked():
+            print(self.radioButton.gender)
 
     def selectedAllType(self, index):
         self.allType = self.allTypeSelect.itemText(index)  # Get the text at index.
@@ -196,7 +386,8 @@ class PatientFormWindow(QWidget):
         self.bloodType = self.bloodTypeSelect.itemText(index)  # Get the text at index.
 
     def displayParameters(self):
-        self.patientLineEdit.clear()
+        self.patientFirstNameLineEdit.clear()
+        self.patientLastNameLineEdit.clear()
         self.weightEdit.clear()
         self.heightEdit.clear()
         self.phoneNumberEdit.clear()
@@ -209,7 +400,8 @@ class PatientFormWindow(QWidget):
         self.consentCheckBox.setChecked(False)
 
         if self.patient is not None:
-            self.patientLineEdit.setText(self.patient.name)
+            self.getNames()
+            self.typeOfPatientForm.setText("Edit Patient Data")
             self.weightEdit.setText(str(self.patient.weight))
             self.heightEdit.setText(str(self.patient.height))
             self.bloodTypeSelect.setCurrentText(self.patient.bloodType)
@@ -238,6 +430,13 @@ class PatientFormWindow(QWidget):
             self.dosageAmount = [item[0] for item in self.patient.dosageMeasurement]
             self.dosageEdit.setText(str(self.dosageAmount[-1]))
             self.consentCheckBox.setChecked(True)
+        else:
+            self.typeOfPatientForm.setText("New Patient Enrollment")
+
+    def getNames(self):
+        self.nameTuple = self.patient.name.split(" ")
+        self.patientFirstNameLineEdit.setText(self.nameTuple[0])
+        self.patientLastNameLineEdit.setText(self.nameTuple[1])
 
     def phoneNumberFormatterBegin(self):
         self.phoneNumberEdit.setText(
@@ -268,7 +467,7 @@ class PatientFormWindow(QWidget):
 
     def savePatientInformation(self):
         try:
-            name = self.patientLineEdit.text()
+            name = self.patientFirstNameLineEdit.text() + " " + self.patientLastNameLineEdit.text()
             assert name != ""
             date = self.dateEdit.date().toString("yyyyMMdd")
             weight = float(self.weightEdit.text())
@@ -355,12 +554,12 @@ class PatientFormWindow(QWidget):
             self.errorLabel.setStyleSheet("color:red")
             logging.error(er)
 
-        except:
-
-            if not self.consentCheckBox.isChecked():
-                msg = "Patient must provide consent to store data"
-            else:
+        except Exception as er:
+            er = str(er)
+            if er != "Patient must provide consent to store data":
                 msg = "Input fields must not be empty"
+            else:
+                msg = "Patient must provide consent to store data"
             self.errorLabel.setText(msg)
             self.errorLabel.setStyleSheet("color:red")
             logging.error(msg)
