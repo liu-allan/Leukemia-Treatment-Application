@@ -85,20 +85,16 @@ class SideBar(QWidget):
         self.dashboardButton.setStyleSheet("background-color: #bfd8d2; border-radius: 20px")
         self.menuLayout.addWidget(self.dashboardButton)
 
-        self.menuLayout.addSpacing(470)
-
-        self.logoutButton = QPushButton()
-        self.logoutButton.setIcon(QIcon("icons/power-on.png"))
-        self.logoutButton.setIconSize(QSize(30, 30))
-        self.logoutButton.setToolTip("Log Out")
-        self.logoutButton.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.logoutButton.setContentsMargins(0, 0, 0, 0)
-        self.logoutButton.setFont(QFont("Avenir", 18))
-        self.logoutButton.clicked.connect(self.logoffButtonClicked)
-        self.logoutButton.setStyleSheet("background-color: #bfd8d2; border-radius: 20px")
-        self.menuLayout.addWidget(self.logoutButton)
+        self.menuLayout.addSpacing(510)
 
         self.setLayout(self.bigLayout)
+    
+    def lockButtons(self, lock):
+        enabled = not lock
+        self.backButton.setEnabled(enabled)
+        self.patientInformationButton.setEnabled(enabled)
+        self.dashboardButton.setEnabled(enabled)
+        self.logoutButton.setEnabled(enabled)
 
     def backButtonClicked(self):
         self.parent().backButtonClicked()
