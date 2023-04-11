@@ -14,7 +14,7 @@ from PyQt6.QtWidgets import (
     QHeaderView,
     QMainWindow,
 )
-from PyQt6.QtGui import QColor, QFont
+from PyQt6.QtGui import QColor, QFont, QMovie
 from PyQt6.QtCore import Qt, QObject, QThread, pyqtSignal, pyqtSlot
 from pyqtgraph import plot
 import pyqtgraph as pg
@@ -36,6 +36,31 @@ class TabShowGraph(QWidget):
         self.noResultsWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.noResultsWidget.setAlignment(Qt.AlignCenter)
         self.noResultsWidget.setVisible(False)
+
+        self.loadingWidget = QWidget(self)
+        self.loadingLayout = QVBoxLayout()
+
+        self.loadingTextWidget = QLabel("Performing Simulations...", self)
+        self.loadingTextWidget.setFont(QFont("Avenir", 24))
+        # self.loadingTextWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.loadingTextWidget.setAlignment(Qt.AlignCenter)
+        self.loadingTextWidget.setVisible(False)
+
+        self.loadingMovieWidget = QLabel(self)
+        movie = QMovie("icons/loading.gif")
+        self.loadingMovieWidget.setMovie(movie)
+        self.loadingMovieWidget.setMinimumWidth(100)
+        self.loadingMovieWidget.setAlignment(Qt.AlignCenter)
+        self.loadingMovieWidget.setVisible(False)
+        movie.start()
+
+        self.loadingLayout.addWidget(self.loadingTextWidget)
+        self.loadingLayout.setAlignment(self.loadingTextWidget, Qt.AlignCenter)
+        self.loadingLayout.addWidget(self.loadingMovieWidget)
+        self.loadingLayout.setAlignment(self.loadingMovieWidget, Qt.AlignCenter)
+        self.loadingWidget.setLayout(self.loadingLayout)
+        self.loadingWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.loadingWidget.setVisible(False)
 
         self.dosageTableWidget = QWidget()
         self.dosageTableLayout = QVBoxLayout()
@@ -85,6 +110,7 @@ class TabShowGraph(QWidget):
 
         self.graphContainerLayout.addWidget(self.graphWidget)
 
+        self.graphLayout.addWidget(self.loadingWidget)
         self.graphLayout.addWidget(self.noResultsWidget)
         self.graphLayout.addWidget(self.graphContainer)
         self.graphLayout.addWidget(self.dosageTableWidget)
@@ -225,7 +251,29 @@ class TabShowGraph(QWidget):
         self.anticipatory_dosage_table.setVisible(show)
         self.reactive_dosage_title.setVisible(show)
         self.reactive_dosage_table.setVisible(show)
+    
+    def showLoadingScreen(self, show):
+        self.noResultsWidget.setVisible(False)
 
+        if show:
+            self.graphWidget.setVisible(not show)
+            self.anticipatory_dosage_title.setVisible(not show)
+            self.anticipatory_dosage_table.setVisible(not show)
+            self.reactive_dosage_title.setVisible(not show)
+            self.reactive_dosage_table.setVisible(not show)
+            self.loadingWidget.setVisible(show)
+            self.loadingMovieWidget.setVisible(show)
+            self.loadingTextWidget.setVisible(show)
+        else:
+            self.loadingWidget.setVisible(show)
+            self.loadingMovieWidget.setVisible(show)
+            self.loadingTextWidget.setVisible(show)
+            self.graphWidget.setVisible(not show)
+            self.anticipatory_dosage_title.setVisible(not show)
+            self.anticipatory_dosage_table.setVisible(not show)
+            self.reactive_dosage_title.setVisible(not show)
+            self.reactive_dosage_table.setVisible(not show)
+            
 class ModelTask(QObject):
     returned = pyqtSignal(list)
     finished = pyqtSignal()
@@ -253,6 +301,7 @@ class DashboardWindow(QWidget):
         
         self.model_thread = None
         self.model_task = None
+        self.simulating_patient = None
 
         self.sideBarLayout = QHBoxLayout()
         self.sideBarLayout.setContentsMargins(10, 0, 10, 0)
@@ -279,18 +328,25 @@ class DashboardWindow(QWidget):
 
     def updatePatientInfo(self, calculation_info):
         self.patient = self.parent().parent().selected_patient
-        if calculation_info[0]:
-            self.graphs.toggleResults(True)
-            self.runMatLabModel(calculation_info[1])
-            self.displayed_patient = self.patient
-        elif self.displayed_patient and self.displayed_patient.user_id == self.patient.user_id:
-            self.graphs.toggleResults(True)
+
+        if self.simulating_patient and self.simulating_patient.user_id == self.patient.user_id:
+            self.graphs.showLoadingScreen(True)
         else:
-            self.graphs.toggleResults(False)
+            self.graphs.showLoadingScreen(False)
+            if calculation_info[0]:
+                self.graphs.toggleResults(True)
+                self.runMatLabModel(calculation_info[1])
+                self.displayed_patient = self.patient
+            elif self.displayed_patient and self.displayed_patient.user_id == self.patient.user_id and self.simulating_patient == None:
+                self.graphs.toggleResults(True)
+            else:
+                self.graphs.toggleResults(False)
     
     @pyqtSlot(list)
     def displayGraphTable(self, info_list):
+        self.simulating_patient = None
         self.graphs.setGraphTableData(info_list[0], info_list[1], info_list[2], info_list[3])
+        self.graphs.showLoadingScreen(False)
 
     def runMatLabModel(self, num_cycles):
         bsa = float(self.patient.bsa)
@@ -311,6 +367,10 @@ class DashboardWindow(QWidget):
         self.model_thread.finished.connect(self.model_thread.deleteLater)
 
         self.model_thread.start()
+
+        self.simulating_patient = self.patient
+
+        self.graphs.showLoadingScreen(True)
     
     def backButtonClicked(self):
         self.showPatientListWindow()
