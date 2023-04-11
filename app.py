@@ -12,6 +12,7 @@ from PyQt6.QtWidgets import (
 )
 
 from util.patient import Patient
+from util.util import decryptData
 from widget_pages.dashboard import DashboardWindow
 from widget_pages.login import LoginWindow
 from widget_pages.patient_information import PatientInformationWindow
@@ -30,6 +31,7 @@ class MainWindow(QMainWindow):
         self.db_conn = sqlite3.connect("db.db")
 
         self.username = ""
+        self.password = ""
         self.user_full_name = ""
         self.selected_patient = None
         self.current_page = "Login"
@@ -91,18 +93,18 @@ class MainWindow(QMainWindow):
         if records is None:
             self.selected_patient = None
         else:
-            name = records[0][0]
-            weight = records[0][1]
-            height = records[0][2]
+            name = decryptData(records[0][0], self.password)
+            weight = decryptData(records[0][1], self.password)
+            height = decryptData(records[0][2], self.password)
             patient_id = records[0][3]
-            phone_number = records[0][4]
-            birthday = records[0][5]
-            age = records[0][6]
-            blood_type = records[0][7]
-            all_type = records[0][8]
-            body_surface_area = records[0][9]
+            phone_number = decryptData(records[0][4], self.password)
+            birthday = decryptData(records[0][5], self.password)
+            age = decryptData(records[0][6], self.password)
+            blood_type = decryptData(records[0][7], self.password)
+            all_type = decryptData(records[0][8], self.password)
+            body_surface_area = decryptData(records[0][9], self.password)
             oncologist_id = records[0][13]
-            user_id = records[0][14]
+            user_id = decryptData(records[0][14], self.password)
             anc_measurements = []
             dosage_measurements = []
             for row in records:
