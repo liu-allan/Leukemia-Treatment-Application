@@ -2,7 +2,7 @@ import bcrypt
 import logging
 import sqlite3
 
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QRect
 from PyQt6.QtWidgets import (
     QWidget,
     QLabel,
@@ -13,6 +13,7 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QSpacerItem,
     QSizePolicy,
+    QScrollArea
 )
 from PyQt6.QtGui import QFont
 from util.animation_manager import AnimationManager
@@ -56,13 +57,16 @@ class OncologistFormWindow(QWidget):
         self.oncologistFormWidget = QWidget()
         self.oncologistFormWidget.setContentsMargins(0, 0, 0, 0)
         self.oncologistFormWidget.setFixedWidth(640)
+        self.oncologistFormWidget.setFixedHeight(820)
         self.oncologistFormWidget.setObjectName("OncologistFormOverall")
         self.oncologistFormWidget.setStyleSheet(
             """
             QWidget#OncologistFormOverall
             {
+                border: 1px solid #aaaaaa;
                 background-color: #ffffff;
                 border-radius: 20px;
+                padding: 5px;
             }
             """
         )
@@ -171,10 +175,10 @@ class OncologistFormWindow(QWidget):
         self.oncologistFormLayout.addWidget(self.confirmPasswordEdit)
         self.confirmPasswordEdit.textEdited.connect(self.checkPasswordMatch)
 
-        # self.spacer = QSpacerItem(
-        #     1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
-        # )
-        # self.oncologistFormLayout.addSpacerItem(self.spacer)
+        self.spacer = QSpacerItem(
+            1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
+        )
+        self.oncologistFormLayout.addSpacerItem(self.spacer)
 
         self.bottomLayout = QHBoxLayout()
         self.bottomLayout.setContentsMargins(30, 0, 30, 10)
@@ -182,6 +186,7 @@ class OncologistFormWindow(QWidget):
         self.errorLabel = Label("")
         self.errorLabel.setContentsMargins(0, 0, 0, 0)
         self.bottomLayout.addWidget(self.errorLabel, 8, alignment=Qt.AlignmentFlag.AlignLeft)
+        
         self.cancelButton = QPushButton("Cancel")
         self.cancelButton.clicked.connect(self.showPatientListWindow)
         self.cancelButton.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -205,11 +210,12 @@ class OncologistFormWindow(QWidget):
             "background-color: #aaaaee; border-radius: 10px; padding: 10px 15px;"
         )
         self.bottomLayout.addWidget(self.saveButton, 1, alignment=Qt.AlignmentFlag.AlignRight)
-
+        
         self.cancelAnimationManager = AnimationManager(widget=self.cancelButton)
         self.saveAnimationManager = AnimationManager(widget=self.saveButton)
 
         self.oncologistFormLayout.addLayout(self.bottomLayout)
+
         self.setLayout(self.oncologistFormBigLayout)
 
     def resizeEvent(self, event):

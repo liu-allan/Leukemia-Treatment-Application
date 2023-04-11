@@ -2,7 +2,7 @@ import logging
 import math
 import sqlite3
 
-from PyQt6.QtCore import QDate, Qt
+from PyQt6.QtCore import QDate, Qt, QRect
 from PyQt6.QtWidgets import (
     QWidget,
     QLabel,
@@ -370,7 +370,7 @@ class PatientFormWindow(QWidget):
             "background-color: #aaaaee; border-radius: 10px; padding: 5px 10px;"
         )
         self.bottomLayout.addWidget(self.saveButton, 1, alignment=Qt.AlignmentFlag.AlignRight)
-
+        
         self.cancelAnimationManager = AnimationManager(widget=self.cancelButton)
         self.saveAnimationManager = AnimationManager(widget=self.saveButton)
 
