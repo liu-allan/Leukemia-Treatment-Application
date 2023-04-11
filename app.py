@@ -91,8 +91,33 @@ class MainWindow(QMainWindow):
             (patient_id,),
         )
         records = res.fetchall()
-        if records is None:
-            self.selected_patient = None
+        if len(records) == 0:
+            res = self.db_conn.execute(
+                """SELECT name, weight, height, phone_number, birthday, age, 
+                        blood_type, all_type, body_surface_area, oncologist_id, sex, user_id
+                FROM patients p 
+                WHERE p.id=? 
+                """,
+                (patient_id,),
+            )
+            row = res.fetchone()
+            name = decryptData(row[0], self.password)
+            weight = decryptData(row[1], self.password)
+            height = decryptData(row[2], self.password)
+            phone_number = decryptData(row[3], self.password)
+            birthday = decryptData(row[4], self.password)
+            age = decryptData(row[5], self.password)
+            blood_type = decryptData(row[6], self.password)
+            all_type = decryptData(row[7], self.password)
+            body_surface_area = decryptData(row[8], self.password)
+            oncologist_id = row[9]
+            sex = decryptData(row[10], self.password)
+            user_id = decryptData(row[11], self.password)   
+            anc_measurements = []
+            dosage_measurements = []
+            self.selected_patient = Patient(
+                patient_id, user_id, name, weight, height, anc_measurements, birthday, dosage_measurements, phone_number, age, blood_type, all_type, body_surface_area, oncologist_id, sex
+            )
         else:
             name = decryptData(records[0][0], self.password)
             weight = decryptData(records[0][1], self.password)
