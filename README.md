@@ -82,6 +82,8 @@ The Matlab Model is called through `runModel()` found in `matlab_script.py`. It 
 
 ## 4.0 Database
 
+To view tables on vscode, install https://marketplace.visualstudio.com/items?itemName=alexcvzz.vscode-sqlite
+
 ### 4.1 Patients
 
 | id | user_id | name |phone_number|birthday|age|blood_type|all_type|weight|height|body_surface_area|oncologist_id| 
