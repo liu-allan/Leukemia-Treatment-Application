@@ -1,6 +1,4 @@
-import logging
 import math
-import sqlite3
 
 from PyQt6.QtWidgets import (
     QLabel,
@@ -8,15 +6,10 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QVBoxLayout,
     QGridLayout,
-    QWidget,
-    QDateEdit,
-    QToolBar,
-    QSizePolicy,
-    QMessageBox,
-    QDialogButtonBox,
+    QWidget
 )
-from PyQt6.QtGui import QFont, QPixmap, QColor, QIcon
-from PyQt6.QtCore import Qt, QDate
+from PyQt6.QtGui import QFont
+from PyQt6.QtCore import Qt
 from datetime import datetime
 
 class Label(QLabel):
@@ -95,12 +88,13 @@ class PatientCard(QWidget):
         self.age_layout = QHBoxLayout(self.ageWidget)
 
         # set patient age
-        self.patientAge = LabelBolded("Age: ", 18, [10, 0, 0, 0])
+        self.patientAge = LabelBolded("Age: ", 18, [0, 0, 0, 0])
         self.age_layout.addWidget(self.patientAge)
 
-        self.patientAgeV = LabelBolded("", 18, [10, 0, 0, 0])
+        self.patientAgeV = LabelBolded("", 18, [0, 0, 0, 0])
         self.age_layout.addWidget(self.patientAgeV)
 
+        self.name_layout.addWidget(self.ageWidget)
         self.avatar_layout.addWidget(self.nameWidget, 3)
         self.left_layout.addWidget(self.avatarWidget)
 
@@ -204,20 +198,19 @@ class PatientCard(QWidget):
         self.bodySurfaceAreaV = LabelBolded("", 18, [0, 0, 0, 0])
         self.buttonLayout.addWidget(self.bodySurfaceAreaV)
 
-        self.editButton = QPushButton("Edit", self)
-        self.editButton.setFixedHeight(40)
-        self.editButton.setContentsMargins(0, 0, 0, 0)
-        self.editButton.setStyleSheet(
-            "background-color: #aaaaee; border-radius: 5px; padding: 12px"
-        )
-        self.editButton.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.editButton = QPushButton("Edit")
         self.editButton.clicked.connect(self.editClicked)
-        self.editButton.setFont(QFont("Avenir", 15))
-
+        self.editButton.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.editButton.setMinimumWidth(60)
+        self.editButton.setMinimumHeight(40)
+        self.editButton.setMaximumHeight(45)
+        self.editButton.setFont(QFont("Avenir", 18))
+        self.editButton.setStyleSheet(
+            "background-color: #aaaaee; border-radius: 10px; padding: 10px 15px;"
+        )
         self.buttonLayout.addWidget(self.editButton, alignment=Qt.AlignmentFlag.AlignRight)
 
         self.right_layout.addWidget(self.buttons, 3, 2)
-
         self.inside_layout.addWidget(self.patient_card_right, 3)
         self.setLayout(self.layout_box)
 
@@ -238,7 +231,7 @@ class PatientCard(QWidget):
             self.patientHeightV.setText(str(self.patient.height))
             self.patientWeightV.setText(str(self.patient.weight))
             self.patientBloodV.setText(self.patient.bloodType)
-            self.patientIDV.setText(str(self.patient.id))
+            self.patientIDV.setText(str(self.patient.user_id))
             self.phoneNumberFormatter()
             self.allTypeV.setText(self.patient.allType)
             self.assignedDoctorV.setText(self.patient.assignedDoctor)
@@ -259,6 +252,7 @@ class PatientCard(QWidget):
             self.bodySurfaceAreaV.setText("{:.2f}".format(bsa))
     
     def phoneNumberFormatter(self):
-        self.phoneNumberV.setText(format(int(self.patient.phoneNumber[:-1]), ",").replace(",", "-") + self.patient.phoneNumber[-1])    
+        self.phoneNumberV.setText(format(int(self.patient.phoneNumber[:-1]), ",").replace(",", "-") + self.patient.phoneNumber[-1])  
+
 
 

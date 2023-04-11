@@ -12,6 +12,7 @@ from PyQt6.QtWidgets import (
 )
 
 from util.patient import Patient
+from util.util import decryptData
 from widget_pages.dashboard import DashboardWindow
 from widget_pages.login import LoginWindow
 from widget_pages.patient_information import PatientInformationWindow
@@ -30,6 +31,7 @@ class MainWindow(QMainWindow):
         self.db_conn = sqlite3.connect("db.db")
 
         self.username = ""
+        self.password = ""
         self.user_full_name = ""
         self.selected_patient = None
         self.current_page = "Login"
@@ -80,7 +82,7 @@ class MainWindow(QMainWindow):
     def updateSelectedPatient(self, patient_id):
         res = self.db_conn.execute(
             """SELECT name, weight, height, patient_id, phone_number, birthday, age, 
-                      blood_type, all_type, body_surface_area, time, dosage_measurement, anc_measurement, oncologist_id, user_id
+                      blood_type, all_type, body_surface_area, time, dosage_measurement, anc_measurement, oncologist_id, sex, user_id
                FROM measurements m 
                INNER JOIN patients p ON m.patient_id=p.id 
                     AND m.patient_id=? ORDER BY time ASC
@@ -91,18 +93,19 @@ class MainWindow(QMainWindow):
         if records is None:
             self.selected_patient = None
         else:
-            name = records[0][0]
-            weight = records[0][1]
-            height = records[0][2]
+            name = decryptData(records[0][0], self.password)
+            weight = decryptData(records[0][1], self.password)
+            height = decryptData(records[0][2], self.password)
             patient_id = records[0][3]
-            phone_number = records[0][4]
-            birthday = records[0][5]
-            age = records[0][6]
-            blood_type = records[0][7]
-            all_type = records[0][8]
-            body_surface_area = records[0][9]
+            phone_number = decryptData(records[0][4], self.password)
+            birthday = decryptData(records[0][5], self.password)
+            age = decryptData(records[0][6], self.password)
+            blood_type = decryptData(records[0][7], self.password)
+            all_type = decryptData(records[0][8], self.password)
+            body_surface_area = decryptData(records[0][9], self.password)
             oncologist_id = records[0][13]
-            user_id = records[0][14]
+            sex = decryptData(records[0][14], self.password)
+            user_id = decryptData(records[0][15], self.password)
             anc_measurements = []
             dosage_measurements = []
             for row in records:
@@ -110,7 +113,7 @@ class MainWindow(QMainWindow):
                 anc_measurements.append((row[12], row[10]))
 
             self.selected_patient = Patient(
-                patient_id, user_id, name, weight, height, anc_measurements, birthday, dosage_measurements, phone_number, age, blood_type, all_type, body_surface_area, oncologist_id
+                patient_id, user_id, name, weight, height, anc_measurements, birthday, dosage_measurements, phone_number, age, blood_type, all_type, body_surface_area, oncologist_id, sex
             )
 
     def updateToolBar(self):
@@ -136,11 +139,11 @@ class MainWindow(QMainWindow):
         self.updateToolBar()
         self.patientInfoWindow.updatePatientInfo()
 
-    def showDashboardWindow(self):
+    def showDashboardWindow(self, calculation_info):
         self.stackLayout.setCurrentIndex(3)
         self.current_page = "Dashboard"
         self.updateToolBar()
-        self.dashboardWindow.updatePatientInfo()
+        self.dashboardWindow.updatePatientInfo(calculation_info=calculation_info)
 
     def showPatientFormWindow(self):
         self.stackLayout.setCurrentIndex(4)
