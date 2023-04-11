@@ -15,7 +15,7 @@ from PyQt6.QtWidgets import (
     QMainWindow,
 )
 from PyQt6.QtGui import QColor, QFont
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QObject, QThread, pyqtSignal, pyqtSlot
 from pyqtgraph import plot
 import pyqtgraph as pg
 
@@ -226,12 +226,33 @@ class TabShowGraph(QWidget):
         self.reactive_dosage_title.setVisible(show)
         self.reactive_dosage_table.setVisible(show)
 
+class ModelTask(QObject):
+    returned = pyqtSignal(list)
+    finished = pyqtSignal()
+
+    def __init__(self, bsa, num_cycles, dosage, anc):
+        super().__init__()
+        self.bsa = bsa
+        self.num_cycles = num_cycles
+        self.dosage = dosage
+        self.anc = anc
+    
+    def run(self):
+        print("running model for {} cycles...".format(self.num_cycles))
+        _, _, _, ra, aa, rd, ad = runModel(self.bsa, self.num_cycles, self.dosage, self.anc)
+        print("finished running model")
+        self.returned.emit([ra, aa, rd, ad])
+        self.finished.emit()
+
 class DashboardWindow(QWidget):
     def __init__(self):
         super().__init__()
 
         self.patient = None
         self.displayed_patient = None
+        
+        self.model_thread = None
+        self.model_task = None
 
         self.sideBarLayout = QHBoxLayout()
         self.sideBarLayout.setContentsMargins(10, 0, 10, 0)
@@ -266,17 +287,30 @@ class DashboardWindow(QWidget):
             self.graphs.toggleResults(True)
         else:
             self.graphs.toggleResults(False)
+    
+    @pyqtSlot(list)
+    def displayGraphTable(self, info_list):
+        self.graphs.setGraphTableData(info_list[0], info_list[1], info_list[2], info_list[3])
 
     def runMatLabModel(self, num_cycles):
         bsa = float(self.patient.bsa)
         num_cycles = float(num_cycles + 1)
         dosage = [float(self.patient.dosageMeasurement[-1][0])]
         anc = [float(self.patient.ancMeasurement[-1][0])]
+
         print(bsa, num_cycles, dosage, anc)
-        print("running model for {} cycles...".format(num_cycles))
-        _, _, _, reactive_anc, anticipatory_anc, reactive_dosage, anticipatory_dosage = runModel(bsa, num_cycles, dosage, anc)
-        print("finished running model")
-        self.graphs.setGraphTableData(reactive_anc, anticipatory_anc, reactive_dosage, anticipatory_dosage)
+
+        self.model_thread = QThread()
+        self.model_task = ModelTask(bsa, num_cycles, dosage, anc)
+        self.model_task.moveToThread(self.model_thread)
+
+        self.model_thread.started.connect(self.model_task.run)
+        self.model_task.returned.connect(self.displayGraphTable)
+        self.model_task.finished.connect(self.model_thread.quit)
+        self.model_task.finished.connect(self.model_task.deleteLater)
+        self.model_thread.finished.connect(self.model_thread.deleteLater)
+
+        self.model_thread.start()
     
     def backButtonClicked(self):
         self.showPatientListWindow()
