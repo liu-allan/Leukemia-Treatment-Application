@@ -281,7 +281,7 @@ class DashboardWindow(QWidget):
         anc = [float(self.patient.ancMeasurement[-1][0])]
         print(bsa, num_cycles, dosage, anc)
         print("running model for {} cycles...".format(num_cycles))
-        _, _, _, reactive_anc, anticipatory_anc, reactive_dosage, anticipatory_dosage = runModel(bsa, num_cycles, dosage, anc)
+        _, _, reactive_anc, anticipatory_anc, reactive_dosage, anticipatory_dosage = runModel(bsa, num_cycles, dosage, anc)
         print("finished running model")
         self.graphs.setGraphTableData(reactive_anc, anticipatory_anc, reactive_dosage, anticipatory_dosage)
     
