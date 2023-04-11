@@ -143,29 +143,28 @@ class PatientFormWindow(QWidget):
         self.patientNameLayout.addWidget(self.patientLastNameLineEdit)
         self.patientFormLayout.addLayout(self.patientNameLayout)
         
-        self.genderLabel = Label("Gender/Sex")
-        self.genderLabel.setContentsMargins(30, 10, 0, 0)
-        self.patientFormLayout.addWidget(self.genderLabel, alignment=Qt.AlignmentFlag.AlignBottom)
+        self.sexLabel = Label("Sex")
+        self.sexLabel.setContentsMargins(30, 10, 0, 0)
+        self.patientFormLayout.addWidget(self.sexLabel, alignment=Qt.AlignmentFlag.AlignBottom)
 
-        self.genderLayout = QHBoxLayout()
-        self.genderLayout.setContentsMargins(30, 0, 0, 0)
+        self.sexLayout = QHBoxLayout()
+        self.sexLayout.setContentsMargins(30, 0, 0, 0)
 
-        self.radioButton = QRadioButton("Male")
-        self.radioButton.setContentsMargins(0, 0, 0, 0)
-        self.radioButton.setChecked(True)
-        self.radioButton.gender = "Male"
-        self.radioButton.setFont(QFont("Avenir", 18))
-        self.radioButton.toggled.connect(self.selectedGenderType)
-        self.genderLayout.addWidget(self.radioButton)
+        self.maleRadioButton = QRadioButton("Male", self)
+        self.maleRadioButton.setContentsMargins(0, 0, 0, 0)
+        self.maleRadioButton.setChecked(True)
+        self.maleRadioButton.setFont(QFont("Avenir", 18))
+        self.maleRadioButton.toggled.connect(self.selectedSexType)
+        self.sexLayout.addWidget(self.maleRadioButton)
 
-        self.radioButton = QRadioButton("Female")
-        self.radioButton.setContentsMargins(10, 0, 0, 0)
-        self.radioButton.setFont(QFont("Avenir", 18))
-        self.radioButton.gender = "Female"
-        self.radioButton.toggled.connect(self.selectedGenderType)
-        self.genderLayout.addWidget(self.radioButton)
+        self.femaleRadioButton = QRadioButton("Female", self)
+        self.femaleRadioButton.setContentsMargins(10, 0, 0, 0)
+        self.femaleRadioButton.setFont(QFont("Avenir", 18))
+        self.femaleRadioButton.toggled.connect(self.selectedSexType)
+        self.sexLayout.addWidget(self.femaleRadioButton)
+        self.sex = "Male"
 
-        self.patientFormLayout.addLayout(self.genderLayout)
+        self.patientFormLayout.addLayout(self.sexLayout)
 
         self.birthdayLayout = QVBoxLayout()
         self.birthdayLayout.setContentsMargins(30, 0, 30, 0)
@@ -377,10 +376,10 @@ class PatientFormWindow(QWidget):
 
         self.setLayout(self.patientFormBigLayout)
 
-    def selectedGenderType(self):
-        self.radioButton = self.sender()
-        if self.radioButton.isChecked():
-            print(self.radioButton.gender)
+    def selectedSexType(self):
+        sex = self.sender()
+        if sex.isChecked():
+            self.sex = sex.text()
 
     def selectedAllType(self, index):
         self.allType = self.allTypeSelect.itemText(index)  # Get the text at index.
@@ -487,6 +486,7 @@ class PatientFormWindow(QWidget):
             ancMeasurement = float(self.ancMeasurementEdit.text())
             dosageMeasurement = float(self.dosageEdit.text())
             age = str(self.calculateAge())
+            sex = self.sex
             user_id = self.createUserID(name)
 
             conn = self.parent().parent().getDatabaseConnection()
@@ -500,8 +500,8 @@ class PatientFormWindow(QWidget):
                 conn.execute(
                     """
                         INSERT INTO patients (user_id, name, weight, height, phone_number, birthday, age, 
-                      blood_type, all_type, body_surface_area, oncologist_id)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                      blood_type, all_type, body_surface_area, oncologist_id, sex)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         encryptData(user_id, password),
@@ -515,6 +515,7 @@ class PatientFormWindow(QWidget):
                         encryptData(allType, password),
                         encryptData(bsa, password),
                         self.parent().parent().username,
+                        encryptData(sex, password)
                     ),
                 )
 
@@ -526,7 +527,7 @@ class PatientFormWindow(QWidget):
                 conn.execute(
                     """
                         UPDATE patients 
-                        SET name=?, weight=?, height=?, phone_number=?, birthday=?, age=?, blood_type=?, all_type=?, body_surface_area=? 
+                        SET name=?, weight=?, height=?, phone_number=?, birthday=?, age=?, blood_type=?, all_type=?, body_surface_area=?, sex=? 
                         WHERE id=?
                     """,
                     (
@@ -539,6 +540,7 @@ class PatientFormWindow(QWidget):
                         encryptData(bloodType, password),
                         encryptData(allType, password),
                         encryptData(bsa, password),
+                        encryptData(sex, password),
                         self.patient.id,
                     ),
                 )
@@ -569,7 +571,7 @@ class PatientFormWindow(QWidget):
                 msg = "Patient must provide consent to store data"
             self.errorLabel.setText(msg)
             self.errorLabel.setStyleSheet("color:red")
-            logging.error(e)
+            logging.error(er)
 
         else:
             self.errorLabel.clear()
@@ -614,4 +616,8 @@ class PatientFormWindow(QWidget):
 
     def updatePatientInfo(self):
         self.patient = self.parent().parent().selected_patient
+        # resetting fields 
+        self.sex = "Male"
+        self.maleRadioButton.setChecked(True)
+        self.femaleRadioButton.setChecked(False)
         self.displayParameters()
