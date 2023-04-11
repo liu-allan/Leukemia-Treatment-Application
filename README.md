@@ -13,6 +13,7 @@ git clone https://github.com/liu-allan/Leukemia-Treatment-Application.git
 cd <path/to/Leukemia-Treatment-Application>
 pip install --upgrade pip
 pip install -r requirements.txt
+git submodule update --init --recursive
 ```
 
 ## 2.0 How to use
