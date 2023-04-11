@@ -215,6 +215,7 @@ class PatientCard(QWidget):
         self.setLayout(self.layout_box)
 
     def editClicked(self):
+        self.parent().parent().parent().parent().adding_new_patient = False
         self.parent().parent().showPatientFormWindow()
 
     def getPatientInfo(self, patient):
