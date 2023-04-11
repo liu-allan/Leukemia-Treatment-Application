@@ -18,7 +18,9 @@ from PyQt6.QtWidgets import (
     QRadioButton,
     QScrollArea,
     QPushButton,
-    QCheckBox
+    QCheckBox,
+    QSizePolicy,
+    QSpacerItem
 )
 from PyQt6.QtGui import QDoubleValidator, QFont
 from pyqtgraph import plot
@@ -284,6 +286,11 @@ class PatientFormWindow(QWidget):
         self.consentLayout.addWidget(self.consentCheckBox, alignment=Qt.AlignmentFlag.AlignRight)
         self.patientFormLayout.addLayout(self.consentLayout)
 
+        self.spacer = QSpacerItem(
+            1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
+        )
+        self.patientFormLayout.addSpacerItem(self.spacer)
+
         self.bottomLayout = QHBoxLayout()
         self.bottomLayout.setContentsMargins(30, 0, 30, 0)
 
@@ -297,7 +304,7 @@ class PatientFormWindow(QWidget):
         self.phoneNumberEdit.editingFinished.connect(self.phoneNumberFormatter)
         self.weightEdit.textEdited.connect(self.calculateBodySurfaceArea)
         self.heightEdit.textEdited.connect(self.calculateBodySurfaceArea)
-        
+
         self.cancelButton = QPushButton("Cancel")
         self.cancelButton.clicked.connect(self.cancelFromPatientForm)
         self.cancelButton.setCursor(Qt.CursorShape.PointingHandCursor)
