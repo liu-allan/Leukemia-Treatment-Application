@@ -42,7 +42,6 @@ class TabShowGraph(QWidget):
 
         self.loadingTextWidget = QLabel("Performing Simulations...", self)
         self.loadingTextWidget.setFont(QFont("Avenir", 24))
-        # self.loadingTextWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.loadingTextWidget.setAlignment(Qt.AlignCenter)
         self.loadingTextWidget.setVisible(False)
 
