@@ -386,31 +386,3 @@ class DashboardWindow(QWidget):
     
     def patientInformationButtonClicked(self):
         self.showPatientInformationWindow()
-
-    def logoffButtonClicked(self):
-        dlg = QMessageBox()
-        dlg.setWindowTitle("Log Off")
-        dlg.setText("Are you sure you want to log off?")
-        dlg.addButton("Yes", QMessageBox.ButtonRole.YesRole)
-        dlg.addButton("No", QMessageBox.ButtonRole.NoRole)
-        for button in dlg.findChild(QDialogButtonBox).findChildren(QPushButton):
-            button.setCursor(Qt.CursorShape.PointingHandCursor)
-        
-        dlg.setStyleSheet(
-            """
-                QMessageBox {
-                    background-color: #ffffff; border-radius: 20px
-                }
-            """
-        )
-
-        dlg.setFont(QFont("Avenir", 15))
-        button = dlg.exec()
-
-        # Yes button is pressed
-        if button == QMessageBox.ButtonRole.YesRole.value:
-            self.dosageEdit.clear()
-            self.ancMeasurementEdit.clear()
-            # link to login page
-            self.updateUsername("")
-            self.showLoginWindow()

@@ -128,27 +128,21 @@ class ToolBar(QWidget):
         )
 
     def logoffClicked(self):
-        dlg = QMessageBox()
+
+        dlg = QMessageBox(self)
         dlg.setWindowTitle("Log Off")
         dlg.setText("Are you sure you want to log off?")
-        dlg.addButton("Yes", QMessageBox.ButtonRole.YesRole)
-        dlg.addButton("No", QMessageBox.ButtonRole.NoRole)
+        dlg.setStandardButtons(
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
         for button in dlg.findChild(QDialogButtonBox).findChildren(QPushButton):
             button.setCursor(Qt.CursorShape.PointingHandCursor)
-
-        dlg.setStyleSheet(
-            """
-                QMessageBox {
-                    background-color: #ffffff; border-radius: 20px
-                }
-            """
-        )
 
         dlg.setFont(QFont("Avenir", 15))
         button = dlg.exec()
 
         # Yes button is pressed
-        if button == QMessageBox.ButtonRole.YesRole.value:
+        if button == QMessageBox.StandardButton.Yes:
             # link to login page
             self.updateUsername("")
             self.showLoginWindow()

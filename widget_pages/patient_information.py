@@ -165,7 +165,7 @@ class PatientInformationWindow(QWidget):
 
         self.patientInputRight = QWidget()
         self.patientInputRight.setObjectName("PatientInputRight")
-        self.patientInputRight.setContentsMargins(30, 0, 30, 0)
+        self.patientInputRight.setContentsMargins(30, 20, 30, 0)
         self.patientInputRight.setStyleSheet(
             """
             QWidget#PatientInputRight
@@ -261,7 +261,7 @@ class PatientInformationWindow(QWidget):
         self.numCyclesEdit.textChanged.connect(self.toggleCalculateButton)
 
         self.calculateButton = QPushButton("Calculate")
-        self.calculateButton.setFont(QFont("Avenir", 12))
+        self.calculateButton.setFont(QFont("Avenir", 15))
         self.calculateButton.setCursor(Qt.CursorShape.PointingHandCursor)
         self.calculateButton.setStyleSheet(
             "background-color: #aaaaee; border-radius: 5px; padding: 10px"
@@ -291,34 +291,6 @@ class PatientInformationWindow(QWidget):
 
     def dashboardButtonClicked(self):
         self.showDashboardWindow(do_calculation=False)
-
-    def logoffButtonClicked(self):
-        dlg = QMessageBox()
-        dlg.setWindowTitle("Log Off")
-        dlg.setText("Are you sure you want to log off?")
-        dlg.addButton("Yes", QMessageBox.ButtonRole.YesRole)
-        dlg.addButton("No", QMessageBox.ButtonRole.NoRole)
-        for button in dlg.findChild(QDialogButtonBox).findChildren(QPushButton):
-            button.setCursor(Qt.CursorShape.PointingHandCursor)
-
-        dlg.setStyleSheet(
-            """
-                QMessageBox {
-                    background-color: #ffffff; border-radius: 20px
-                }
-            """
-        )
-
-        dlg.setFont(QFont("Avenir", 15))
-        button = dlg.exec()
-
-        # Yes button is pressed
-        if button == QMessageBox.ButtonRole.YesRole.value:
-            self.dosageEdit.clear()
-            self.ancMeasurementEdit.clear()
-            # link to login page
-            self.updateUsername("")
-            self.showLoginWindow()
 
     def updateUsername(self, username):
         self.parent().parent().updateUsername(username)
