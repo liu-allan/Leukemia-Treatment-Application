@@ -216,11 +216,11 @@ class PatientFormWindow(QWidget):
 
         self.bodySurfaceAreaMeasurement = QLineEdit()
         self.bodySurfaceAreaMeasurement.setContentsMargins(10, 0, 30, 0)
-        self.bodySurfaceAreaMeasurement.setPlaceholderText("m^2")
+        self.bodySurfaceAreaMeasurement.setPlaceholderText("0")
         self.bodySurfaceAreaMeasurement.setReadOnly(True)
         self.bodySurfaceAreaMeasurement.setFont(QFont("Avenir", 18))
         self.bodySurfaceAreaMeasurement.setStyleSheet(
-            "background-color: #f5f5f5; height: 40px; border-radius: 10px; padding: 0px 10px"
+            "background-color: #ffffff; height: 40px; border-radius: 10px; padding: 0px 10px"
         )
         self.bodyLayout.addWidget(self.bodySurfaceAreaMeasurement, 1, 2)
         self.patientFormLayout.addLayout(self.bodyLayout)
@@ -427,17 +427,20 @@ class PatientFormWindow(QWidget):
     def savePatientInformation(self):
         try:
             name = self.patientFirstNameLineEdit.text() + " " + self.patientLastNameLineEdit.text()
-            assert name != ""
+            assert self.patientFirstNameLineEdit.text() != ""
+            assert self.patientLastNameLineEdit.text() != ""
             weight = self.weightEdit.text()
             height = self.heightEdit.text()
             allType = self.allTypeSelect.currentText()
+            assert weight != ""
+            assert height != ""
             assert allType in valid_all_types
             bloodType = self.bloodTypeSelect.currentText()
             assert bloodType in valid_blood_types
             birthday = self.birthdayEdit.date().toString("yyyyMMdd")
+            assert birthday != ""
             phoneNumber = self.phoneNumberFormatterReverse()
             assert phoneNumber != ""
-            assignedDoctor = self.parent().parent().username
             bsa = self.bodySurfaceAreaMeasurement.text()
             age = str(self.calculateAge())
             sex = self.sex

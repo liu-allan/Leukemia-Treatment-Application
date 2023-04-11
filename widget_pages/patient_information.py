@@ -286,7 +286,7 @@ class PatientInformationWindow(QWidget):
         self.setLayout(self.sideBarLayout)
 
     def toggleCalculateButton(self, input):
-        if input and int(input) > 0:
+        if input and int(input) > 0 and int(input) < 100:
             self.calculateButton.setEnabled(True)
         else:
             self.calculateButton.setEnabled(False)
