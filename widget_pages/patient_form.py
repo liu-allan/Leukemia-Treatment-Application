@@ -168,7 +168,7 @@ class PatientFormWindow(QWidget):
         self.birthdayLayout = QVBoxLayout()
         self.birthdayLayout.setContentsMargins(30, 0, 30, 0)
         
-        self.birthdayLabel = Label("Brithday")
+        self.birthdayLabel = Label("Birthday")
         self.birthdayLabel.setContentsMargins(0, 10, 0, 0)
         self.birthdayLayout.addWidget(self.birthdayLabel, alignment=Qt.AlignmentFlag.AlignBottom)
 
@@ -181,15 +181,15 @@ class PatientFormWindow(QWidget):
         self.bodyLayout = QGridLayout()
         self.bodyLayout.setContentsMargins(0, 0, 0, 0)
 
-        self.weightLabel = Label("Weight(kg)")
+        self.weightLabel = Label("Weight (kg)")
         self.weightLabel.setContentsMargins(30, 10, 0, 0)
         self.bodyLayout.addWidget(self.weightLabel, 0, 0, alignment=Qt.AlignmentFlag.AlignBottom)
 
-        self.heightLabel = Label("Height(cm)")
+        self.heightLabel = Label("Height (cm)")
         self.heightLabel.setContentsMargins(10, 10, 0, 0)
         self.bodyLayout.addWidget(self.heightLabel, 0, 1, alignment=Qt.AlignmentFlag.AlignBottom)
 
-        self.bodySurfaceAreaLabel = Label("Body Surface Area(m^2)")
+        self.bodySurfaceAreaLabel = Label("Body Surface Area (m^2)")
         self.bodySurfaceAreaLabel.setContentsMargins(10, 10, 30, 0)
         self.bodyLayout.addWidget(self.bodySurfaceAreaLabel, 0, 2, alignment=Qt.AlignmentFlag.AlignBottom)
 
