@@ -107,30 +107,6 @@ class OncologistFormWindow(QWidget):
         self.oncologistNameLayout.addWidget(self.oncologistLastNameLineEdit)
         self.oncologistFormLayout.addLayout(self.oncologistNameLayout)
         
-        self.genderLabel = Label("Gender/Sex")
-        self.genderLabel.setContentsMargins(30, 20, 0, 0)
-        self.oncologistFormLayout.addWidget(self.genderLabel, alignment=Qt.AlignmentFlag.AlignBottom)
-
-        self.genderLayout = QHBoxLayout()
-        self.genderLayout.setContentsMargins(30, 0, 0, 0)
-
-        self.radioButton = QRadioButton("Male")
-        self.radioButton.setContentsMargins(0, 0, 0, 0)
-        self.radioButton.setChecked(True)
-        self.radioButton.gender = "Male"
-        self.radioButton.setFont(QFont("Avenir", 18))
-        self.radioButton.toggled.connect(self.selectedGenderType)
-        self.genderLayout.addWidget(self.radioButton)
-
-        self.radioButton = QRadioButton("Female")
-        self.radioButton.setContentsMargins(10, 0, 0, 0)
-        self.radioButton.setFont(QFont("Avenir", 18))
-        self.radioButton.gender = "Female"
-        self.radioButton.toggled.connect(self.selectedGenderType)
-        self.genderLayout.addWidget(self.radioButton)
-
-        self.oncologistFormLayout.addLayout(self.genderLayout)
-
         self.usernameLabel = Label("Oncologist Username")
         self.usernameLabel.setContentsMargins(30, 20, 30, 0)
         self.oncologistFormLayout.addWidget(self.usernameLabel, alignment=Qt.AlignmentFlag.AlignBottom)
@@ -212,11 +188,6 @@ class OncologistFormWindow(QWidget):
         self.oncologistFormLayout.addLayout(self.bottomLayout)
 
         self.setLayout(self.oncologistFormBigLayout)
-
-    def selectedGenderType(self):
-        self.radioButton = self.sender()
-        if self.radioButton.isChecked():
-            print(self.radioButton.gender)
 
     def checkPasswordMatch(self):
         if(self.confirmPasswordEdit.text() != self.passwordEdit.text()):
