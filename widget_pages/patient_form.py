@@ -71,6 +71,7 @@ class PatientFormWindow(QWidget):
         self.scroll_area = QScrollArea()
         self.scroll_area.setContentsMargins(0, 0, 0, 0)
         self.scroll_area.setFixedWidth(820)
+        self.scroll_area.setFixedHeight(840)
         self.scroll_area.setStyleSheet(
             """
             QScrollArea
