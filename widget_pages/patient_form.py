@@ -354,6 +354,9 @@ class PatientFormWindow(QWidget):
         self.birthdayEdit.setDate(QDate.currentDate())
         self.bodySurfaceAreaMeasurement.clear()
         self.consentCheckBox.setChecked(False)
+        self.sex = "Male"
+        self.maleRadioButton.setChecked(True)
+        self.femaleRadioButton.setChecked(False)
 
         if self.patient is not None:
             self.getNames()
@@ -369,6 +372,12 @@ class PatientFormWindow(QWidget):
             self.phoneNumberFormatterBegin()
             self.bodySurfaceAreaMeasurement.setText(str(self.patient.bsa))
             self.consentCheckBox.setChecked(True)
+
+            if self.patient.sex == "Female":
+                self.sex = "Female"
+                self.maleRadioButton.setChecked(False)
+                self.femaleRadioButton.setChecked(True)
+
         else:
             self.typeOfPatientForm.setText("New Patient Enrollment")
 
@@ -539,8 +548,4 @@ class PatientFormWindow(QWidget):
 
     def updatePatientInfo(self):
         self.patient = self.parent().parent().selected_patient
-        # resetting fields 
-        self.sex = "Male"
-        self.maleRadioButton.setChecked(True)
-        self.femaleRadioButton.setChecked(False)
         self.displayParameters()

@@ -94,7 +94,6 @@ class SideBar(QWidget):
         self.backButton.setEnabled(enabled)
         self.patientInformationButton.setEnabled(enabled)
         self.dashboardButton.setEnabled(enabled)
-        self.logoutButton.setEnabled(enabled)
 
     def backButtonClicked(self):
         self.parent().backButtonClicked()
@@ -104,6 +103,3 @@ class SideBar(QWidget):
 
     def dashboardButtonClicked(self):
         self.parent().dashboardButtonClicked()
-
-    def logoffButtonClicked(self):
-        self.parent().logoffButtonClicked()
