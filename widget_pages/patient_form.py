@@ -243,6 +243,7 @@ class PatientFormWindow(QWidget):
             ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"]
         )
         self.bloodTypeSelect.activated.connect(self.selectedBloodType)
+        self.bloodTypeSelect.setCurrentIndex(-1)
         self.bloodAndALLLayout.addWidget(self.bloodTypeSelect, 1, 0)
 
         self.allTypeSelect = QComboBox()
@@ -256,6 +257,7 @@ class PatientFormWindow(QWidget):
             ]
         )
         self.allTypeSelect.activated.connect(self.selectedAllType)
+        self.allTypeSelect.setCurrentIndex(-1)
         self.bloodAndALLLayout.addWidget(self.allTypeSelect, 1, 1)
         self.patientFormLayout.addLayout(self.bloodAndALLLayout)
         
@@ -352,6 +354,8 @@ class PatientFormWindow(QWidget):
         self.phoneNumberEdit.clear()
         self.birthdayEdit.clear()
         self.birthdayEdit.setDate(QDate.currentDate())
+        self.bloodTypeSelect.setCurrentIndex(-1)
+        self.allTypeSelect.setCurrentIndex(-1)
         self.bodySurfaceAreaMeasurement.clear()
         self.consentCheckBox.setChecked(False)
         self.sex = "Male"

@@ -210,7 +210,13 @@ class PatientInformationWindow(QWidget):
 
         self.patientInputLayout.addWidget(FormRow(self.dateLabel, self.dateEdit))
 
+        self.bottomLayout = QHBoxLayout()
+        self.bottomLayout.setContentsMargins(50, 0, 50, 20)
+
         self.errorLabel = Label("")
+        self.errorLabel.setContentsMargins(0, 0, 0, 0)
+        self.bottomLayout.addWidget(self.errorLabel, 9, alignment=Qt.AlignmentFlag.AlignLeft)
+
         self.patient = None
         self.dosageEdit.setValidator(QDoubleValidator())
         self.ancMeasurementEdit.setValidator(QDoubleValidator())
@@ -222,15 +228,17 @@ class PatientInformationWindow(QWidget):
         self.dosageEdit.textEdited.connect(self.valueChangedDosage)
 
         self.saveButton = QPushButton("Save")
-        self.saveButton.setFont(QFont("Avenir", 18))
-        self.saveButton.setFixedWidth(70)
-        self.saveButton.setStyleSheet(
-            "background-color: #aaaaee; border-radius: 5px; padding: 10px"
-        )
         self.saveButton.clicked.connect(self.savePatientInformation)
         self.saveButton.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.saveButton.setContentsMargins(0, 0, 30, 0)
-        self.patientInputLayout.addWidget(FormRow(self.errorLabel, self.saveButton))
+        self.saveButton.setMinimumWidth(70)
+        self.saveButton.setMinimumHeight(40)
+        self.saveButton.setMaximumHeight(50)
+        self.saveButton.setFont(QFont("Avenir", 18))
+        self.saveButton.setStyleSheet(
+            "background-color: #aaaaee; border-radius: 10px; padding: 10px"
+        )
+        self.bottomLayout.addWidget(self.saveButton, 1, alignment=Qt.AlignmentFlag.AlignRight)
+        self.patientInputLayout.addLayout(self.bottomLayout)
 
         self.patientBottomLayout.addWidget(self.patientInputRight, 0, 1, 1, 1)
 
@@ -300,6 +308,8 @@ class PatientInformationWindow(QWidget):
 
     def displayParameters(self):
         self.dateEdit.setDate(QDate.currentDate())
+        self.dosageEdit.clear()
+        self.ancMeasurementEdit.clear()
         self.ancMeasurementDate.clear()
         self.ancMeasurement.clear()
         self.dosagePrescribedDate.clear()
@@ -421,6 +431,7 @@ class PatientInformationWindow(QWidget):
         except sqlite3.Error as er:
             msg = "Existing entry in the database. Please check your inputs."
             self.errorLabel.setText(msg)
+            self.errorLabel.setWordWrap(True)
             self.errorLabel.setStyleSheet("color:red")
             logging.error(er)
 
