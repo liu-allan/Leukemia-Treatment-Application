@@ -162,28 +162,35 @@ class TabShowGraph(QWidget):
 
         item = QTableWidgetItem("Day")
         item.setFlags(Qt.ItemFlag.ItemIsEnabled)
+        item.setFont(QFont("Avenir", 18))
         item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
         item.setBackground(QColor("#bfd8d2"))
         self.tableWidget.setItem(0, 0, item)
 
         item = QTableWidgetItem("Dosages (mg)")
         item.setFlags(Qt.ItemFlag.ItemIsEnabled)
+        item.setFont(QFont("Avenir", 18))
         item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
         item.setBackground(QColor("#bfd8d2"))
         self.tableWidget.setItem(1, 0, item)
 
+        self.tableWidget.setColumnWidth(0, 125)
+
         for i in range(row):
             for j in range(1, column):
+                self.tableWidget.setColumnWidth(j, 125)
 
                 if i == 0:
                     item = QTableWidgetItem(str(j))
                     item.setFlags(Qt.ItemFlag.ItemIsEnabled)
+                    item.setFont(QFont("Avenir", 18))
                     item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                     item.setBackground(QColor("#bfd8d2"))
                     self.tableWidget.setItem(i, j, item)
                 elif i == 1:
                     item = QTableWidgetItem("{:.2f}".format(dosages_list[j - 1]))
                     item.setFlags(Qt.ItemFlag.ItemIsEnabled)
+                    item.setFont(QFont("Avenir", 18))
                     item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                     self.tableWidget.setItem(i, j, item)
 
@@ -192,7 +199,7 @@ class TabShowGraph(QWidget):
 
         self.tableWidget.verticalHeader().setStretchLastSection(True)
         self.tableWidget.horizontalHeader().setSectionResizeMode(
-            QHeaderView.ResizeMode.ResizeToContents
+            QHeaderView.ResizeMode.Fixed
         )
         return self.tableWidget
 
