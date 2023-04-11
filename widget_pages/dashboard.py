@@ -293,7 +293,7 @@ class ModelTask(QObject):
     
     def run(self):
         print("running model for {} cycles...".format(self.num_cycles))
-        _, _, _, ra, aa, rd, ad = runModel(self.bsa, self.num_cycles, self.dosage, self.anc)
+        _, _, ra, aa, rd, ad = runModel(self.bsa, self.num_cycles, self.dosage, self.anc)
         print("finished running model")
         self.returned.emit([ra, aa, rd, ad])
         self.finished.emit()
