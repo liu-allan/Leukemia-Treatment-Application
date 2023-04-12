@@ -88,13 +88,11 @@ hash = bcrypt.hashpw(bytes, salt)
 #     """
 # )
 
-conn.execute(
-    "PRAGMA foreign_keys = ON"
-)  # enable foreign key cascade on delete
+conn.execute("PRAGMA foreign_keys = ON")  # enable foreign key cascade on delete
 
 # conn.execute(
 #     "DROP TABLE oncologists"
-# ) 
+# )
 
 conn.commit()  # this is necessary to confirm entry into the database
 

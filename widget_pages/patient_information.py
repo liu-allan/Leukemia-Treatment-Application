@@ -215,7 +215,9 @@ class PatientInformationWindow(QWidget):
 
         self.errorLabel = Label("")
         self.errorLabel.setContentsMargins(0, 0, 0, 0)
-        self.bottomLayout.addWidget(self.errorLabel, 9, alignment=Qt.AlignmentFlag.AlignLeft)
+        self.bottomLayout.addWidget(
+            self.errorLabel, 9, alignment=Qt.AlignmentFlag.AlignLeft
+        )
 
         self.patient = None
         self.dosageEdit.setValidator(QDoubleValidator())
@@ -237,7 +239,9 @@ class PatientInformationWindow(QWidget):
         self.saveButton.setStyleSheet(
             "background-color: #aaaaee; border-radius: 10px; padding: 10px"
         )
-        self.bottomLayout.addWidget(self.saveButton, 1, alignment=Qt.AlignmentFlag.AlignRight)
+        self.bottomLayout.addWidget(
+            self.saveButton, 1, alignment=Qt.AlignmentFlag.AlignRight
+        )
         self.patientInputLayout.addLayout(self.bottomLayout)
 
         self.patientBottomLayout.addWidget(self.patientInputRight, 0, 1, 1, 1)
@@ -258,7 +262,7 @@ class PatientInformationWindow(QWidget):
 
         self.modelInputLayout = QHBoxLayout(self.modelInput)
         self.modelInputLayout.setContentsMargins(0, 0, 0, 0)
-        
+
         self.numCyclesEdit = LineEdit("# calculation cycles")
         self.numCyclesEdit.setContentsMargins(30, 0, 30, 0)
         self.numCyclesEdit.setFixedWidth(500)
@@ -276,7 +280,9 @@ class PatientInformationWindow(QWidget):
         )
         self.calculateButton.setEnabled(False)
 
-        self.calculateButton.clicked.connect(lambda: self.showDashboardWindow(do_calculation=True))
+        self.calculateButton.clicked.connect(
+            lambda: self.showDashboardWindow(do_calculation=True)
+        )
 
         self.modelInputLayout.addWidget(self.numCyclesEdit)
         self.modelInputLayout.addWidget(self.calculateButton)
@@ -293,7 +299,7 @@ class PatientInformationWindow(QWidget):
 
     def backButtonClicked(self):
         self.showPatientListWindow()
-    
+
     def patientInformationButtonClicked(self):
         return
 
@@ -471,7 +477,9 @@ class PatientInformationWindow(QWidget):
                 logging.error(e)
             else:
                 self.errorLabel.clear()
-                self.parent().parent().showDashboardWindow(calculation_info=(True, numCalculationCycles))
+                self.parent().parent().showDashboardWindow(
+                    calculation_info=(True, numCalculationCycles)
+                )
         else:
             self.errorLabel.clear()
             self.parent().parent().showDashboardWindow(calculation_info=(False, 0))

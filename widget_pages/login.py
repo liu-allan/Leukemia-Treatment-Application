@@ -24,18 +24,21 @@ import qtawesome as qta
 
 logging.getLogger().setLevel(logging.INFO)
 
+
 class LoginWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setStyleSheet('border-radius: 20px;')
+        self.setStyleSheet("border-radius: 20px;")
 
         self.mainPageLayout = QHBoxLayout()
         self.mainPageLayout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.mainPageLayout)
 
         self.picture = QLabel()
-        self.picture.setStyleSheet('border-image: url("icons/background.png"); background-repeat: no-repeat; background-position: center; height: auto; border-radius: 20px')
+        self.picture.setStyleSheet(
+            'border-image: url("icons/background.png"); background-repeat: no-repeat; background-position: center; height: auto; border-radius: 20px'
+        )
         self.picture.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.mainPageLayout.addWidget(self.picture, 50)
 
@@ -59,7 +62,9 @@ class LoginWindow(QWidget):
         self.quotes.raise_()
 
         self.quotesLayout = QVBoxLayout(self.quotes)
-        self.pictureTop = QLabel("A graphical tool for comparing two dosage strategies used in Leukemia treatment")
+        self.pictureTop = QLabel(
+            "A graphical tool for comparing two dosage strategies used in Leukemia treatment"
+        )
         self.pictureTop.setObjectName("QuoteTop")
         self.pictureTop.setFont(QFont("Avenir", 25))
         self.pictureTop.setAlignment(Qt.AlignmentFlag.AlignLeft)
@@ -76,7 +81,9 @@ class LoginWindow(QWidget):
         self.pictureTop.setContentsMargins(30, 0, 30, 0)
         self.quotesLayout.addWidget(self.pictureTop, 2)
 
-        self.quoteBottom = QLabel("This application can help oncologists to decide dosages for better patient health")
+        self.quoteBottom = QLabel(
+            "This application can help oncologists to decide dosages for better patient health"
+        )
         self.quoteBottom.setObjectName("QuoteBottom")
         self.quoteBottom.setFont(QFont("Avenir", 13))
         self.quoteBottom.setAlignment(Qt.AlignmentFlag.AlignLeft)
@@ -95,12 +102,10 @@ class LoginWindow(QWidget):
 
         self.login = QWidget()
         self.login.setContentsMargins(30, 10, 30, 0)
-        self.login.setStyleSheet(
-            "background-color: #ffffff; border-radius: 20px;"
-        )
+        self.login.setStyleSheet("background-color: #ffffff; border-radius: 20px;")
         self.mainPageLayout.addWidget(self.login, 50)
         self.layout = QVBoxLayout(self.login)
-        
+
         self.title = QWidget()
         self.title.setContentsMargins(0, 0, 0, 0)
 
@@ -113,7 +118,9 @@ class LoginWindow(QWidget):
         self.titleLayout.addWidget(self.appNameIcon)
 
         self.appName = QLabel()
-        self.appName.setText('<font color="black">Leukemia</font><font color="#aaaaee">Compare</font>')
+        self.appName.setText(
+            '<font color="black">Leukemia</font><font color="#aaaaee">Compare</font>'
+        )
         self.appName.setFont(QFont("Avenir", 30))
         self.appName.setContentsMargins(0, 0, 0, 0)
         self.appName.setAlignment(Qt.AlignmentFlag.AlignRight)
@@ -151,7 +158,9 @@ class LoginWindow(QWidget):
             "background-color: #f5f5f5; height: 60px; border-radius: 20px;"
         )
         self.usernameLineEdit.setFixedWidth(500)
-        self.middleLayout.addWidget(self.usernameLineEdit, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.middleLayout.addWidget(
+            self.usernameLineEdit, alignment=Qt.AlignmentFlag.AlignCenter
+        )
 
         self.passwordLineEdit = QLineEdit()
         self.passwordLineEdit.setPlaceholderText("Password")
@@ -163,7 +172,9 @@ class LoginWindow(QWidget):
         )
         self.passwordLineEdit.setFixedWidth(500)
         self.passwordLineEdit.setEchoMode(QLineEdit.EchoMode.Password)
-        self.middleLayout.addWidget(self.passwordLineEdit, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.middleLayout.addWidget(
+            self.passwordLineEdit, alignment=Qt.AlignmentFlag.AlignCenter
+        )
 
         self.errorLabel = QLabel()
         self.errorLabel.setFont(QFont("Avenir", 12))
@@ -185,20 +196,24 @@ class LoginWindow(QWidget):
             "background-color: #aaaaee; border-radius: 20px; padding: 10px; color: #000000"
         )
 
-        self.middleLayout.addWidget(self.loginPushButton, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.middleLayout.addWidget(
+            self.loginPushButton, alignment=Qt.AlignmentFlag.AlignCenter
+        )
         self.middleLayout.addSpacerItem(self.spacer)
         self.layout.addSpacerItem(self.spacer)
 
-        self.copyRightLabel = QLabel("Copyright @ 2023. LeukemiaCompare. All rights reserved.")
+        self.copyRightLabel = QLabel(
+            "Copyright @ 2023. LeukemiaCompare. All rights reserved."
+        )
         self.copyRightLabel.setFont(QFont("Avenir", 12))
         self.copyRightLabel.setContentsMargins(0, 0, 0, 10)
         self.copyRightLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.copyRightLabel.setAlignment(Qt.AlignmentFlag.AlignBottom)
-        self.copyRightLabel.setStyleSheet(
-            "color: #5a5a5a"
-        )
+        self.copyRightLabel.setStyleSheet("color: #5a5a5a")
 
-        self.layout.addWidget(self.copyRightLabel, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.layout.addWidget(
+            self.copyRightLabel, alignment=Qt.AlignmentFlag.AlignCenter
+        )
 
     def loginPushed(self):
         try:
@@ -230,7 +245,7 @@ class LoginWindow(QWidget):
             self.usernameLineEdit.setFocus()
             logging.info("Login Successful")
             self.updateUser(username, password)
-            if (row[3] == "TRUE"):
+            if row[3] == "TRUE":
                 self.parent().parent().is_admin_user = True
             else:
                 self.parent().parent().is_admin_user = False

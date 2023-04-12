@@ -16,20 +16,36 @@ runModel will automatically follow the reactive dosage strategy, therefore we do
 The outputs are all lists of length 21*numCycles*1000
 
 """
+
+
 def runModel(bsa, numCycles, dosage, ANC_measurements):
-    
+
     eng = matlab.engine.start_matlab()
-    s = eng.genpath('Leukemia-Treatment-Project')
+    s = eng.genpath("Leukemia-Treatment-Project")
     eng.addpath(s, nargout=0)
-    time, nominal_trajectory, reactive_trajectory, anticipatory_trajectory, reactive_dosage, anticipatory_dosage = eng.runController(bsa, numCycles, dosage, ANC_measurements, nargout=6)
+    (
+        time,
+        nominal_trajectory,
+        reactive_trajectory,
+        anticipatory_trajectory,
+        reactive_dosage,
+        anticipatory_dosage,
+    ) = eng.runController(bsa, numCycles, dosage, ANC_measurements, nargout=6)
     eng.quit()
 
     indices = [i for i in range(0, len(time) - len(time) % 100, 100)]
-    
+
     time = [time[i][0] for i in indices]
     reactive_trajectory = [reactive_trajectory[i][0] for i in indices]
     anticipatory_trajectory = [anticipatory_trajectory[i][0] for i in indices]
     reactive_dosage = [reactive_dosage[i][0] for i in indices]
     anticipatory_dosage = [anticipatory_dosage[i][0] for i in indices]
 
-    return time, nominal_trajectory, reactive_trajectory, anticipatory_trajectory, reactive_dosage, anticipatory_dosage
+    return (
+        time,
+        nominal_trajectory,
+        reactive_trajectory,
+        anticipatory_trajectory,
+        reactive_dosage,
+        anticipatory_dosage,
+    )

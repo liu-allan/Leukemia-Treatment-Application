@@ -20,7 +20,7 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QCheckBox,
     QSizePolicy,
-    QSpacerItem
+    QSpacerItem,
 )
 from PyQt6.QtGui import QDoubleValidator, QFont
 from pyqtgraph import plot
@@ -91,8 +91,10 @@ class PatientFormWindow(QWidget):
             Qt.ScrollBarPolicy.ScrollBarAlwaysOff
         )
         self.scroll_area.setWidgetResizable(True)
-        self.patientFormBigLayout.addWidget(self.scroll_area, alignment=Qt.AlignmentFlag.AlignHCenter)
-        
+        self.patientFormBigLayout.addWidget(
+            self.scroll_area, alignment=Qt.AlignmentFlag.AlignHCenter
+        )
+
         self.patientFormWidget = QWidget()
         self.patientFormWidget.setContentsMargins(0, 0, 0, 0)
         self.patientFormWidget.setFixedWidth(810)
@@ -116,12 +118,18 @@ class PatientFormWindow(QWidget):
         self.typeOfPatientForm.setFont(QFont("Avenir", 30))
         self.typeOfPatientForm.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.typeOfPatientForm.setFixedWidth(self.scroll_area.width() - 60)
-        self.typeOfPatientForm.setStyleSheet("background-color: rgba(170, 170, 238, 100); height: 60px; border-radius: 20px;")
-        self.patientFormLayout.addWidget(self.typeOfPatientForm, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.typeOfPatientForm.setStyleSheet(
+            "background-color: rgba(170, 170, 238, 100); height: 60px; border-radius: 20px;"
+        )
+        self.patientFormLayout.addWidget(
+            self.typeOfPatientForm, alignment=Qt.AlignmentFlag.AlignCenter
+        )
 
         self.patientLabel = Label("Patient Name")
         self.patientLabel.setContentsMargins(30, 20, 0, 0)
-        self.patientFormLayout.addWidget(self.patientLabel, alignment=Qt.AlignmentFlag.AlignBottom)
+        self.patientFormLayout.addWidget(
+            self.patientLabel, alignment=Qt.AlignmentFlag.AlignBottom
+        )
 
         self.patientNameLayout = QHBoxLayout()
         self.patientNameLayout.setContentsMargins(0, 0, 0, 0)
@@ -144,10 +152,12 @@ class PatientFormWindow(QWidget):
         )
         self.patientNameLayout.addWidget(self.patientLastNameLineEdit)
         self.patientFormLayout.addLayout(self.patientNameLayout)
-        
+
         self.sexLabel = Label("Sex")
         self.sexLabel.setContentsMargins(30, 10, 0, 0)
-        self.patientFormLayout.addWidget(self.sexLabel, alignment=Qt.AlignmentFlag.AlignBottom)
+        self.patientFormLayout.addWidget(
+            self.sexLabel, alignment=Qt.AlignmentFlag.AlignBottom
+        )
 
         self.sexLayout = QHBoxLayout()
         self.sexLayout.setContentsMargins(30, 0, 0, 0)
@@ -170,10 +180,12 @@ class PatientFormWindow(QWidget):
 
         self.birthdayLayout = QVBoxLayout()
         self.birthdayLayout.setContentsMargins(30, 0, 30, 0)
-        
+
         self.birthdayLabel = Label("Birthday")
         self.birthdayLabel.setContentsMargins(0, 10, 0, 0)
-        self.birthdayLayout.addWidget(self.birthdayLabel, alignment=Qt.AlignmentFlag.AlignBottom)
+        self.birthdayLayout.addWidget(
+            self.birthdayLabel, alignment=Qt.AlignmentFlag.AlignBottom
+        )
 
         self.birthdayEdit = QDateEdit()
         self.birthdayEdit.setContentsMargins(0, 0, 0, 0)
@@ -186,15 +198,21 @@ class PatientFormWindow(QWidget):
 
         self.weightLabel = Label("Weight (kg)")
         self.weightLabel.setContentsMargins(30, 10, 0, 0)
-        self.bodyLayout.addWidget(self.weightLabel, 0, 0, alignment=Qt.AlignmentFlag.AlignBottom)
+        self.bodyLayout.addWidget(
+            self.weightLabel, 0, 0, alignment=Qt.AlignmentFlag.AlignBottom
+        )
 
         self.heightLabel = Label("Height (cm)")
         self.heightLabel.setContentsMargins(10, 10, 0, 0)
-        self.bodyLayout.addWidget(self.heightLabel, 0, 1, alignment=Qt.AlignmentFlag.AlignBottom)
+        self.bodyLayout.addWidget(
+            self.heightLabel, 0, 1, alignment=Qt.AlignmentFlag.AlignBottom
+        )
 
         self.bodySurfaceAreaLabel = Label("Body Surface Area (m^2)")
         self.bodySurfaceAreaLabel.setContentsMargins(10, 10, 30, 0)
-        self.bodyLayout.addWidget(self.bodySurfaceAreaLabel, 0, 2, alignment=Qt.AlignmentFlag.AlignBottom)
+        self.bodyLayout.addWidget(
+            self.bodySurfaceAreaLabel, 0, 2, alignment=Qt.AlignmentFlag.AlignBottom
+        )
 
         self.weightEdit = QLineEdit()
         self.weightEdit.setContentsMargins(30, 0, 0, 0)
@@ -230,11 +248,15 @@ class PatientFormWindow(QWidget):
 
         self.bloodTypeLabel = Label("Blood Type")
         self.bloodTypeLabel.setContentsMargins(0, 10, 0, 0)
-        self.bloodAndALLLayout.addWidget(self.bloodTypeLabel, 0, 0, alignment=Qt.AlignmentFlag.AlignBottom)
-        
+        self.bloodAndALLLayout.addWidget(
+            self.bloodTypeLabel, 0, 0, alignment=Qt.AlignmentFlag.AlignBottom
+        )
+
         self.allTypeLabel = Label("ALL Type")
         self.allTypeLabel.setContentsMargins(10, 10, 0, 0)
-        self.bloodAndALLLayout.addWidget(self.allTypeLabel, 0, 1, alignment=Qt.AlignmentFlag.AlignBottom)
+        self.bloodAndALLLayout.addWidget(
+            self.allTypeLabel, 0, 1, alignment=Qt.AlignmentFlag.AlignBottom
+        )
 
         self.bloodTypeSelect = QComboBox()
         self.bloodTypeSelect.setContentsMargins(0, 0, 0, 0)
@@ -260,10 +282,12 @@ class PatientFormWindow(QWidget):
         self.allTypeSelect.setCurrentIndex(-1)
         self.bloodAndALLLayout.addWidget(self.allTypeSelect, 1, 1)
         self.patientFormLayout.addLayout(self.bloodAndALLLayout)
-        
+
         self.phoneNumberLabel = Label("Phone Number")
         self.phoneNumberLabel.setContentsMargins(30, 10, 0, 0)
-        self.patientFormLayout.addWidget(self.phoneNumberLabel, alignment=Qt.AlignmentFlag.AlignBottom)
+        self.patientFormLayout.addWidget(
+            self.phoneNumberLabel, alignment=Qt.AlignmentFlag.AlignBottom
+        )
 
         self.phoneNumberEdit = QLineEdit()
         self.phoneNumberEdit.setContentsMargins(30, 0, 30, 0)
@@ -277,15 +301,21 @@ class PatientFormWindow(QWidget):
         self.consentLayout = QHBoxLayout()
         self.consentLayout.setContentsMargins(30, 0, 30, 0)
 
-        self.consentLabel = QLabel("I authorize the use and storage of my information in this application")
+        self.consentLabel = QLabel(
+            "I authorize the use and storage of my information in this application"
+        )
         self.consentLabel.setFont(QFont("Avenir", 18))
         self.consentLabel.setContentsMargins(0, 10, 0, 0)
-        self.consentLayout.addWidget(self.consentLabel, alignment=Qt.AlignmentFlag.AlignLeft)
+        self.consentLayout.addWidget(
+            self.consentLabel, alignment=Qt.AlignmentFlag.AlignLeft
+        )
 
         self.consentCheckBox = QCheckBox()
         self.consentCheckBox.setContentsMargins(10, 10, 0, 0)
         self.consentCheckBox.setFixedWidth(25)
-        self.consentLayout.addWidget(self.consentCheckBox, alignment=Qt.AlignmentFlag.AlignRight)
+        self.consentLayout.addWidget(
+            self.consentCheckBox, alignment=Qt.AlignmentFlag.AlignRight
+        )
         self.patientFormLayout.addLayout(self.consentLayout)
 
         self.spacer = QSpacerItem(
@@ -298,7 +328,9 @@ class PatientFormWindow(QWidget):
 
         self.errorLabel = Label("")
         self.errorLabel.setContentsMargins(0, 0, 0, 0)
-        self.bottomLayout.addWidget(self.errorLabel, 8, alignment=Qt.AlignmentFlag.AlignLeft)
+        self.bottomLayout.addWidget(
+            self.errorLabel, 8, alignment=Qt.AlignmentFlag.AlignLeft
+        )
         self.patient = None
         self.weightEdit.setValidator(QDoubleValidator())
         self.heightEdit.setValidator(QDoubleValidator())
@@ -317,7 +349,9 @@ class PatientFormWindow(QWidget):
         self.cancelButton.setStyleSheet(
             "background-color: #aaaaee; border-radius: 10px;"
         )
-        self.bottomLayout.addWidget(self.cancelButton, 1, alignment=Qt.AlignmentFlag.AlignRight)
+        self.bottomLayout.addWidget(
+            self.cancelButton, 1, alignment=Qt.AlignmentFlag.AlignRight
+        )
 
         self.saveButton = QPushButton("Save")
         self.saveButton.clicked.connect(self.savePatientInformation)
@@ -326,10 +360,10 @@ class PatientFormWindow(QWidget):
         self.saveButton.setMinimumHeight(40)
         self.saveButton.setMaximumHeight(50)
         self.saveButton.setFont(QFont("Avenir", 18))
-        self.saveButton.setStyleSheet(
-            "background-color: #aaaaee; border-radius: 10px;"
+        self.saveButton.setStyleSheet("background-color: #aaaaee; border-radius: 10px;")
+        self.bottomLayout.addWidget(
+            self.saveButton, 1, alignment=Qt.AlignmentFlag.AlignRight
         )
-        self.bottomLayout.addWidget(self.saveButton, 1, alignment=Qt.AlignmentFlag.AlignRight)
 
         self.patientFormLayout.addLayout(self.bottomLayout)
 
@@ -423,10 +457,14 @@ class PatientFormWindow(QWidget):
             self.parent().parent().showPatientListWindow()
         else:
             self.parent().parent().showPatientInformationWindow()
-        
+
     def savePatientInformation(self):
         try:
-            name = self.patientFirstNameLineEdit.text() + " " + self.patientLastNameLineEdit.text()
+            name = (
+                self.patientFirstNameLineEdit.text()
+                + " "
+                + self.patientLastNameLineEdit.text()
+            )
             assert self.patientFirstNameLineEdit.text() != ""
             assert self.patientLastNameLineEdit.text() != ""
             weight = self.weightEdit.text()
@@ -451,7 +489,7 @@ class PatientFormWindow(QWidget):
             patient_id = self.patient.id if self.patient else -1
 
             if not self.consentCheckBox.isChecked():
-                raise Exception("Patient must provide consent to store data") 
+                raise Exception("Patient must provide consent to store data")
 
             if self.patient is None:
                 password = self.parent().parent().password
@@ -473,7 +511,7 @@ class PatientFormWindow(QWidget):
                         encryptData(allType, password),
                         encryptData(bsa, password),
                         self.parent().parent().username,
-                        encryptData(sex, password)
+                        encryptData(sex, password),
                     ),
                 )
 

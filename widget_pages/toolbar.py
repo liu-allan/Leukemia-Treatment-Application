@@ -12,6 +12,7 @@ from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
 from util.util import getLastNameFromFullName
 
+
 class ToolBar(QWidget):
     def __init__(self, page_name, user_full_name):
         super().__init__()
@@ -22,7 +23,7 @@ class ToolBar(QWidget):
         self.toolBar.setStyleSheet(
             "background-color: #a9c7c5; height: 100; border-radius: 10px;"
         )
-        
+
         self.dashboard_label = QLabel(page_name)
         self.dashboard_label.setAlignment(Qt.AlignmentFlag.AlignVCenter)
         self.dashboard_label.setFont(QFont("Avenir", 25))
@@ -137,7 +138,7 @@ class ToolBar(QWidget):
             # link to login page
             self.updateUsername("")
             self.showLoginWindow()
-        
+
     def lockLogoutButton(self, lock):
         self.logout_button.setEnabled(not lock)
 
@@ -149,5 +150,3 @@ class ToolBar(QWidget):
 
     def userProfileClick(self, s):
         return
-
-    

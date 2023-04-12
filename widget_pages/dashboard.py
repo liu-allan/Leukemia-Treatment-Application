@@ -83,7 +83,7 @@ class TabShowGraph(QWidget):
 
         self.graphWidget = pg.PlotWidget()
         self.graphWidget.setCursor(Qt.CursorShape.OpenHandCursor)
-        
+
         # Add Background colour to white
         self.graphWidget.setBackground("w")
         # Add Title
@@ -95,7 +95,9 @@ class TabShowGraph(QWidget):
         )
         # Add Axis Labels
         styles = {"color": "#000000", "font": QFont("Avenir", 25), "font-size": "25px"}
-        self.graphWidget.setLabel("left", "Neutrophil Count (# Cells/L) x 1e9", **styles)
+        self.graphWidget.setLabel(
+            "left", "Neutrophil Count (# Cells/L) x 1e9", **styles
+        )
         self.graphWidget.setLabel("bottom", "Day (days)", **styles)
         # Add legend
         self.graphWidget.addLegend()
@@ -124,22 +126,42 @@ class TabShowGraph(QWidget):
         self.setLayout(self.graphLayout)
 
     def plotANCGraph(self):
-        pen = pg.mkPen(color='r', width=5)
+        pen = pg.mkPen(color="r", width=5)
         self.ant_plot = self.graphWidget.plot(
-            self.day, self.anticipatory_anc, name="Anticipatory", pen=pen, symbol="o", symbolSize=7, symbolBrush=('r')
+            self.day,
+            self.anticipatory_anc,
+            name="Anticipatory",
+            pen=pen,
+            symbol="o",
+            symbolSize=7,
+            symbolBrush=("r"),
         )
-        pen = pg.mkPen(color='b', width=5)
+        pen = pg.mkPen(color="b", width=5)
         self.rea_plot = self.graphWidget.plot(
-            self.day, self.reactive_anc, name="Reactive", pen=pen, symbol="o", symbolSize=7, symbolBrush=('b')
+            self.day,
+            self.reactive_anc,
+            name="Reactive",
+            pen=pen,
+            symbol="o",
+            symbolSize=7,
+            symbolBrush=("b"),
         )
 
         pen = pg.mkPen(color="#4a707a", width=5, style=Qt.PenStyle.DashLine)
         self.pos_plot = self.graphWidget.plot(
-            self.day, self.boundary_positive, name="Neutrophil Top Boundary", pen=pen, symbolBrush=("#4a707a")
+            self.day,
+            self.boundary_positive,
+            name="Neutrophil Top Boundary",
+            pen=pen,
+            symbolBrush=("#4a707a"),
         )
         pen = pg.mkPen(color="#4a707a", width=5, style=Qt.PenStyle.DashLine)
         self.neg_plot = self.graphWidget.plot(
-            self.day, self.boundary_negative, name="Neutrophil Bottom Boundary", pen=pen, symbolBrush=("#4a707a")
+            self.day,
+            self.boundary_negative,
+            name="Neutrophil Bottom Boundary",
+            pen=pen,
+            symbolBrush=("#4a707a"),
         )
 
     def updateANCGraph(self):
@@ -160,12 +182,16 @@ class TabShowGraph(QWidget):
         self.anticipatory_dosage_title = QLabel("Anticipatory dosages")
         self.anticipatory_dosage_title.setFont(QFont("Avenir", 15))
         self.anticipatory_dosage_title.setMargin(5)
-        self.anticipatory_dosage_table = self.createTable(2, len(self.anticipatory_dosage) + 1, self.anticipatory_dosage)
+        self.anticipatory_dosage_table = self.createTable(
+            2, len(self.anticipatory_dosage) + 1, self.anticipatory_dosage
+        )
 
         self.reactive_dosage_title = QLabel("Reactive dosages")
         self.reactive_dosage_title.setFont(QFont("Avenir", 15))
         self.reactive_dosage_title.setMargin(5)
-        self.reactive_dosage_table = self.createTable(2, len(self.reactive_dosage) + 1, self.reactive_dosage)
+        self.reactive_dosage_table = self.createTable(
+            2, len(self.reactive_dosage) + 1, self.reactive_dosage
+        )
 
         self.dosageTableLayout.addWidget(self.anticipatory_dosage_title)
         self.dosageTableLayout.addWidget(self.anticipatory_dosage_table)
@@ -228,9 +254,16 @@ class TabShowGraph(QWidget):
         )
         return self.tableWidget
 
-    def setGraphTableData(self, reactive_anc, anticipatory_anc, reactive_dosage, anticipatory_dosage):
+    def setGraphTableData(
+        self, reactive_anc, anticipatory_anc, reactive_dosage, anticipatory_dosage
+    ):
         # set graph and table parameters
-        if reactive_anc and anticipatory_anc and reactive_dosage and anticipatory_dosage:
+        if (
+            reactive_anc
+            and anticipatory_anc
+            and reactive_dosage
+            and anticipatory_dosage
+        ):
             self.day = [i + 1 for i in range(len(reactive_anc))]
             self.boundary_positive = [2 for _ in range(len(self.day))]
             self.boundary_negative = [1 for _ in range(len(self.day))]
@@ -249,7 +282,7 @@ class TabShowGraph(QWidget):
 
         self.updateANCGraph()
         self.updateDosageTable()
-    
+
     def toggleResults(self, show):
         self.noResultsWidget.setVisible(not show)
         self.graphWidget.setVisible(show)
@@ -257,7 +290,7 @@ class TabShowGraph(QWidget):
         self.anticipatory_dosage_table.setVisible(show)
         self.reactive_dosage_title.setVisible(show)
         self.reactive_dosage_table.setVisible(show)
-    
+
     def showLoadingScreen(self, show):
         self.noResultsWidget.setVisible(False)
 
@@ -279,7 +312,8 @@ class TabShowGraph(QWidget):
             self.anticipatory_dosage_table.setVisible(not show)
             self.reactive_dosage_title.setVisible(not show)
             self.reactive_dosage_table.setVisible(not show)
-            
+
+
 class ModelTask(QObject):
     returned = pyqtSignal(list)
     finished = pyqtSignal()
@@ -290,13 +324,16 @@ class ModelTask(QObject):
         self.num_cycles = num_cycles
         self.dosage = dosage
         self.anc = anc
-    
+
     def run(self):
         print("running model for {} cycles...".format(self.num_cycles))
-        _, _, ra, aa, rd, ad = runModel(self.bsa, self.num_cycles, self.dosage, self.anc)
+        _, _, ra, aa, rd, ad = runModel(
+            self.bsa, self.num_cycles, self.dosage, self.anc
+        )
         print("finished running model")
         self.returned.emit([ra, aa, rd, ad])
         self.finished.emit()
+
 
 class DashboardWindow(QWidget):
     def __init__(self):
@@ -304,7 +341,7 @@ class DashboardWindow(QWidget):
 
         self.patient = None
         self.displayed_patient = None
-        
+
         self.model_thread = None
         self.model_task = None
         self.simulating_patient = None
@@ -335,7 +372,10 @@ class DashboardWindow(QWidget):
     def updatePatientInfo(self, calculation_info):
         self.patient = self.parent().parent().selected_patient
 
-        if self.simulating_patient and self.simulating_patient.user_id == self.patient.user_id:
+        if (
+            self.simulating_patient
+            and self.simulating_patient.user_id == self.patient.user_id
+        ):
             self.graphs.showLoadingScreen(True)
         else:
             self.graphs.showLoadingScreen(False)
@@ -343,15 +383,21 @@ class DashboardWindow(QWidget):
                 self.graphs.toggleResults(True)
                 self.runMatLabModel(calculation_info[1])
                 self.displayed_patient = self.patient
-            elif self.displayed_patient and self.displayed_patient.user_id == self.patient.user_id and self.simulating_patient == None:
+            elif (
+                self.displayed_patient
+                and self.displayed_patient.user_id == self.patient.user_id
+                and self.simulating_patient == None
+            ):
                 self.graphs.toggleResults(True)
             else:
                 self.graphs.toggleResults(False)
-    
+
     @pyqtSlot(list)
     def displayGraphTable(self, info_list):
         self.simulating_patient = None
-        self.graphs.setGraphTableData(info_list[0], info_list[1], info_list[2], info_list[3])
+        self.graphs.setGraphTableData(
+            info_list[0], info_list[1], info_list[2], info_list[3]
+        )
         self.graphs.showLoadingScreen(False)
         self.sideBar.lockButtons(False)
         self.parent().parent().toolBar.lockLogoutButton(False)
@@ -381,12 +427,12 @@ class DashboardWindow(QWidget):
         self.graphs.showLoadingScreen(True)
         self.sideBar.lockButtons(True)
         self.parent().parent().toolBar.lockLogoutButton(True)
-    
+
     def backButtonClicked(self):
         self.showPatientListWindow()
-    
+
     def dashboardButtonClicked(self):
         return
-    
+
     def patientInformationButtonClicked(self):
         self.showPatientInformationWindow()
