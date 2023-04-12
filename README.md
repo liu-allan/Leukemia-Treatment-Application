@@ -108,7 +108,7 @@ After calculation, the dashboard page will show two main components.
 1. The top part is the ANC trajectories for two strategies. 
 2. The bottom part is the dosage tables for two strategies.
 
-![Dashboard Page](https://user-images.githubusercontent.com/44624612/231537420-bfb6324d-7aad-4841-ad94-dee608bf41db.png)
+![Dashboard Page](https://user-images.githubusercontent.com/44624612/231587587-8ac735a0-17ca-4ce1-bbc0-e6165d7022c6.png)
 
 - Navigate to previous pages using the tabs on the left.
 - Press and hold left click to move the graph.
