@@ -18,6 +18,39 @@ pip install -r requirements.txt
 git submodule update --init --recursive
 ```
 
+## 1.1 Setup on MacOS M1 
+
+- To run matlabengine on MacOS M1, need to install Rosetta2 on the machine. 
+- To check whether the terminal is Rosetta2 enabled
+  ```
+  uname -m
+  ```
+  - if it returns x86_64, then it means you are on a Rosetta2 enabled terminal
+  - if it returns arm64, then it means it is not enabled
+
+- To install Rosetta2, open Terminal and run this command:
+  ```
+  softwareupdate --install-rosetta --agree-to-license
+  ```
+- After installing Rosetta2, please follow this youtube link: https://www.youtube.com/watch?v=9W8rTTE1WEA
+  - Go to Finder -> Applications -> Utilities -> Terminal
+  - Right click on the Terminal app and select "Duplicate" and rename the duplicate app to something else
+  - Then right click on the duplicated Terminal and select "Get Info" and checkmark "Open using Rosetta"
+
+- Now you can run the first command again to check whether you are running on x86_64
+
+- Download miniconda3 x86_64 bash installer using this link: https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
+- Follow step 4 and onwards to download miniconda3: https://towardsdatascience.com/how-to-install-miniconda-x86-64-apple-m1-side-by-side-on-mac-book-m1-a476936bfaf0
+
+- After success installation of miniconda3 x86_64, to run the entire project:
+  - Open Rosetta2 enabled terminal
+  - Set up virtual environment using the following command:
+  ```
+  /usr/bin/python3 -m venv env
+  source env/bin/activate 
+  ```
+  - Then continue to follow the 1.0 Setup.
+
 ## 2.0 How to use
 
 Open the application in the root directory of the repository.
@@ -29,7 +62,6 @@ Login with credentials. To create a new user, see [section 5.0](https://github.c
 ![image](https://user-images.githubusercontent.com/44624435/226797287-7ec91a25-df3c-48b4-99d3-2bb32287f7fa.png)
 
 After logging in, log out at any time by pressing the `Log Off` button in the top right of the application. 
-
 
 ### 2.1 Patient List Page
 
