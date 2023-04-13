@@ -458,8 +458,6 @@ class PatientInformationWindow(QWidget):
             self.dosageEdited = False
 
     def showPatientListWindow(self):
-        self.graphWidgetANC.clear()
-        self.graphWidgetDosages.clear()
         self.numCyclesEdit.clear()
         self.errorLabel.clear()
         self.parent().parent().showPatientListWindow()
@@ -495,6 +493,8 @@ class PatientInformationWindow(QWidget):
         self.dosageEdited = True
 
     def updatePatientInfo(self):
+        self.graphWidgetANC.clear()
+        self.graphWidgetDosages.clear()
         self.errorLabel.clear()
         self.patient = self.parent().parent().selected_patient
         self.displayParameters()
