@@ -13,7 +13,7 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QComboBox,
     QMessageBox,
-    QDialogButtonBox
+    QDialogButtonBox,
 )
 from PyQt6.QtCore import Qt, QSize, QPropertyAnimation, QAbstractAnimation
 from PyQt6.QtGui import QFont, QIcon, QPixmap
@@ -21,14 +21,19 @@ from PyQt6.QtGui import QFont, QIcon, QPixmap
 from datetime import datetime
 from enum import Enum
 from util.util import decryptData
+
 logging.getLogger().setLevel(logging.INFO)
+
 
 class SearchMode(Enum):
     DEFAULT = 0
     ADVANCED = 1
 
+
 class PatientListItem(QPushButton):
-    def __init__(self, patient_name, patient_id, user_id, birthday, phone_number, is_admin=False):
+    def __init__(
+        self, patient_name, patient_id, user_id, birthday, phone_number, is_admin=False
+    ):
         super(PatientListItem, self).__init__()
 
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
@@ -52,15 +57,24 @@ class PatientListItem(QPushButton):
             """
         )
         self.setCursor(Qt.CursorShape.PointingHandCursor)
-        if (not is_admin):
+        if not is_admin:
             self.clicked.connect(self.showPatientInfo)
 
         self.patient_name = patient_name
         self.patient_id = patient_id
         self.user_id = user_id
         self.is_admin = is_admin
-        self.birthday = datetime.strptime(birthday, '%Y%m%d').strftime('%Y-%m-%d') if birthday else ""
-        self.phone_number = str(format(int(phone_number[:-1]), ",").replace(",", "-")) + str(phone_number[-1]) if phone_number else ""
+        self.birthday = (
+            datetime.strptime(birthday, "%Y%m%d").strftime("%Y-%m-%d")
+            if birthday
+            else ""
+        )
+        self.phone_number = (
+            str(format(int(phone_number[:-1]), ",").replace(",", "-"))
+            + str(phone_number[-1])
+            if phone_number
+            else ""
+        )
 
         self.avatar = QPushButton(self.patient_name[0])
         self.avatar.setObjectName("avatar")
@@ -88,7 +102,7 @@ class PatientListItem(QPushButton):
         self.name_label.setFixedWidth(350)
         self.name_label.setContentsMargins(5, 10, 5, 0)
 
-        if (is_admin):
+        if is_admin:
             self.user_id_label = QLabel("Oncologist Username: " + self.user_id)
         else:
             self.user_id_label = QLabel("Patient ID: " + self.user_id)
@@ -165,14 +179,14 @@ class PatientListItem(QPushButton):
         self.layout.addWidget(self.delete_button, 0, 9, 2, 1)
 
         self.setLayout(self.layout)
-    
+
     def onButtonHover(self, event):
         self.animation = QPropertyAnimation(self.delete_button, b"iconSize")
         self.animation.setDuration(200)
         self.animation.setStartValue(self.delete_button.iconSize())
         self.animation.setEndValue(QSize(46, 46))
         self.animation.start()
-    
+
     def onButtonUnhover(self, event):
         self.animation = QPropertyAnimation(self.delete_button, b"iconSize")
         self.animation.setDuration(200)
@@ -195,7 +209,7 @@ class PatientListItem(QPushButton):
 
         dlg = QMessageBox(self)
         dlg.setWindowTitle("Delete Patient")
-        dlg.setText("Are you sure you want to delete " + self.patient_name +"?")
+        dlg.setText("Are you sure you want to delete " + self.patient_name + "?")
         dlg.setStandardButtons(
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
         )
@@ -214,8 +228,8 @@ class PatientListItem(QPushButton):
             conn.execute(
                 "PRAGMA foreign_keys = ON"
             )  # enable foreign key cascade on delete for the measurements table
-            
-            if (self.is_admin):
+
+            if self.is_admin:
                 conn.execute(
                     """
                     DELETE FROM oncologists 
@@ -261,7 +275,7 @@ class PatientListWindow(QWidget):
         self.new_patient_button = QPushButton("+")
         self.new_patient_button.setFont(QFont("Avenir", 15))
         self.new_patient_button.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.new_patient_button.setToolTip('Add Patient')
+        self.new_patient_button.setToolTip("Add Patient")
         self.new_patient_button.setFixedHeight(40)
         self.new_patient_button.setFixedWidth(40)
         self.new_patient_button.setStyleSheet(
@@ -361,7 +375,7 @@ class PatientListWindow(QWidget):
         self.main_box_layout.addLayout(self.search_bar_layout)
         self.main_box_layout.addWidget(self.scroll_area)
         self.setLayout(self.main_box_layout)
-    
+
     def setSearchMode(self):
         if self.search_mode_button.isChecked():
             self.search_mode = SearchMode(1)
@@ -369,11 +383,11 @@ class PatientListWindow(QWidget):
         else:
             self.search_mode = SearchMode(0)
             self.showAdvancedOptions(False)
-    
+
     def showAdvancedOptions(self, display):
         if display:
             self.search_mode_button.setText("Default Search")
-            if (self.parent().parent().is_admin_user):
+            if self.parent().parent().is_admin_user:
                 self.name_search_bar.setPlaceholderText("Oncologist Name")
             else:
                 self.name_search_bar.setPlaceholderText("Patient Name")
@@ -382,18 +396,18 @@ class PatientListWindow(QWidget):
             self.id_search_bar.setVisible(True)
         else:
             self.search_mode_button.setText("Advanced Search")
-            if (self.parent().parent().is_admin_user):
+            if self.parent().parent().is_admin_user:
                 self.name_search_bar.setPlaceholderText("Search Oncologist")
             else:
                 self.name_search_bar.setPlaceholderText("Search Patient")
             self.name_search_bar.clear()
             self.id_search_bar.clear()
             self.id_search_bar.setVisible(False)
-    
+
     def filterByName(self, input):
         self.filter_name = input
         self.filterPatients()
-    
+
     def filterByID(self, input):
         self.filter_id = input
         self.filterPatients()
@@ -402,7 +416,10 @@ class PatientListWindow(QWidget):
         for widget in self.patient_widgets:
             widget.show()
         for widget in self.patient_widgets:
-            if self.filter_name and self.filter_name.lower() not in widget.patient_name.lower():
+            if (
+                self.filter_name
+                and self.filter_name.lower() not in widget.patient_name.lower()
+            ):
                 widget.hide()
             if self.filter_id and self.filter_id.lower() not in widget.user_id.lower():
                 widget.hide()
@@ -410,7 +427,7 @@ class PatientListWindow(QWidget):
     def showPatientFormWindow(self):
         self.parent().parent().selected_patient = None
         self.parent().parent().adding_new_patient = True
-        if (self.parent().parent().is_admin_user):
+        if self.parent().parent().is_admin_user:
             self.parent().parent().showOncologistFormWindow()
         else:
             self.parent().parent().showPatientFormWindow()
@@ -430,12 +447,10 @@ class PatientListWindow(QWidget):
     def displayPatientList(self):
         self.list = QWidget()
         self.list.setObjectName("PatientList")
-        self.list.setStyleSheet(
-            "QWidget#PatientList { background-color: #ffffff; }"
-        )
+        self.list.setStyleSheet("QWidget#PatientList { background-color: #ffffff; }")
         self.list_layout = QVBoxLayout()
 
-        if (self.parent().parent().is_admin_user):
+        if self.parent().parent().is_admin_user:
             self.name_search_bar.setPlaceholderText("Search Oncologists")
             self.id_search_bar.setPlaceholderText("Oncologist Username")
             for username, full_name in self.patients:
@@ -445,12 +460,20 @@ class PatientListWindow(QWidget):
         else:
             self.name_search_bar.setPlaceholderText("Search Patients")
             self.id_search_bar.setPlaceholderText("Patient ID")
-            for patient_name, patient_id, user_id, birthday, phoneNumber in self.patients:
-                widget = PatientListItem(decryptData(patient_name, self.parent().parent().password), 
-                                         patient_id,
-                                         decryptData(user_id, self.parent().parent().password),
-                                         decryptData(birthday, self.parent().parent().password),
-                                         decryptData(phoneNumber, self.parent().parent().password))
+            for (
+                patient_name,
+                patient_id,
+                user_id,
+                birthday,
+                phoneNumber,
+            ) in self.patients:
+                widget = PatientListItem(
+                    decryptData(patient_name, self.parent().parent().password),
+                    patient_id,
+                    decryptData(user_id, self.parent().parent().password),
+                    decryptData(birthday, self.parent().parent().password),
+                    decryptData(phoneNumber, self.parent().parent().password),
+                )
                 self.patient_widgets.append(widget)
                 self.list_layout.addWidget(widget)
 
@@ -467,13 +490,13 @@ class PatientListWindow(QWidget):
         conn = self.getDatabaseConnection()
         username = self.parent().parent().username
 
-        if (self.parent().parent().is_admin_user):
+        if self.parent().parent().is_admin_user:
             res = conn.execute(
                 """SELECT username, full_name
                 FROM oncologists o
                 WHERE o.is_admin='FALSE'
                 """
-            ) 
+            )
         else:
             res = conn.execute(
                 """SELECT name, id, user_id, birthday, phone_number 

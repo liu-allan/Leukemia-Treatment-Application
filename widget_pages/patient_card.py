@@ -6,11 +6,12 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QVBoxLayout,
     QGridLayout,
-    QWidget
+    QWidget,
 )
 from PyQt6.QtGui import QFont, QIcon
 from PyQt6.QtCore import Qt
 from datetime import datetime
+
 
 class Label(QLabel):
     def __init__(self, text, textSize, margins, color):
@@ -21,6 +22,7 @@ class Label(QLabel):
         self.setContentsMargins(margins[0], margins[1], margins[2], margins[3])
         self.setStyleSheet("color: {}".format(color))
 
+
 class LabelBolded(QLabel):
     def __init__(self, text, textSize, margins):
         super().__init__()
@@ -29,6 +31,7 @@ class LabelBolded(QLabel):
         self.setFont(QFont("Avenir", textSize))
         self.setContentsMargins(margins[0], margins[1], margins[2], margins[3])
         self.setStyleSheet("font-weight: bold;")
+
 
 class PatientCard(QWidget):
     def __init__(self):
@@ -42,7 +45,9 @@ class PatientCard(QWidget):
 
         self.patient_card = QWidget()
         self.patient_card.setContentsMargins(0, 0, 0, 0)
-        self.patient_card.setStyleSheet("background-color: #ffffff; height: 250; border-radius: 20px;")
+        self.patient_card.setStyleSheet(
+            "background-color: #ffffff; height: 250; border-radius: 20px;"
+        )
 
         self.layout_box.addWidget(self.patient_card)
 
@@ -96,7 +101,7 @@ class PatientCard(QWidget):
         self.age_layout.addWidget(self.sexLabel, 0, 0, 2, 1)
 
         # set patient age
-        self.patientAge = Label("Age", 18, [0, 0, 0, 0], 'black')
+        self.patientAge = Label("Age", 18, [0, 0, 0, 0], "black")
         self.age_layout.addWidget(self.patientAge, 0, 1, 1, 1)
 
         self.patientAgeV = LabelBolded("", 18, [0, 0, 0, 0])
@@ -116,7 +121,7 @@ class PatientCard(QWidget):
 
         # set patient height label
         self.patientHeight = Label("Height(cm)", 18, [0, 0, 0, 1], "#000")
-        self.patient_detail_layout.addWidget(self.patientHeight, 0, 0) 
+        self.patient_detail_layout.addWidget(self.patientHeight, 0, 0)
 
         # set patient weight label
         self.patientWeight = Label("Weight(kg)", 18, [0, 0, 0, 1], "#000")
@@ -128,7 +133,7 @@ class PatientCard(QWidget):
 
         # set patient height
         self.patientHeightV = LabelBolded("", 18, [0, 0, 0, 1])
-        self.patient_detail_layout.addWidget(self.patientHeightV, 1, 0) 
+        self.patient_detail_layout.addWidget(self.patientHeightV, 1, 0)
 
         # set patient weight
         self.patientWeightV = LabelBolded("", 18, [0, 0, 0, 1])
@@ -183,7 +188,9 @@ class PatientCard(QWidget):
         self.right_layout.addWidget(self.assignedDoctor, 2, 1)
 
         # set body surface area label
-        self.bodySurfaceArea = Label("Body Surface Area(m^2)", 18, [0, 0, 0, 0], "#71797E")
+        self.bodySurfaceArea = Label(
+            "Body Surface Area(m^2)", 18, [0, 0, 0, 0], "#71797E"
+        )
         self.right_layout.addWidget(self.bodySurfaceArea, 2, 2)
 
         # set ALL type
@@ -216,12 +223,14 @@ class PatientCard(QWidget):
         self.editButton.setStyleSheet(
             "background-color: #aaaaee; border-radius: 10px; padding: 10px 15px;"
         )
-        self.buttonLayout.addWidget(self.editButton, alignment=Qt.AlignmentFlag.AlignRight)
+        self.buttonLayout.addWidget(
+            self.editButton, alignment=Qt.AlignmentFlag.AlignRight
+        )
 
         self.right_layout.addWidget(self.buttons, 3, 2)
         self.inside_layout.addWidget(self.patient_card_right, 3)
         self.setLayout(self.layout_box)
-    
+
     def setSexIcon(self):
         if self.patientSex == "Male":
             self.sexLabel.setPixmap(self.maleIcon.pixmap(40, 40))
@@ -235,7 +244,7 @@ class PatientCard(QWidget):
     def getPatientInfo(self, patient):
         self.patient = patient
         self.displayPatientInfo()
-    
+
     def displayPatientInfo(self):
         self.patientName.clear()
 
@@ -250,10 +259,14 @@ class PatientCard(QWidget):
             self.patientIDV.setText(str(self.patient.user_id))
             self.phoneNumberFormatter()
             self.allTypeV.setText(self.patient.allType)
-            self.assignedDoctorV.setText(self.getAssignedDoctorFullName(self.patient.assignedDoctor))
+            self.assignedDoctorV.setText(
+                self.getAssignedDoctorFullName(self.patient.assignedDoctor)
+            )
             self.bodySurfaceAreaV.setText(str(self.patient.bsa))
-            self.birthdayV.setText(datetime.strptime(self.patient.birthday, '%Y%m%d').strftime('%Y-%m-%d'))
-            
+            self.birthdayV.setText(
+                datetime.strptime(self.patient.birthday, "%Y%m%d").strftime("%Y-%m-%d")
+            )
+
             self.setSexIcon()
 
     def getAssignedDoctorFullName(self, doctorID):
@@ -272,7 +285,7 @@ class PatientCard(QWidget):
             return row[0]
         else:
             return doctorID
-    
+
     def calculateBodySurfaceArea(self):
         weight = self.patientWeightV.text()
         height = self.patientHeightV.text()
@@ -284,9 +297,9 @@ class PatientCard(QWidget):
         else:
             bsa = math.sqrt(height * weight / 3600)
             self.bodySurfaceAreaV.setText("{:.2f}".format(bsa))
-    
+
     def phoneNumberFormatter(self):
-        self.phoneNumberV.setText(format(int(self.patient.phoneNumber[:-1]), ",").replace(",", "-") + self.patient.phoneNumber[-1])  
-
-
-
+        self.phoneNumberV.setText(
+            format(int(self.patient.phoneNumber[:-1]), ",").replace(",", "-")
+            + self.patient.phoneNumber[-1]
+        )

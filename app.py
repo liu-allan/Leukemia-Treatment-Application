@@ -112,11 +112,25 @@ class MainWindow(QMainWindow):
             body_surface_area = decryptData(row[8], self.password)
             oncologist_id = row[9]
             sex = decryptData(row[10], self.password)
-            user_id = decryptData(row[11], self.password)   
+            user_id = decryptData(row[11], self.password)
             anc_measurements = []
             dosage_measurements = []
             self.selected_patient = Patient(
-                patient_id, user_id, name, weight, height, anc_measurements, birthday, dosage_measurements, phone_number, age, blood_type, all_type, body_surface_area, oncologist_id, sex
+                patient_id,
+                user_id,
+                name,
+                weight,
+                height,
+                anc_measurements,
+                birthday,
+                dosage_measurements,
+                phone_number,
+                age,
+                blood_type,
+                all_type,
+                body_surface_area,
+                oncologist_id,
+                sex,
             )
         else:
             name = decryptData(records[0][0], self.password)
@@ -139,7 +153,21 @@ class MainWindow(QMainWindow):
                 anc_measurements.append((row[12], row[10]))
 
             self.selected_patient = Patient(
-                patient_id, user_id, name, weight, height, anc_measurements, birthday, dosage_measurements, phone_number, age, blood_type, all_type, body_surface_area, oncologist_id, sex
+                patient_id,
+                user_id,
+                name,
+                weight,
+                height,
+                anc_measurements,
+                birthday,
+                dosage_measurements,
+                phone_number,
+                age,
+                blood_type,
+                all_type,
+                body_surface_area,
+                oncologist_id,
+                sex,
             )
 
     def updateToolBar(self):
@@ -152,7 +180,7 @@ class MainWindow(QMainWindow):
 
     def showPatientListWindow(self):
         self.stackLayout.setCurrentIndex(1)
-        if (self.is_admin_user):
+        if self.is_admin_user:
             self.current_page = "Oncologist List"
         else:
             self.current_page = "Patient List"

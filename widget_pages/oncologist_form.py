@@ -13,7 +13,7 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QSpacerItem,
     QSizePolicy,
-    QScrollArea
+    QScrollArea,
 )
 from PyQt6.QtGui import QFont
 
@@ -27,12 +27,14 @@ class Label(QLabel):
         self.setFont(QFont("Avenir", 18))
         self.setFixedWidth(width)
 
+
 class LineEdit(QLineEdit):
     def __init__(self, placeholderText, width=200):
         super().__init__()
         self.setPlaceholderText(placeholderText)
         self.setFont(QFont("Avenir", 15))
         self.setFixedWidth(width)
+
 
 class FormRow(QWidget):
     def __init__(self, label, widget):
@@ -45,6 +47,7 @@ class FormRow(QWidget):
         layout.addWidget(widget)
 
         self.setLayout(layout)
+
 
 class OncologistFormWindow(QWidget):
     def __init__(self):
@@ -68,7 +71,9 @@ class OncologistFormWindow(QWidget):
             }
             """
         )
-        self.oncologistFormBigLayout.addWidget(self.oncologistFormWidget, alignment=Qt.AlignmentFlag.AlignHCenter)
+        self.oncologistFormBigLayout.addWidget(
+            self.oncologistFormWidget, alignment=Qt.AlignmentFlag.AlignHCenter
+        )
 
         self.oncologistFormLayout = QVBoxLayout(self.oncologistFormWidget)
         self.oncologistFormLayout.setContentsMargins(0, 30, 0, 10)
@@ -78,12 +83,18 @@ class OncologistFormWindow(QWidget):
         self.typeOfOncologistForm.setFont(QFont("Avenir", 30))
         self.typeOfOncologistForm.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.typeOfOncologistForm.setFixedWidth(self.oncologistFormWidget.width() - 60)
-        self.typeOfOncologistForm.setStyleSheet("background-color: rgba(170, 170, 238, 100); height: 60px; border-radius: 20px;")
-        self.oncologistFormLayout.addWidget(self.typeOfOncologistForm, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.typeOfOncologistForm.setStyleSheet(
+            "background-color: rgba(170, 170, 238, 100); height: 60px; border-radius: 20px;"
+        )
+        self.oncologistFormLayout.addWidget(
+            self.typeOfOncologistForm, alignment=Qt.AlignmentFlag.AlignCenter
+        )
 
         self.fullNameLabel = Label("Full Name")
         self.fullNameLabel.setContentsMargins(30, 20, 0, 0)
-        self.oncologistFormLayout.addWidget(self.fullNameLabel, alignment=Qt.AlignmentFlag.AlignBottom)
+        self.oncologistFormLayout.addWidget(
+            self.fullNameLabel, alignment=Qt.AlignmentFlag.AlignBottom
+        )
 
         self.oncologistNameLayout = QHBoxLayout()
         self.oncologistNameLayout.setContentsMargins(0, 0, 0, 0)
@@ -106,10 +117,12 @@ class OncologistFormWindow(QWidget):
         )
         self.oncologistNameLayout.addWidget(self.oncologistLastNameLineEdit)
         self.oncologistFormLayout.addLayout(self.oncologistNameLayout)
-        
+
         self.usernameLabel = Label("Oncologist Username")
         self.usernameLabel.setContentsMargins(30, 20, 30, 0)
-        self.oncologistFormLayout.addWidget(self.usernameLabel, alignment=Qt.AlignmentFlag.AlignBottom)
+        self.oncologistFormLayout.addWidget(
+            self.usernameLabel, alignment=Qt.AlignmentFlag.AlignBottom
+        )
 
         self.usernameLineEdit = QLineEdit()
         self.usernameLineEdit.setContentsMargins(30, 0, 30, 0)
@@ -122,7 +135,9 @@ class OncologistFormWindow(QWidget):
 
         self.passwordLabel = Label("Password")
         self.passwordLabel.setContentsMargins(30, 20, 30, 0)
-        self.oncologistFormLayout.addWidget(self.passwordLabel, alignment=Qt.AlignmentFlag.AlignBottom)
+        self.oncologistFormLayout.addWidget(
+            self.passwordLabel, alignment=Qt.AlignmentFlag.AlignBottom
+        )
 
         self.passwordEdit = QLineEdit()
         self.passwordEdit.setContentsMargins(30, 0, 30, 0)
@@ -136,7 +151,9 @@ class OncologistFormWindow(QWidget):
 
         self.confirmPasswordLabel = Label("Confirm Password")
         self.confirmPasswordLabel.setContentsMargins(30, 20, 30, 0)
-        self.oncologistFormLayout.addWidget(self.confirmPasswordLabel, alignment=Qt.AlignmentFlag.AlignBottom)
+        self.oncologistFormLayout.addWidget(
+            self.confirmPasswordLabel, alignment=Qt.AlignmentFlag.AlignBottom
+        )
 
         self.confirmPasswordEdit = QLineEdit()
         self.confirmPasswordEdit.setContentsMargins(30, 0, 30, 0)
@@ -159,8 +176,10 @@ class OncologistFormWindow(QWidget):
 
         self.errorLabel = Label("")
         self.errorLabel.setContentsMargins(0, 0, 0, 0)
-        self.bottomLayout.addWidget(self.errorLabel, 8, alignment=Qt.AlignmentFlag.AlignLeft)
-        
+        self.bottomLayout.addWidget(
+            self.errorLabel, 8, alignment=Qt.AlignmentFlag.AlignLeft
+        )
+
         self.cancelButton = QPushButton("Cancel")
         self.cancelButton.clicked.connect(self.showPatientListWindow)
         self.cancelButton.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -171,7 +190,9 @@ class OncologistFormWindow(QWidget):
         self.cancelButton.setStyleSheet(
             "background-color: #aaaaee; border-radius: 10px;"
         )
-        self.bottomLayout.addWidget(self.cancelButton, 1, alignment=Qt.AlignmentFlag.AlignRight)
+        self.bottomLayout.addWidget(
+            self.cancelButton, 1, alignment=Qt.AlignmentFlag.AlignRight
+        )
 
         self.saveButton = QPushButton("Save")
         self.saveButton.clicked.connect(self.savePatientInformation)
@@ -180,17 +201,17 @@ class OncologistFormWindow(QWidget):
         self.saveButton.setMinimumHeight(40)
         self.saveButton.setMaximumHeight(50)
         self.saveButton.setFont(QFont("Avenir", 18))
-        self.saveButton.setStyleSheet(
-            "background-color: #aaaaee; border-radius: 10px;"
+        self.saveButton.setStyleSheet("background-color: #aaaaee; border-radius: 10px;")
+        self.bottomLayout.addWidget(
+            self.saveButton, 1, alignment=Qt.AlignmentFlag.AlignRight
         )
-        self.bottomLayout.addWidget(self.saveButton, 1, alignment=Qt.AlignmentFlag.AlignRight)
 
         self.oncologistFormLayout.addLayout(self.bottomLayout)
 
         self.setLayout(self.oncologistFormBigLayout)
 
     def checkPasswordMatch(self):
-        if(self.confirmPasswordEdit.text() != self.passwordEdit.text()):
+        if self.confirmPasswordEdit.text() != self.passwordEdit.text():
             msg = "Password does not match!"
             self.errorLabel.setText(msg)
             self.errorLabel.setStyleSheet("color:red")
@@ -200,20 +221,24 @@ class OncologistFormWindow(QWidget):
             self.errorLabel.setText(msg)
             self.errorLabel.setStyleSheet("color:green")
             logging.info(msg)
-    
+
     def savePatientInformation(self):
         try:
             username = self.usernameLineEdit.text()
             assert username != ""
             password = self.encryptPassword(self.passwordEdit.text())
-            fullName = self.oncologistFirstNameLineEdit.text() + " " + self.oncologistLastNameLineEdit.text()
-            
+            fullName = (
+                self.oncologistFirstNameLineEdit.text()
+                + " "
+                + self.oncologistLastNameLineEdit.text()
+            )
+
             conn = self.parent().parent().getDatabaseConnection()
             conn.execute(
-                '''
+                """
                 INSERT INTO oncologists (username, password, full_name, is_admin)
                 VALUES (?, ?, ?, 'FALSE')
-                ''',
+                """,
                 (username, password, fullName),
             )
             conn.commit()
@@ -251,6 +276,6 @@ class OncologistFormWindow(QWidget):
     def clearForm(self):
         self.usernameLineEdit.clear()
         self.passwordEdit.clear()
-        self.oncologistFirstNameLineEdit.clear() 
+        self.oncologistFirstNameLineEdit.clear()
         self.oncologistLastNameLineEdit.clear()
         self.confirmPasswordEdit.clear()

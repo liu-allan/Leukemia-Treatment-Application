@@ -18,6 +18,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QFont, QPixmap, QColor, QIcon
 from PyQt6.QtCore import Qt, QDate, QSize
 
+
 class SideBar(QWidget):
     def __init__(self, pageName):
         super().__init__()
@@ -44,7 +45,7 @@ class SideBar(QWidget):
         self.menuLayout.setContentsMargins(0, 0, 0, 0)
 
         self.backButton = QPushButton()
-        if(pageName == "Patient List"):
+        if pageName == "Patient List":
             self.backButton.setIcon(QIcon("icons/user_black.png"))
         else:
             self.backButton.setIcon(QIcon("icons/user.png"))
@@ -58,7 +59,7 @@ class SideBar(QWidget):
         self.menuLayout.addWidget(self.backButton)
 
         self.patientInformationButton = QPushButton()
-        if(pageName == "Patient Information"):
+        if pageName == "Patient Information":
             self.patientInformationButton.setIcon(QIcon("icons/information_black.png"))
         else:
             self.patientInformationButton.setIcon(QIcon("icons/information.png"))
@@ -67,12 +68,16 @@ class SideBar(QWidget):
         self.patientInformationButton.setCursor(Qt.CursorShape.PointingHandCursor)
         self.patientInformationButton.setContentsMargins(0, 15, 0, 0)
         self.patientInformationButton.setFont(QFont("Avenir", 18))
-        self.patientInformationButton.clicked.connect(self.patientInformationButtonClicked)
-        self.patientInformationButton.setStyleSheet("background-color: #bfd8d2; border-radius: 20px")
+        self.patientInformationButton.clicked.connect(
+            self.patientInformationButtonClicked
+        )
+        self.patientInformationButton.setStyleSheet(
+            "background-color: #bfd8d2; border-radius: 20px"
+        )
         self.menuLayout.addWidget(self.patientInformationButton)
 
         self.dashboardButton = QPushButton()
-        if(pageName == "Dashboard"):
+        if pageName == "Dashboard":
             self.dashboardButton.setIcon(QIcon("icons/dashboard_black.png"))
         else:
             self.dashboardButton.setIcon(QIcon("icons/dashboard.png"))
@@ -82,13 +87,15 @@ class SideBar(QWidget):
         self.dashboardButton.setContentsMargins(0, 15, 0, 0)
         self.dashboardButton.setFont(QFont("Avenir", 18))
         self.dashboardButton.clicked.connect(self.dashboardButtonClicked)
-        self.dashboardButton.setStyleSheet("background-color: #bfd8d2; border-radius: 20px")
+        self.dashboardButton.setStyleSheet(
+            "background-color: #bfd8d2; border-radius: 20px"
+        )
         self.menuLayout.addWidget(self.dashboardButton)
 
         self.menuLayout.addSpacing(510)
 
         self.setLayout(self.bigLayout)
-    
+
     def lockButtons(self, lock):
         enabled = not lock
         self.backButton.setEnabled(enabled)
@@ -97,7 +104,7 @@ class SideBar(QWidget):
 
     def backButtonClicked(self):
         self.parent().backButtonClicked()
-    
+
     def patientInformationButtonClicked(self):
         self.parent().patientInformationButtonClicked()
 
