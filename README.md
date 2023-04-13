@@ -51,6 +51,12 @@ git submodule update --init --recursive
   ```
   - Then continue to follow the 1.0 Setup.
 
+## 1.2 Command when submodule is updated
+- When the Leukemia Treatment Project is updated, need to use the following command to make sure that the repo contains the newest update from the submodule.
+  ```
+  git submodule update --recursive
+  ```
+ 
 ## 2.0 How to use
 
 Open the application in the root directory of the repository.
