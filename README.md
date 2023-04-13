@@ -63,13 +63,18 @@ Open the application in the root directory of the repository.
 ```
 python app.py
 ```
+### 2.1 Login Page
 Login with credentials. To create a new user, see [section 5.0](https://github.com/liu-allan/Leukemia-Treatment-Application/tree/documentation#40-optional-create-a-new-user)
+
+There are two existing example oncologists profiles in the database. The account usernames and passwords are the following:
+- Username: allan, Password: wordpass
+- Username: angus, Password: password
 
 ![Login Page](https://user-images.githubusercontent.com/44624612/231532389-985b40ae-3497-4cc1-8cf8-b46936e97597.png)
 
 After logging in, log out at any time by pressing the `Log Off` button in the top right of the application. 
 
-### 2.1 Patient List Page
+### 2.2 Patient List Page
 
 1. To create a patient profile, click on the plus icon in the top left.
 2. To search for an existing patient, type the patient's name into the search bar
@@ -79,20 +84,20 @@ After logging in, log out at any time by pressing the `Log Off` button in the to
 
 ![Patient List Page](https://user-images.githubusercontent.com/44624612/231534114-3fa2d8e7-ed4e-4fb9-8d4f-28473c73a298.png)
 
-### 2.2 Patient Form Page
+### 2.3 Patient Form Page
 
 - Fill in patient parameters 
 - Press Save to add the new patient to the list
-- Press Cancel to return to the Patient List Page
+- Press Cancel to return to the previous page
 
 ![Patient Form Page](https://user-images.githubusercontent.com/44624612/231534394-62da01d8-dfd0-48ec-a9c6-9082e1b726ce.png)
 
-### 2.3 Patient Information Page
+### 2.4 Patient Information Page
 
 - Press Edit to change patient parameters.
 - If there is new data, input the prescribed dosage, ANC measurement and date of measurement.
 - Press Save to save the record into the database.
-- Input the number of cycles into the future to run (Note: no negative numbers or number >= 99 as the calculate button will be disabled)
+- Input the number of cycles into the future to run (Note: no negative numbers or numbers > 99 as the calculate button will be disabled) (if '1' is inputted, there will actually be 2 cycles ran)
 - Press Calculate to run the model with the newest and previously saved records. 
 
 ![Patient Information Page](https://user-images.githubusercontent.com/44624612/231534625-c6de4f25-946d-4278-98df-4cd431252e2e.png)
@@ -104,7 +109,7 @@ Navigate to other pages by pressing the icons on the left. If the model has alre
 Note: The model only takes the most recent dosage and ANC measurement into consideration. The code needs to be modified in order to run the entire patient's history.
 
 
-### 2.4 Dashboard
+### 2.5 Dashboard
 
 The model can take a few minutes (4-5 minutes per cycle) to complete. This is normal. The dashboard page will be shown as below when performing calculation. When performing calculation, all other buttons are disabled to prevent multiple calculation happening simultaneously. 
 
@@ -117,13 +122,13 @@ After calculation, the dashboard page will show two main components.
 ![Dashboard Page](https://user-images.githubusercontent.com/44624612/231587587-8ac735a0-17ca-4ce1-bbc0-e6165d7022c6.png)
 
 - Navigate to previous pages using the tabs on the left.
-- Press and hold left click to move the graph.
-- Press and hold right click to stretch the X-axis.
+- Press and hold left click to pan the graph.
+- Press and hold right click to stretch the axes (place the cursor on the axes when you do this).
 - Use the scroll wheel on the graph to zoom in and out.
 
 ## 3.0 Matlab Model
 
-The Matlab Model is called through `runModel()` found in `matlab_script.py`. It calls `runController.m` found in the `/Leukemia-Treatment-Project` directory 
+The Matlab Model is called through `runModel()` found in `matlab_script.py`. It calls `runController.m` found in the [`/Leukemia-Treatment-Project`](https://github.com/liu-allan/Leukemia-Treatment-Project/tree/d8ab68d451eea82b5519327db5ec79ee9549ffa2) directory
 
 ## 4.0 Database
 
@@ -131,9 +136,9 @@ To view tables on vscode, install https://marketplace.visualstudio.com/items?ite
 
 ### 4.1 Patients
 
-| id | user_id | name |phone_number|birthday|age|blood_type|all_type|weight|height|body_surface_area|oncologist_id| 
-|:--:|:-------:|:----:|:----------:|:------:|:-:|:--------:|:------:|:----:|:-----|:---------------:|:-----------:|
-|int|string|string|string|string (yyyyMMdd)|int|string|string|float|float|float|string|
+| id | user_id | name |phone_number|birthday|age|blood_type|all_type|weight|height|body_surface_area|oncologist_id|sex| 
+|:--:|:-------:|:----:|:----------:|:------:|:-:|:--------:|:------:|:----:|:-----|:---------------:|:-----------:|:-:|
+|int|string|string|string|string (yyyyMMdd)|string|string|string|string|string|string|string|string|
 
 The Patients Table is encrypted with the plaintext password as the key.
 
@@ -149,7 +154,7 @@ The Patients Table is encrypted with the plaintext password as the key.
 |:------:|:------:|:-------:|:------:|
 |string (yyyyMMdd)|float|float|bool|
 
-
+To get a better understanding of the tables, one can look at the schemas in [`database.py`](https://github.com/liu-allan/Leukemia-Treatment-Application/blob/main/database.py)
 
 ## 5.0 Optional: Create a new user
 
