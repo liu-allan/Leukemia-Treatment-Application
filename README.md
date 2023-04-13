@@ -170,4 +170,7 @@ Fill out the form and press save to complete registration.
 
 Logout from the admin account and login with the newly created account.
 
+## 6.0 Other Resources
+
+For further details about the project, one can visit the [team drive](https://drive.google.com/drive/folders/1ULl7E6QBmyQbtAvO5eGinjr2fYjNRKPB?usp=share_link) for more reports/documents. 
 
